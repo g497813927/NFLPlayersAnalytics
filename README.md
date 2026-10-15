@@ -4,6 +4,9 @@ A local, database-backed football analytics prototype for CS5614. All people,
 teams, venues, and results in the sample are fictional. The database supports
 multiple sports; this first demo focuses on one fictional football league.
 
+The frontend uses React with TypeScript/TSX and Ant Design. The backend uses
+Python, FastAPI, and SQLAlchemy with SQLite for the demo.
+
 ## First-time setup
 
 Requirements: Git, [uv](https://docs.astral.sh/uv/), Python 3.12, and Node.js
@@ -28,6 +31,7 @@ In **terminal 2**, start from the cloned repository root:
 ```sh
 cd frontend
 npm ci
+cp .env.example .env
 npm run dev
 ```
 
@@ -38,12 +42,66 @@ endpoints, request fields, and interactive **Try it out** controls. It is also
 available [directly from FastAPI](http://127.0.0.1:8000/docs/api). The generated
 OpenAPI schema remains at `/openapi.json`.
 
+Endpoints are grouped by entity, with separate sections for teams, athletes,
+rosters, memberships, games, statistics, and standings. Expand an operation for
+its filters, business rules, named request examples, and readable error format.
+Use `/api/lookups` to find current IDs. Example descriptions explain prerequisites
+such as creating a new team before adding its roster. `PUT` replaces all editable
+fields; **Try it out** writes to your local database.
+
 Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000;
 both processes must stay running. Stop them with `Ctrl+C` in each terminal.
 
 The shell examples use macOS/Linux syntax. On Windows PowerShell, replace
 `cp .env.example .env` with `Copy-Item .env.example .env`; the `uv` and npm
 commands are the same.
+
+## Configuration with `.env`
+
+Copy each committed example to a local `.env` once. Existing `.env` files should
+be edited, not overwritten when pulling updates. Both local files are ignored by
+Git; commit new defaults and explanations in `.env.example` instead.
+
+The backend automatically reads `backend/.env` using Pydantic Settings, regardless
+of the working directory. Shell environment variables override this file; missing
+values use the defaults below. Restart FastAPI after editing it.
+
+| Backend setting | Default | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | `sqlite:///data/prototype.db` | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`. |
+| `APP_ENV` | `development` | Browser SQL inspection is available only with this value. |
+| `SQL_ECHO` | `false` | Print emitted SQL and parameters in the backend terminal. |
+| `SQL_DEBUG_UI` | `false` | Capture request SQL for the browser inspector when `APP_ENV=development`. |
+| `CORS_ORIGINS` | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly. |
+
+For example, `backend/.env` can contain:
+
+```dotenv
+DATABASE_URL=sqlite:///data/prototype.db
+APP_ENV=development
+SQL_ECHO=false
+SQL_DEBUG_UI=true
+CORS_ORIGINS=["http://127.0.0.1:5173","http://localhost:5173"]
+```
+
+Vite reads `frontend/.env` for its development proxy. Restart Vite after editing
+it. A shell value takes precedence over the file; if absent, the target defaults
+to `http://127.0.0.1:8000`.
+
+```dotenv
+API_PROXY_TARGET=http://127.0.0.1:8000
+```
+
+The target forwards `/api`, `/docs/api`, and `/openapi.json` to FastAPI. It is a
+server-side Vite setting, not a `VITE_` variable exposed to browser code. Never
+put secrets in `VITE_` variables. This proxy applies to the development server;
+a deployed frontend will need equivalent routing on its host.
+
+To use backend port 8001, start Uvicorn with `--port 8001`, set
+`API_PROXY_TARGET=http://127.0.0.1:8001`, and restart Vite. To use frontend port
+5174, run `npm run dev -- --port 5174` and update `CORS_ORIGINS` if accessing the
+backend directly. Changing a database URL selects a different database; it does
+not create its tables or migrate data automatically.
 
 ## Start again or update your checkout
 
@@ -191,14 +249,23 @@ standings calculation, and current limitations.
 
 ```text
 backend/
-  app/          models, connection setup, API, validation, standings, SQL tracing
+  app/
+    main.py     application assembly
+    config.py   backend .env settings
+    models.py   public ORM imports and complete metadata
+    entities/   one SQLAlchemy entity per file
+    routes/     one router per resource; system and development routes
+    schemas/    one request/response model per file; entity request examples
+    services/   integrity rules, standings, and individual response builders
   scripts/      schema export, explicit initialization, deterministic seeding
   data/         ignored local SQLite database
   pyproject.toml / uv.lock
 database/
   schema.sql    standalone SQLite schema
 frontend/
-  src/          React pages and Ant Design forms
+  src/          TypeScript pages, individual TSX components, hooks, and types
+  .env.example  development API proxy configuration
+  tsconfig.json strict TypeScript compiler settings
 docs/
   DATABASE.md   schema rules and current boundaries
 ```
@@ -207,6 +274,16 @@ The repository includes source, schema, example configuration, and dependency
 lockfiles. `.env`, SQLite databases, `.venv`, `node_modules`, build output, and
 local caches are ignored; do not commit them.
 
+Each React component belongs in its own file. Keep nested JSX and long prop lists
+on separate, indented lines. Keep hooks, types, and non-UI helpers outside component
+files, and group backend modules by entity or responsibility. `models.py` remains
+the stable entry point for database scripts. The checked-in `database/schema.sql`
+is the submission artifact and is unchanged by this refactor.
+
+From `frontend`, run `npm run typecheck` for TypeScript diagnostics or
+`npm run build` for type checking followed by the production bundle. These are
+compile/build checks, not the deferred automated test suite.
+
 ## Troubleshooting
 
 - **Database setup required:** run one initialization method and then the
@@ -214,8 +291,8 @@ local caches are ignored; do not commit them.
 - **Disconnected:** ensure FastAPI is running on `127.0.0.1:8000`; check
   [the health endpoint](http://127.0.0.1:8000/api/health) and its terminal output.
 - **Address already in use:** stop the existing process or use the already
-  running server. Changing the backend port also requires updating Vite's proxy
-  in `frontend/vite.config.js`.
+  running server. Changing the backend port also requires updating
+  `API_PROXY_TARGET` in `frontend/.env` and restarting Vite.
 - **Database is not empty:** normal restarts do not need initialization; only
   use the reset procedure when you intend to discard local changes.
 

@@ -56,13 +56,15 @@ def install_error_handlers(app: FastAPI) -> None:
                 message = {
                     "teams": "This team has rosters or game records and cannot be deleted while they exist.",
                     "athletes": "This athlete has roster memberships or statistics and cannot be deleted while they exist.",
-                }.get(resource, "This record is still used by other records and cannot be deleted.")
-                return error_response(
-                    409, "record_in_use", message
+                }.get(
+                    resource,
+                    "This record is still used by other records and cannot be deleted.",
                 )
+                return error_response(409, "record_in_use", message)
             return error_response(
-                422, "invalid_reference",
-                "A related record no longer exists. Refresh the page and choose it again."
+                422,
+                "invalid_reference",
+                "A related record no longer exists. Refresh the page and choose it again.",
             )
         if "unique" in driver_message or "duplicate" in driver_message:
             message = {
@@ -71,31 +73,42 @@ def install_error_handlers(app: FastAPI) -> None:
                 "memberships": "This athlete already has a membership in this roster with the same start date.",
                 "performance-statistics": "This subject already has this statistic recorded for the selected game. Edit the existing value instead.",
                 "games": "A game cannot have duplicate teams or duplicate home/away roles.",
-            }.get(resource, "A record with this name or combination already exists. Please choose different values.")
-            return error_response(
-                409, "duplicate_record", message
+            }.get(
+                resource,
+                "A record with this name or combination already exists. Please choose different values.",
             )
+            return error_response(409, "duplicate_record", message)
         if "not null" in driver_message:
-            return error_response(422, "missing_value", "Please fill in all required fields.")
+            return error_response(
+                422, "missing_value", "Please fill in all required fields."
+            )
         return error_response(
-            422, "invalid_record",
-            "These values do not meet the record's rules. Check the dates, scores, and selected records."
+            422,
+            "invalid_record",
+            "These values do not meet the record's rules. Check the dates, scores, and selected records.",
         )
 
     @app.exception_handler(SQLAlchemyError)
     async def database_error(_request: Request, exc: SQLAlchemyError):
         logger.error("Database operation failed (%s)", type(exc).__name__)
         return error_response(
-            503, "database_unavailable",
-            "The database could not complete this operation. Check that it has been initialized, then try again."
+            503,
+            "database_unavailable",
+            "The database could not complete this operation. Check that it has been initialized, then try again.",
         )
 
     @app.exception_handler(HTTPException)
     async def http_error(_request: Request, exc: HTTPException):
-        message = "This page or record could not be found." if exc.status_code == 404 else "The request could not be completed."
+        message = (
+            "This page or record could not be found."
+            if exc.status_code == 404
+            else "The request could not be completed."
+        )
         return error_response(exc.status_code, "request_failed", message)
 
     @app.exception_handler(Exception)
     async def unexpected_error(_request: Request, exc: Exception):
         logger.error("Unexpected application error", exc_info=exc)
-        return error_response(500, "unexpected_error", "Something went wrong. Please try again.")
+        return error_response(
+            500, "unexpected_error", "Something went wrong. Please try again."
+        )

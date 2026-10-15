@@ -24,18 +24,19 @@ when a task explicitly asks for tests, implement the relevant tests then.
 
 - `README.md`: fresh-clone setup, startup commands, debugging, and troubleshooting.
 - `docs/DATABASE.md`: ER mapping, integrity rules, seed data, and known limits.
-- `backend/app/models.py`: the 17 SQLAlchemy table mappings and SQL constraints.
+- `backend/app/models.py`: public imports and complete ORM metadata.
+- `backend/app/entities/`: the 17 SQLAlchemy table mappings, one entity per file.
 - `backend/app/database.py` and `config.py`: engine, sessions, paths, and flags.
-- `backend/app/schemas.py`: Pydantic write payloads.
-- `backend/app/routes.py`: explicit API endpoints and transaction boundaries.
-- `backend/app/services.py`: cross-table validation, response labels, standings.
+- `backend/app/schemas/`: Pydantic payloads and examples, one model per file.
+- `backend/app/routes/`: resource routers and shared transaction boundaries.
+- `backend/app/services/`: cross-table validation, response labels, standings.
 - `backend/app/errors.py` and `sql_debug.py`: readable failures and SQL traces.
 - `backend/scripts/`: schema export, explicit initialization, seed, and refresh.
 - `frontend/src/`: React pages, Ant Design forms, API client, and shared state.
 
 ## Stack and commands
 
-Use React JavaScript, Ant Design, React Router, and Vite for the frontend.
+Use React TypeScript/TSX, Ant Design, React Router, and Vite for the frontend.
 Use Python 3.12+, FastAPI, Pydantic, and synchronous SQLAlchemy sessions for
 the backend. SQLite is the demo database. Preserve `uv.lock` and
 `frontend/package-lock.json`; update them only when dependencies change.
@@ -53,17 +54,27 @@ Initialization and seeding are first-time steps for an empty database, not
 normal startup steps. From `frontend`, run `npm ci` once and `npm run dev` to
 start the browser app. Vite forwards `/api`, `/docs/api`, and `/openapi.json`
 to port 8000. Swagger UI lives at `/docs/api`; the app header links to it with
-a native link rather than a React Router route.
+a native link rather than a React Router route. Keep entity tags, endpoint
+descriptions, request examples, and error documentation accurate when routes change.
+
+Settings belong in environment files, with documented defaults in `.env.example`.
+The backend loads `backend/.env`; Vite loads `frontend/.env` for `API_PROXY_TARGET`.
+Keep local `.env` files ignored and never expose secrets through `VITE_` variables.
+Document setting changes in README and restart the affected server.
 
 For changes that affect runtime code, suitable lightweight checks are
 `uv run --frozen python -m compileall -q app scripts` from `backend` and
-`npm run build` from `frontend`, plus a relevant startup/manual check. Do not
+`npm run build` from `frontend` (strict type checking plus Vite), plus a relevant
+startup/manual check. `npm run typecheck` performs type checking alone. Do not
 rerun unrelated checks for documentation-only changes. State exactly what was
 checked; builds and syntax checks are not proof of CRUD or integrity coverage.
 
 ## Database rules
 
-- Treat `models.py` as the schema source. After schema changes, run
+- Treat `models.py` and its imported entity definitions as the schema source.
+  `database/schema.sql` is a coursework submission artifact: preserve it
+  byte-for-byte during refactors and documentation work. Only change it when the
+  current task explicitly authorizes a schema change. For authorized schema changes, run
   `uv run --frozen python -m scripts.export_schema` from `backend` and include
   `database/schema.sql` in the same change. The SQL file is a standalone SQLite
   creation path; the ORM path must describe the same tables and constraints.
@@ -98,6 +109,16 @@ checked; builds and syntax checks are not proof of CRUD or integrity coverage.
 
 ## API and frontend conventions
 
+- Put each React component in a separate file. Use small page sections, form
+  components, and layout components instead of a large switch or page bundle.
+  Separate hooks, types, API access, and pure helpers from component files.
+- Format JSX with clear nesting and indentation; put nested tags and long prop
+  lists on separate lines. Do not compress multiple components onto one line.
+- Apply the same separation on the backend: one entity and request model per
+  file, resource-specific routers, and focused service modules. Keep `main.py`
+  for assembly and `models.py` as a stable public import for database scripts.
+- Keep strict TypeScript enabled. Model API payloads and props explicitly;
+  do not bypass checking with blanket `any` types or `@ts-nocheck`.
 - Keep explicit resource routes and Pydantic request models. Lists return
   `{items, total, page, page_size}`. Errors return
   `{error: {code, message, fields?}}`; preserve useful 404/409/422 distinctions.
