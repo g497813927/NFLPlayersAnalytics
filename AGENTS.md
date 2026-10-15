@@ -38,21 +38,31 @@ when a task explicitly asks for tests, implement the relevant tests then.
 
 Use React TypeScript/TSX, Ant Design, React Router, and Vite for the frontend.
 Use Python 3.12+, FastAPI, Pydantic, and synchronous SQLAlchemy sessions for
-the backend. SQLite is the demo database. Preserve `uv.lock` and
-`frontend/package-lock.json`; update them only when dependencies change.
+the backend. SQLite is the demo database. Preserve `backend/uv.lock`, the root
+`package-lock.json`, and `frontend/package-lock.json`; update the relevant
+lockfile only when its dependencies change.
 
-From `backend`:
+For first-time setup, run `npm ci` at the repository root and in `frontend`,
+copy each service's `.env.example` to its local `.env` only if it does not
+already exist, then prepare an empty database from `backend`:
 
 ```sh
 uv sync --frozen --python 3.12
 uv run --frozen python -m scripts.init_db --method orm
 uv run --frozen python -m scripts.seed
-uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 Initialization and seeding are first-time steps for an empty database, not
-normal startup steps. From `frontend`, run `npm ci` once and `npm run dev` to
-start the browser app. Vite forwards `/api`, `/docs/api`, and `/openapi.json`
+normal startup steps. Once set up, run `npm run dev` from the repository root
+to start FastAPI on port 8000 and Vite on port 5173 in one terminal. Output is
+labeled API/Web; `Ctrl+C` or either service exiting stops both. Stop older
+instances first. The launcher must not reset/seed databases or overwrite `.env`
+files, and Vite must fail when its port is occupied rather than select another.
+
+For individual services or custom ports, run
+`uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000` from
+`backend` and `npm run dev -- --port 5173 --strictPort` from `frontend` in
+separate terminals. Vite forwards `/api`, `/docs/api`, and `/openapi.json`
 to port 8000. Swagger UI lives at `/docs/api`; the app header links to it with
 a native link rather than a React Router route. Keep entity tags, endpoint
 descriptions, request examples, and error documentation accurate when routes change.

@@ -14,26 +14,30 @@ Requirements: Git, [uv](https://docs.astral.sh/uv/), Python 3.12, and Node.js
 Use the committed lockfiles to install the same dependencies as your teammates.
 This repository is private, so your GitHub account needs repository access to clone it.
 
-Clone the repository, then prepare and start the backend in **terminal 1**:
+Clone the repository and prepare both services. These initialization steps are
+only for a new checkout with an empty database:
 
 ```sh
 git clone https://github.com/g497813927/NFLPlayersAnalytics.git
-cd NFLPlayersAnalytics/backend
+cd NFLPlayersAnalytics
+npm ci
+cd backend
 uv sync --frozen --python 3.12
 cp .env.example .env
 uv run --frozen python -m scripts.init_db --method orm
 uv run --frozen python -m scripts.seed
-uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
-
-In **terminal 2**, start from the cloned repository root:
-
-```sh
-cd frontend
+cd ../frontend
 npm ci
 cp .env.example .env
+cd ..
 npm run dev
 ```
+
+The final command runs FastAPI and Vite together in one terminal, with output
+labeled **API** and **Web**. It uses backend port 8000 and frontend port 5173;
+stop any older instances before starting it. Press `Ctrl+C` once to stop both.
+If either process exits or cannot start, the launcher stops the other process
+too. It never initializes or reseeds the database or rewrites your `.env` files.
 
 Open [the prototype](http://127.0.0.1:5173). The homepage reports database
 connectivity. Open **API docs** in the app header for
@@ -49,8 +53,7 @@ Use `/api/lookups` to find current IDs. Example descriptions explain prerequisit
 such as creating a new team before adding its roster. `PUT` replaces all editable
 fields; **Try it out** writes to your local database.
 
-Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000;
-both processes must stay running. Stop them with `Ctrl+C` in each terminal.
+Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000.
 
 The shell examples use macOS/Linux syntax. On Windows PowerShell, replace
 `cp .env.example .env` with `Copy-Item .env.example .env`; the `uv` and npm
@@ -97,16 +100,27 @@ server-side Vite setting, not a `VITE_` variable exposed to browser code. Never
 put secrets in `VITE_` variables. This proxy applies to the development server;
 a deployed frontend will need equivalent routing on its host.
 
-To use backend port 8001, start Uvicorn with `--port 8001`, set
-`API_PROXY_TARGET=http://127.0.0.1:8001`, and restart Vite. To use frontend port
-5174, run `npm run dev -- --port 5174` and update `CORS_ORIGINS` if accessing the
-backend directly. Changing a database URL selects a different database; it does
-not create its tables or migrate data automatically.
+The root launcher uses ports 8000 and 5173. For custom ports, use the separate
+service commands below. To use backend port 8001, start Uvicorn with
+`--port 8001`, set `API_PROXY_TARGET=http://127.0.0.1:8001`, and restart Vite.
+To use frontend port 5174, run `npm run dev -- --port 5174 --strictPort` from
+`frontend` and update `CORS_ORIGINS` if accessing the backend directly. Changing
+a database URL selects a different database; it does not create its tables or
+migrate data automatically.
 
 ## Start again or update your checkout
 
 Keep the existing database and `.env`. Do **not** rerun initialization or seeding
-for a normal restart. From the repository root, use two terminals:
+for a normal restart. From the repository root, start both services:
+
+```sh
+npm run dev
+```
+
+Press `Ctrl+C` to stop both services before restarting them, including after
+configuration changes. If you prefer separate terminals or need custom ports,
+run the services individually instead, starting each terminal at the repository
+root:
 
 ```sh
 # Terminal 1
@@ -117,18 +131,24 @@ uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```sh
 # Terminal 2
 cd frontend
-npm run dev
+npm run dev -- --port 5173 --strictPort
 ```
 
+The root aliases `npm run dev:api` and `npm run dev:web` also start just one
+service at its default port.
+
 After pulling updates, rerun `uv sync --frozen --python 3.12` in `backend` and
-`npm ci` in `frontend` if dependencies changed. There is no migration history
-yet: model changes do not update an existing database automatically. For a
+`npm ci` in both the repository root and `frontend` when their respective
+dependencies changed. The root lockfile covers the shared launcher; the frontend
+lockfile covers the browser app. There is no migration history yet: model
+changes do not update an existing database automatically. For a
 changed schema, deliberately rebuild only disposable demo data as described
 below.
 
 If a sandbox prevents writes to the normal package caches, use
 `UV_CACHE_DIR=.cache/uv uv sync --frozen --python 3.12` and
-`npm ci --cache .cache/npm` instead.
+`npm ci --cache .cache/npm` instead. For the shared launcher, use
+`UV_CACHE_DIR=.cache/uv npm run dev` from the repository root.
 
 ## What works
 
@@ -248,6 +268,8 @@ Contributors and coding agents should read [AGENTS.md](AGENTS.md).
 standings calculation, and current limitations.
 
 ```text
+package.json / package-lock.json
+                shared development launcher (npm run dev)
 backend/
   app/
     main.py     application assembly
@@ -291,7 +313,9 @@ compile/build checks, not the deferred automated test suite.
 - **Disconnected:** ensure FastAPI is running on `127.0.0.1:8000`; check
   [the health endpoint](http://127.0.0.1:8000/api/health) and its terminal output.
 - **Address already in use:** stop the existing process or use the already
-  running server. Changing the backend port also requires updating
+  running server. The root launcher stops both services when either cannot
+  start; it does not silently move Vite to another port. Changing the backend
+  port with the separate service commands also requires updating
   `API_PROXY_TARGET` in `frontend/.env` and restarting Vite.
 - **Database is not empty:** normal restarts do not need initialization; only
   use the reset procedure when you intend to discard local changes.
