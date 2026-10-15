@@ -16,7 +16,13 @@ from .models import Base
 from .routes import router
 from .sql_debug import SQLTrace, active_trace, get_trace, install_sql_capture, save_trace
 
-app = FastAPI(title="NFL Players Analytics — synthetic prototype", version="0.1.0", debug=False)
+app = FastAPI(
+    title="NFL Players Analytics — synthetic prototype",
+    version="0.1.0",
+    debug=False,
+    docs_url="/docs/api",
+    swagger_ui_oauth2_redirect_url="/docs/api/oauth2-redirect",
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5173", "http://localhost:5173"],

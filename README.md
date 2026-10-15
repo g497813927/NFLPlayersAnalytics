@@ -32,8 +32,13 @@ npm run dev
 ```
 
 Open [the prototype](http://127.0.0.1:5173). The homepage reports database
-connectivity. [FastAPI's API reference](http://127.0.0.1:8000/docs) is also
-available while the backend runs. Vite forwards `/api` requests to port 8000;
+connectivity. Open **API docs** in the app header for
+[Swagger UI at `/docs/api`](http://127.0.0.1:5173/docs/api), which lists the
+endpoints, request fields, and interactive **Try it out** controls. It is also
+available [directly from FastAPI](http://127.0.0.1:8000/docs/api). The generated
+OpenAPI schema remains at `/openapi.json`.
+
+Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000;
 both processes must stay running. Stop them with `Ctrl+C` in each terminal.
 
 The shell examples use macOS/Linux syntax. On Windows PowerShell, replace

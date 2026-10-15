@@ -51,7 +51,9 @@ uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000
 
 Initialization and seeding are first-time steps for an empty database, not
 normal startup steps. From `frontend`, run `npm ci` once and `npm run dev` to
-start the browser app. Vite forwards `/api` to port 8000.
+start the browser app. Vite forwards `/api`, `/docs/api`, and `/openapi.json`
+to port 8000. Swagger UI lives at `/docs/api`; the app header links to it with
+a native link rather than a React Router route.
 
 For changes that affect runtime code, suitable lightweight checks are
 `uv run --frozen python -m compileall -q app scripts` from `backend` and
