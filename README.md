@@ -9,31 +9,38 @@ Python, FastAPI, and SQLAlchemy with SQLite for the demo.
 
 ## First-time setup
 
-Requirements: Git, [uv](https://docs.astral.sh/uv/), Python 3.12, and Node.js
-22.12+ with npm. `uv` can install Python 3.12 if it is not already available.
+Requirements: Git, [uv](https://docs.astral.sh/uv/), and Node.js 22.12+ with npm.
+Setup uses Python 3.12; `uv` can install it if it is not already available.
 Use the committed lockfiles to install the same dependencies as your teammates.
 This repository is private, so your GitHub account needs repository access to clone it.
 
-Clone the repository and prepare both services. These initialization steps are
-only for a new checkout with an empty database:
+Clone the repository, run setup once, then start the app:
 
 ```sh
 git clone https://github.com/g497813927/NFLPlayersAnalytics.git
 cd NFLPlayersAnalytics
-npm ci
-cd backend
-uv sync --frozen --python 3.12
-cp .env.example .env
-uv run --frozen python -m scripts.init_db --method orm
-uv run --frozen python -m scripts.seed
-cd ../frontend
-npm ci
-cp .env.example .env
-cd ..
+npm run setup
 npm run dev
 ```
 
-The final command runs FastAPI and Vite together in one terminal, with output
+`npm run setup` installs the locked root/frontend npm dependencies and backend
+Python dependencies, creates only missing `backend/.env` and `frontend/.env`
+files from their examples, and prepares the configured SQLite database. The
+default is `backend/data/prototype.db`; existing `.env` files remain unchanged.
+
+- An empty database receives all 17 ORM tables and synthetic sample data.
+- A complete, compatible empty application schema receives the sample data.
+  If it already contains any rows, setup preserves the data and skips seeding.
+- Partial or unrelated schemas stop setup with a readable explanation. Setup
+  never resets a database, migrates a schema, or overwrites existing records.
+
+Setup supports a plain SQLite file, respects `DATABASE_URL`, and refuses
+in-memory SQLite, SQLite URI options, or other RDBMS connectors; configure those
+manually if needed. Stop running dev servers before rerunning setup because
+`npm ci` replaces their dependency directories. The setup command
+can be rerun after pulling updates; it does not start either server.
+
+`npm run dev` runs FastAPI and Vite together in one terminal, with output
 labeled **API** and **Web**. It uses backend port 8000 and frontend port 5173;
 stop any older instances before starting it. Press `Ctrl+C` once to stop both.
 If either process exits or cannot start, the launcher stops the other process
@@ -55,25 +62,27 @@ fields; **Try it out** writes to your local database.
 
 Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000.
 
-The shell examples use macOS/Linux syntax. On Windows PowerShell, replace
-`cp .env.example .env` with `Copy-Item .env.example .env`; the `uv` and npm
-commands are the same.
+The setup and development commands work in macOS/Linux shells and Windows
+PowerShell without manually copying files or activating a virtual environment.
 
 ## Configuration with `.env`
 
-Copy each committed example to a local `.env` once. Existing `.env` files should
-be edited, not overwritten when pulling updates. Both local files are ignored by
-Git; commit new defaults and explanations in `.env.example` instead.
+Setup copies each committed example to a local `.env` only if that file is
+missing. Edit existing `.env` files directly; setup preserves them on subsequent
+runs. Both local files are ignored by Git; commit new defaults and explanations
+in `.env.example` instead.
 
 The backend automatically reads `backend/.env` using Pydantic Settings, regardless
-of the working directory. Shell environment variables override this file; missing
-values use the defaults below. Restart FastAPI after editing it.
+of the working directory. Shell environment variables override this file.
+The table shows the values in the example used by new setups. Missing values
+use the same application defaults except `SQL_ECHO`, whose fallback is `false`.
+Restart FastAPI after editing the file.
 
-| Backend setting | Default | Purpose |
+| Backend setting | New setup value | Purpose |
 | --- | --- | --- |
 | `DATABASE_URL` | `sqlite:///data/prototype.db` | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`. |
 | `APP_ENV` | `development` | Browser SQL inspection is available only with this value. |
-| `SQL_ECHO` | `false` | Print emitted SQL and parameters in the backend terminal. |
+| `SQL_ECHO` | `true` | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
 | `SQL_DEBUG_UI` | `false` | Capture request SQL for the browser inspector when `APP_ENV=development`. |
 | `CORS_ORIGINS` | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly. |
 
@@ -82,8 +91,8 @@ For example, `backend/.env` can contain:
 ```dotenv
 DATABASE_URL=sqlite:///data/prototype.db
 APP_ENV=development
-SQL_ECHO=false
-SQL_DEBUG_UI=true
+SQL_ECHO=true
+SQL_DEBUG_UI=false
 CORS_ORIGINS=["http://127.0.0.1:5173","http://localhost:5173"]
 ```
 
@@ -137,13 +146,14 @@ npm run dev -- --port 5173 --strictPort
 The root aliases `npm run dev:api` and `npm run dev:web` also start just one
 service at its default port.
 
-After pulling updates, rerun `uv sync --frozen --python 3.12` in `backend` and
-`npm ci` in both the repository root and `frontend` when their respective
-dependencies changed. The root lockfile covers the shared launcher; the frontend
-lockfile covers the browser app. There is no migration history yet: model
-changes do not update an existing database automatically. For a
-changed schema, deliberately rebuild only disposable demo data as described
-below.
+After pulling updates, stop both services and run `npm run setup` to refresh
+dependencies while preserving existing environment files and populated data.
+Alternatively, run `uv sync --frozen --python 3.12` in `backend` and `npm ci`
+in the root or `frontend` when their respective dependencies changed. The root
+lockfile covers the shared launcher; the frontend lockfile covers the browser
+app. There is no migration history yet: setup does not update an existing
+schema. For a changed schema, deliberately rebuild only disposable demo data
+as described below.
 
 If a sandbox prevents writes to the normal package caches, use
 `UV_CACHE_DIR=.cache/uv uv sync --frozen --python 3.12` and
@@ -160,7 +170,8 @@ If a sandbox prevents writes to the normal package caches, use
   delete confirmation.
 - Database constraints plus cross-table validation, transactional writes, and
   readable error messages.
-- Optional terminal SQL logging and a read-only SQL inspector in the browser.
+- Terminal SQL logging enabled by the new setup template, and an optional
+  read-only SQL inspector in the browser.
 
 Game participants are saved as one home/away pair with the game. A completed
 game needs two scores. Statistics have exactly one subject: an athlete or a
@@ -174,8 +185,10 @@ basic demo standings and do not implement official NFL tiebreakers.
 
 ## Two database creation methods
 
-Run commands below from `backend`. ORM and SQL initialization are alternative
-ways to create the same database, not steps to run in sequence.
+`npm run setup` uses the ORM creation path when the database is empty. For
+manual initialization, run the commands below from `backend` after dependencies
+and `.env` are ready. ORM and SQL initialization are alternative ways to create
+the same database, not steps to run in sequence.
 
 ```sh
 # Create tables using the SQLAlchemy models.
@@ -242,7 +255,16 @@ required. Each teammate generates their own local database.
 
 ## SQL inspector
 
-In `backend/.env`, enable either or both flags and restart the backend:
+New setups enable terminal SQL logging through `SQL_ECHO=true` in
+`backend/.env`. Browse pages or submit forms to see the actual SQLAlchemy
+statements and separate bound parameters under **API** in the `npm run dev`
+terminal. Startup and read requests can also produce SQL output.
+
+Existing `.env` files are preserved by setup. If SQL is not appearing, set
+`SQL_ECHO=true` in `backend/.env`, check for an overriding shell variable, and
+restart with `npm run dev`. Set it to `false` to turn terminal SQL logging off.
+
+The browser inspector is controlled separately. To enable it as well, use:
 
 ```dotenv
 APP_ENV=development
@@ -256,9 +278,11 @@ to show the actual statements, separate parameters, and execution times for
 recent operations. It keeps up to 100 requests and 100 statements per request
 in process memory. Restarting the backend clears the traces.
 
-Both flags default to false. The browser inspector is disabled outside
-`APP_ENV=development`. It cannot execute SQL. Raw database error messages and
-stack traces are never included in application error responses.
+`SQL_DEBUG_UI` defaults to false. The application fallback for `SQL_ECHO` is
+also false when it is absent from both the environment and `.env`; the example
+template explicitly enables it for new demo setups. The browser inspector is
+disabled outside `APP_ENV=development` and cannot execute SQL. Raw database
+error messages and stack traces are never included in application error responses.
 
 ## Project layout
 
@@ -269,7 +293,9 @@ standings calculation, and current limitations.
 
 ```text
 package.json / package-lock.json
-                shared development launcher (npm run dev)
+                setup and shared development launcher
+scripts/
+  setup.mjs     install dependencies and prepare missing local configuration
 backend/
   app/
     main.py     application assembly
@@ -279,7 +305,7 @@ backend/
     routes/     one router per resource; system and development routes
     schemas/    one request/response model per file; entity request examples
     services/   integrity rules, standings, and individual response builders
-  scripts/      schema export, explicit initialization, deterministic seeding
+  scripts/      safe setup, schema export, explicit initialization, seeding
   data/         ignored local SQLite database
   pyproject.toml / uv.lock
 database/
@@ -308,8 +334,13 @@ compile/build checks, not the deferred automated test suite.
 
 ## Troubleshooting
 
-- **Database setup required:** run one initialization method and then the
-  seeder in `backend`, then select **Reconnect** in the app.
+- **Database setup required:** stop the servers, run `npm run setup`, and
+  restart with `npm run dev`.
+- **Setup rejects the database:** check `DATABASE_URL` and the reported schema
+  mismatch. Use a new SQLite file for a fresh demo or follow the explicit reset
+  procedure only when the existing data is disposable.
+- **No SQL in the terminal:** set `SQL_ECHO=true` in `backend/.env`, check any
+  overriding shell value, restart the servers, then browse or edit records.
 - **Disconnected:** ensure FastAPI is running on `127.0.0.1:8000`; check
   [the health endpoint](http://127.0.0.1:8000/api/health) and its terminal output.
 - **Address already in use:** stop the existing process or use the already

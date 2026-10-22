@@ -23,6 +23,7 @@ when a task explicitly asks for tests, implement the relevant tests then.
 ## Start with the relevant source
 
 - `README.md`: fresh-clone setup, startup commands, debugging, and troubleshooting.
+- `scripts/setup.mjs`: dependency installation and missing local environment files.
 - `docs/DATABASE.md`: ER mapping, integrity rules, seed data, and known limits.
 - `backend/app/models.py`: public imports and complete ORM metadata.
 - `backend/app/entities/`: the 17 SQLAlchemy table mappings, one entity per file.
@@ -42,18 +43,25 @@ the backend. SQLite is the demo database. Preserve `backend/uv.lock`, the root
 `package-lock.json`, and `frontend/package-lock.json`; update the relevant
 lockfile only when its dependencies change.
 
-For first-time setup, run `npm ci` at the repository root and in `frontend`,
-copy each service's `.env.example` to its local `.env` only if it does not
-already exist, then prepare an empty database from `backend`:
+With Node.js 22.12+, npm, and `uv` installed, run from the repository root:
 
 ```sh
-uv sync --frozen --python 3.12
-uv run --frozen python -m scripts.init_db --method orm
-uv run --frozen python -m scripts.seed
+npm run setup
+npm run dev
 ```
 
-Initialization and seeding are first-time steps for an empty database, not
-normal startup steps. Once set up, run `npm run dev` from the repository root
+Setup runs `npm ci` in the root and `frontend`, syncs locked Python dependencies
+with Python 3.12 through `uv`, and copies only missing service `.env` files.
+It initializes/seeds an empty SQLite file, seeds a complete compatible empty
+application schema, and skips populated application data. It rejects partial or
+unrelated schemas, in-memory SQLite, SQLite URI options, and other RDBMS
+connectors. It respects the configured `DATABASE_URL`; preserve existing
+environment files and data, with no automatic reset or migration.
+Stop running servers before setup because `npm ci`
+replaces dependency directories. `uv` can install the required Python version.
+
+Initialization and seeding are setup operations for an empty database, not
+normal startup steps. Once set up, run only `npm run dev` from the repository root
 to start FastAPI on port 8000 and Vite on port 5173 in one terminal. Output is
 labeled API/Web; `Ctrl+C` or either service exiting stops both. Stop older
 instances first. The launcher must not reset/seed databases or overwrite `.env`
@@ -140,8 +148,12 @@ checked; builds and syntax checks are not proof of CRUD or integrity coverage.
 - Keep the synthetic-data label and the local prototype boundary visible. Do
   not introduce a login screen or claim that the stored user role enforces
   authorization.
-- `SQL_ECHO` and `SQL_DEBUG_UI` default to false. Browser SQL inspection is
-  development-only, read-only, request-scoped, and bounded in memory. Display
+- The backend `.env.example` sets `SQL_ECHO=true` for new demo setups so actual
+  SQL and parameters appear in the API terminal. Setup preserves existing `.env`
+  values; change that flag explicitly and restart when requested. The Settings
+  fallback remains false if the flag is unset. `SQL_DEBUG_UI` defaults to false
+  independently. Browser SQL inspection is development-only, read-only,
+  request-scoped, and bounded in memory. Display
   actual emitted SQL and separate bound parameters, not reconstructed SQL or
   raw exception messages. Keep the disabled endpoint unavailable.
 
