@@ -391,8 +391,8 @@ Its syntax parser uses the root TypeScript 6 dependency supported by
 strict checking. The scoped `minimatch` overrides supply the patched glob
 matcher for ESLint and its TypeScript parser. Ruff is a locked backend development dependency.
 
-CI runs both jobs for pull requests (including stacked PRs), pushes to `main`,
-and manual dispatches, using Node 24 and Python 3.12. It needs no `.env`, database,
+CI runs both jobs for pull requests (including stacked PRs), pushes to `main`
+and `codex/**` branches, and manual dispatches, using Node 24 and Python 3.12. It needs no `.env`, database,
 credentials, or external sports feed. It does not initialize or seed a database.
 Formatting, linting, compilation, and builds do not replace the deferred
 functional/integrity test suite or manual browser checks.
