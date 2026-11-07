@@ -61,9 +61,17 @@ export function GamesPage() {
             }
           />
         </div>
-        <ResourceTable {...listing} rowKey="game_id" columns={columns} />
+        <ResourceTable
+          {...listing}
+          rowKey="game_id"
+          columns={columns}
+        />
       </Card>
-      <RecordDrawer kind="game" record={selected} onClose={() => setSelected(null)} />
+      <RecordDrawer
+        kind="game"
+        record={selected}
+        onClose={() => setSelected(null)}
+      />
     </>
   );
 }

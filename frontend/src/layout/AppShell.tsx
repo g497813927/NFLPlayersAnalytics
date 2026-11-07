@@ -24,7 +24,11 @@ export function AppShell() {
 
   return (
     <Layout className="app-layout">
-      <Sidebar collapsed={collapsed} pathname={location.pathname} onBreakpoint={setCollapsed} />
+      <Sidebar
+        collapsed={collapsed}
+        pathname={location.pathname}
+        onBreakpoint={setCollapsed}
+      />
       <Layout className="workspace">
         <Topbar
           title={currentTitle}

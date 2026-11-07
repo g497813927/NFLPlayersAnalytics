@@ -19,7 +19,10 @@ export function useGameColumns(onOpen: (game: Game) => void): TableColumnsType<G
             : game.matchup || `Game #${game.game_id}`;
 
         return (
-          <button className="text-button" onClick={() => onOpen(game)}>
+          <button
+            className="text-button"
+            onClick={() => onOpen(game)}
+          >
             {title}
           </button>
         );

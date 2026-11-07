@@ -79,9 +79,7 @@ def install_error_handlers(app: FastAPI) -> None:
             )
             return error_response(409, "duplicate_record", message)
         if "not null" in driver_message:
-            return error_response(
-                422, "missing_value", "Please fill in all required fields."
-            )
+            return error_response(422, "missing_value", "Please fill in all required fields.")
         return error_response(
             422,
             "invalid_record",
@@ -109,6 +107,4 @@ def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(Exception)
     async def unexpected_error(_request: Request, exc: Exception):
         logger.error("Unexpected application error", exc_info=exc)
-        return error_response(
-            500, "unexpected_error", "Something went wrong. Please try again."
-        )
+        return error_response(500, "unexpected_error", "Something went wrong. Please try again.")

@@ -32,7 +32,11 @@ export function GameFields({ form, lookups }: FieldProps) {
           />
         </Col>
         <Col span={12}>
-          <Form.Item name="status" label="Status" rules={requiredRules}>
+          <Form.Item
+            name="status"
+            label="Status"
+            rules={requiredRules}
+          >
             <Select<GameStatus>
               options={(['scheduled', 'in_progress', 'completed', 'cancelled'] as const).map(
                 (value) => ({ value, label: value.replaceAll('_', ' ') }),
@@ -43,7 +47,11 @@ export function GameFields({ form, lookups }: FieldProps) {
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="game_time" label="Game time (your local time)" rules={requiredRules}>
+          <Form.Item
+            name="game_time"
+            label="Game time (your local time)"
+            rules={requiredRules}
+          >
             <Input type="datetime-local" />
           </Form.Item>
         </Col>
@@ -77,7 +85,10 @@ export function GameFields({ form, lookups }: FieldProps) {
               label="Away score"
               rules={status === 'completed' ? requiredRules : []}
             >
-              <InputNumber min={0} precision={0} />
+              <InputNumber
+                min={0}
+                precision={0}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -96,7 +107,10 @@ export function GameFields({ form, lookups }: FieldProps) {
               label="Home score"
               rules={status === 'completed' ? requiredRules : []}
             >
-              <InputNumber min={0} precision={0} />
+              <InputNumber
+                min={0}
+                precision={0}
+              />
             </Form.Item>
           </Col>
         </Row>

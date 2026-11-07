@@ -1,6 +1,9 @@
 export function FootballFieldArt() {
   return (
-    <div className="field-art" aria-hidden="true">
+    <div
+      className="field-art"
+      aria-hidden="true"
+    >
       <div className="field-midline" />
       <span className="field-label">NFL ANALYTICS</span>
       <span className="field-marker m1">20</span>

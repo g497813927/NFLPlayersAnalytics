@@ -4,7 +4,6 @@ from fastapi import APIRouter
 from sqlalchemy import select
 
 from ..api_docs import LIST_RESPONSES
-from ..response_docs import LOOKUPS_RESPONSE
 from ..models import (
     Athlete,
     Game,
@@ -16,6 +15,7 @@ from ..models import (
     Team,
     Venue,
 )
+from ..response_docs import LOOKUPS_RESPONSE
 from ..services import athlete_view, game_view, roster_view, row_values, team_view
 from .common import DB
 
@@ -39,13 +39,10 @@ router = APIRouter()
 def lookups(session: DB):
     leagues = session.scalars(select(League).order_by(League.league_name)).all()
     seasons = session.scalars(select(Season).order_by(Season.start_date.desc())).all()
-    definitions = session.scalars(
-        select(StatDefinition).order_by(StatDefinition.stat_name)
-    ).all()
+    definitions = session.scalars(select(StatDefinition).order_by(StatDefinition.stat_name)).all()
     return {
         "sports": [
-            row_values(row)
-            for row in session.scalars(select(Sport).order_by(Sport.sport_name))
+            row_values(row) for row in session.scalars(select(Sport).order_by(Sport.sport_name))
         ],
         "leagues": [
             {
@@ -63,8 +60,7 @@ def lookups(session: DB):
             for row in seasons
         ],
         "venues": [
-            row_values(row)
-            for row in session.scalars(select(Venue).order_by(Venue.venue_name))
+            row_values(row) for row in session.scalars(select(Venue).order_by(Venue.venue_name))
         ],
         "stat_definitions": [
             {

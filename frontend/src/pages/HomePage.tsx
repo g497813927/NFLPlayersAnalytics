@@ -16,21 +16,37 @@ export function HomePage() {
   return (
     <>
       <HomeHero />
-      <ErrorNotice error={overview.error} retry={overview.retry} />
-      <OverviewMetrics counts={overview.data?.counts || {}} loading={overview.loading} />
+      <ErrorNotice
+        error={overview.error}
+        retry={overview.retry}
+      />
+      <OverviewMetrics
+        counts={overview.data?.counts || {}}
+        loading={overview.loading}
+      />
       <Row gutter={[20, 20]}>
-        <Col xs={24} xl={17}>
+        <Col
+          xs={24}
+          xl={17}
+        >
           <RecentGamesCard
             games={overview.data?.recent_games || []}
             loading={overview.loading}
             onOpen={setSelected}
           />
         </Col>
-        <Col xs={24} xl={7}>
+        <Col
+          xs={24}
+          xl={7}
+        >
           <WorkspaceCard />
         </Col>
       </Row>
-      <RecordDrawer kind="game" record={selected} onClose={() => setSelected(null)} />
+      <RecordDrawer
+        kind="game"
+        record={selected}
+        onClose={() => setSelected(null)}
+      />
     </>
   );
 }

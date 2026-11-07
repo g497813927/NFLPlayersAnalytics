@@ -1,6 +1,7 @@
 """Require record for the sports prototype."""
 
 from sqlalchemy.orm import Session
+
 from ..errors import AppError
 
 

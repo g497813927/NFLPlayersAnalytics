@@ -29,7 +29,11 @@ export function StatisticFields({ form, lookups, labels }: FieldProps) {
           label: `${row.stat_name}${row.abbreviation ? ` (${row.abbreviation})` : ''}`,
         }))}
       />
-      <Form.Item name="subject_type" label="Record performance for" rules={requiredRules}>
+      <Form.Item
+        name="subject_type"
+        label="Record performance for"
+        rules={requiredRules}
+      >
         <Radio.Group
           options={[
             { value: 'athlete', label: 'An athlete' },
@@ -56,7 +60,11 @@ export function StatisticFields({ form, lookups, labels }: FieldProps) {
           disabled={!gameId}
         />
       )}
-      <Form.Item name="stat_value" label="Value" rules={requiredRules}>
+      <Form.Item
+        name="stat_value"
+        label="Value"
+        rules={requiredRules}
+      >
         <InputNumber />
       </Form.Item>
       <p className="muted">

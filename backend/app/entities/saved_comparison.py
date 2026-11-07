@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -39,6 +40,4 @@ class SavedComparison(Base):
         ForeignKey("team.team_id", ondelete="CASCADE"), index=True
     )
     title: Mapped[str] = mapped_column(String(200))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, server_default=text("CURRENT_TIMESTAMP")
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=text("CURRENT_TIMESTAMP"))

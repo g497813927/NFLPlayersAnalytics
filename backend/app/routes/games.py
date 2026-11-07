@@ -10,8 +10,8 @@ from sqlalchemy.orm import Session
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
 from ..errors import AppError
 from ..models import Game, GameParticipant, Season, Team, Venue
-from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..request_examples import GAME_EXAMPLES
+from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..schemas import GameWrite
 from ..services import game_view, require_record
 from .common import DB, page_result, save_changes
@@ -38,9 +38,7 @@ def list_games(
         description="Case-insensitive text contained in either participating team's name.",
         examples=["Harbor"],
     ),
-    season_id: int | None = Query(
-        None, description="Season ID from /api/lookups.", examples=[1]
-    ),
+    season_id: int | None = Query(None, description="Season ID from /api/lookups.", examples=[1]),
     team_id: int | None = Query(
         None,
         description="Games in which this team participates as home or away.",
@@ -83,9 +81,7 @@ def list_games(
     if team_id is not None:
         statement = statement.where(
             Game.game_id.in_(
-                select(GameParticipant.game_id).where(
-                    GameParticipant.team_id == team_id
-                )
+                select(GameParticipant.game_id).where(GameParticipant.team_id == team_id)
             )
         )
     if league_id is not None:
@@ -99,13 +95,9 @@ def list_games(
             "The start date must be on or before the end date.",
         )
     if date_from is not None:
-        statement = statement.where(
-            Game.game_time >= datetime.combine(date_from, time.min)
-        )
+        statement = statement.where(Game.game_time >= datetime.combine(date_from, time.min))
     if date_to is not None:
-        statement = statement.where(
-            Game.game_time <= datetime.combine(date_to, time.max)
-        )
+        statement = statement.where(Game.game_time <= datetime.combine(date_to, time.max))
     return page_result(session, statement, game_view, page, page_size)
 
 
@@ -151,9 +143,7 @@ def require_game_references(session: Session, body: GameWrite) -> None:
     status_code=201,
     responses={201: RECORD_RESPONSE, **WRITE_RESPONSES},
 )
-def create_game(
-    body: Annotated[GameWrite, Body(openapi_examples=GAME_EXAMPLES)], session: DB
-):
+def create_game(body: Annotated[GameWrite, Body(openapi_examples=GAME_EXAMPLES)], session: DB):
     require_game_references(session, body)
     game = Game(**body.model_dump(exclude={"participants"}))
     session.add(game)

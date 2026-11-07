@@ -19,7 +19,11 @@ export function Sidebar({ collapsed, pathname, onBreakpoint }: Props) {
       onBreakpoint={onBreakpoint}
       className="sidebar"
     >
-      <Link to="/" className="brand" aria-label="NFL Players Analytics home">
+      <Link
+        to="/"
+        className="brand"
+        aria-label="NFL Players Analytics home"
+      >
         <span className="brand-symbol">
           <ApartmentOutlined />
         </span>

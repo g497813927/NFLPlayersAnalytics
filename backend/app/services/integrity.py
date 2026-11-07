@@ -1,8 +1,10 @@
 """Validate sports integrity for the sports prototype."""
 
 from collections import defaultdict
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
 from ..errors import AppError
 from ..models import (
     Game,
@@ -29,9 +31,7 @@ def validate_sports_integrity(session: Session, status_code: int = 422) -> None:
     teams = {r.team_id: r for r in session.scalars(select(Team))}
     rosters = {r.roster_id: r for r in session.scalars(select(Roster))}
     games = {r.game_id: r for r in session.scalars(select(Game))}
-    definitions = {
-        r.stat_definition_id: r for r in session.scalars(select(StatDefinition))
-    }
+    definitions = {r.stat_definition_id: r for r in session.scalars(select(StatDefinition))}
     participants = defaultdict(list)
     memberships = defaultdict(list)
     season_teams = {(r.season_id, r.team_id) for r in rosters.values()}
@@ -51,9 +51,7 @@ def validate_sports_integrity(session: Session, status_code: int = 422) -> None:
             membership.end_date is not None
             and not membership.start_date <= membership.end_date <= season.end_date
         ):
-            reject(
-                "A membership must end between its start date and the season's end date."
-            )
+            reject("A membership must end between its start date and the season's end date.")
         memberships[membership.athlete_id].append(membership)
     for participant in session.scalars(select(GameParticipant)):
         participants[participant.game_id].append(participant)
@@ -79,16 +77,11 @@ def validate_sports_integrity(session: Session, status_code: int = 422) -> None:
     for statistic in session.scalars(select(PerformanceStatistic)):
         game = games[statistic.game_id]
         season = seasons[game.season_id]
-        if (
-            definitions[statistic.stat_definition_id].sport_id
-            != leagues[season.league_id].sport_id
-        ):
+        if definitions[statistic.stat_definition_id].sport_id != leagues[season.league_id].sport_id:
             reject("The statistic's definition must match the game's sport.")
         participant_ids = {p.team_id for p in participants[game.game_id]}
         if statistic.team_id is not None and statistic.team_id not in participant_ids:
-            reject(
-                "A team statistic must describe one of the teams playing in its game."
-            )
+            reject("A team statistic must describe one of the teams playing in its game.")
         if statistic.athlete_id is not None:
             active = any(
                 rosters[m.roster_id].season_id == game.season_id

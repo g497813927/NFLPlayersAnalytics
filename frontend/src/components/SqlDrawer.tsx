@@ -29,7 +29,10 @@ export function SqlDrawer({
       width={760}
       title="SQL inspector"
       extra={
-        <Button icon={<ReloadOutlined />} onClick={onRefresh}>
+        <Button
+          icon={<ReloadOutlined />}
+          onClick={onRefresh}
+        >
           Latest request
         </Button>
       }
@@ -52,11 +55,17 @@ export function SqlDrawer({
       {!requestId && (
         <Empty description="Open a data page or save a record to capture a request." />
       )}
-      <ErrorNotice error={trace.error} retry={trace.retry} />
+      <ErrorNotice
+        error={trace.error}
+        retry={trace.retry}
+      />
       {trace.loading && <Skeleton active />}
       {trace.data && (
         <>
-          <Space wrap className="trace-heading">
+          <Space
+            wrap
+            className="trace-heading"
+          >
             <Tag color="blue">{trace.data.method}</Tag>
             <Typography.Text code>{trace.data.path}</Typography.Text>
             <Typography.Text type="secondary">
@@ -65,7 +74,10 @@ export function SqlDrawer({
           </Space>
           <p className="muted trace-id">Request: {trace.data.request_id}</p>
           {(trace.data.statements || []).map((entry, index) => (
-            <div className="sql-entry" key={index}>
+            <div
+              className="sql-entry"
+              key={index}
+            >
               <div className="sql-entry-heading">
                 <strong>Statement {index + 1}</strong>
                 <span>{Number(entry.duration_ms || 0).toFixed(2)} ms</span>

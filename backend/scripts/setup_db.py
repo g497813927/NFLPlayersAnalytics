@@ -49,9 +49,7 @@ def inspect_schema(connection: Connection, metadata) -> bool:
 
     compiler = connection.dialect.ddl_compiler(connection.dialect, None)
     for table in metadata.sorted_tables:
-        columns = {
-            column["name"]: column for column in inspector.get_columns(table.name)
-        }
+        columns = {column["name"]: column for column in inspector.get_columns(table.name)}
         if set(columns) != set(table.columns.keys()):
             incompatible_schema(table.name)
         for expected in table.columns:
@@ -65,9 +63,9 @@ def inspect_schema(connection: Connection, metadata) -> bool:
             ):
                 incompatible_schema(table.name)
 
-        if tuple(
-            inspector.get_pk_constraint(table.name)["constrained_columns"]
-        ) != tuple(column.name for column in table.primary_key.columns):
+        if tuple(inspector.get_pk_constraint(table.name)["constrained_columns"]) != tuple(
+            column.name for column in table.primary_key.columns
+        ):
             incompatible_schema(table.name)
 
         actual_foreign_keys = {

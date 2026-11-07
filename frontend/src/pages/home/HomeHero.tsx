@@ -18,7 +18,11 @@ export function HomeHero() {
         <p>
           Explore the teams, follow the season, and connect performance to the people behind it.
         </p>
-        <Button type="primary" size="large" onClick={() => navigate('/athletes')}>
+        <Button
+          type="primary"
+          size="large"
+          onClick={() => navigate('/athletes')}
+        >
           Explore athletes <ArrowRightOutlined />
         </Button>
       </div>

@@ -41,15 +41,16 @@ function createMissingEnvironment(service) {
     }
     throw new Error(
       `Could not create ${service}/.env. Check the example file and directory permissions.`,
+      { cause: error },
     );
   }
 }
 
 function setup() {
   const [major, minor] = process.versions.node.split('.').map(Number);
-  if (major < 22 || (major === 22 && minor < 12)) {
+  if (major < 22 || major === 23 || (major === 22 && minor < 13)) {
     throw new Error(
-      'Node.js 22.12 or newer is required. Upgrade Node, then run npm run setup again.',
+      'Node.js 22.13+ LTS or 24+ is required. Upgrade Node, then run npm run setup again.',
     );
   }
 
@@ -61,18 +62,23 @@ function setup() {
   }
 
   console.log('[setup] Stop running development servers before installing dependencies.');
-  runStep(
-    'Checking uv (install it from https://docs.astral.sh/uv/ if missing)',
-    'uv',
-    ['--version'],
-  );
+  runStep('Checking uv (install it from https://docs.astral.sh/uv/ if missing)', 'uv', [
+    '--version',
+  ]);
   runStep('Installing launcher dependencies', process.execPath, [npmCli, 'ci']);
-  runStep('Installing frontend dependencies', process.execPath, [npmCli, '--prefix', 'frontend', 'ci']);
+  runStep('Installing frontend dependencies', process.execPath, [
+    npmCli,
+    '--prefix',
+    'frontend',
+    'ci',
+  ]);
   runStep('Installing backend dependencies', 'uv', [
     'sync',
-    '--directory', 'backend',
+    '--directory',
+    'backend',
     '--frozen',
-    '--python', '3.12',
+    '--python',
+    '3.12',
   ]);
 
   createMissingEnvironment('backend');
@@ -80,14 +86,19 @@ function setup() {
 
   runStep('Preparing the configured database without replacing existing data', 'uv', [
     'run',
-    '--directory', 'backend',
+    '--directory',
+    'backend',
     '--frozen',
-    'python', '-m', 'scripts.setup_db',
+    'python',
+    '-m',
+    'scripts.setup_db',
   ]);
 
   console.log('\n[setup] Ready. Start both servers with npm run dev.');
   console.log('[setup] Terminal SQL output: set SQL_ECHO=true in backend/.env, then restart.');
-  console.log('[setup] New environment files enable terminal SQL; existing settings are preserved.');
+  console.log(
+    '[setup] New environment files enable terminal SQL; existing settings are preserved.',
+  );
 }
 
 try {

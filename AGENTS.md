@@ -43,7 +43,7 @@ the backend. SQLite is the demo database. Preserve `backend/uv.lock`, the root
 `package-lock.json`, and `frontend/package-lock.json`; update the relevant
 lockfile only when its dependencies change.
 
-With Node.js 22.12+, npm, and `uv` installed, run from the repository root:
+With Node.js 22.13+ LTS or 24+, npm, and `uv` installed, run from the repository root:
 
 ```sh
 npm run setup
@@ -86,6 +86,15 @@ For changes that affect runtime code, suitable lightweight checks are
 startup/manual check. `npm run typecheck` performs type checking alone. Do not
 rerun unrelated checks for documentation-only changes. State exactly what was
 checked; builds and syntax checks are not proof of CRUD or integrity coverage.
+
+Run `npm run check` from the root before handing off runtime changes. This
+runs Prettier, ESLint for frontend and Node scripts, Stylelint, the TypeScript
+production build, and Ruff format/lint plus Python syntax compilation. Use
+`npm run format` and `npm run format:python` for formatting fixes; review the
+diff. CI applies these checks to both runtimes on every PR and `main` push.
+Do not compact source to silence formatting checks, disable rules to hide
+errors, or add a test suite as part of routine cleanup. Keep the SQL submission
+artifact outside the formatters.
 
 ## Database rules
 

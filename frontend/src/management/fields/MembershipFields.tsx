@@ -35,20 +35,41 @@ export function MembershipFields({ form, lookups, labels }: FieldProps) {
       />
       <Row gutter={16}>
         <Col span={16}>
-          <Form.Item name="position" label="Position" rules={requiredTextRules}>
-            <Input maxLength={40} placeholder="e.g. Quarterback" />
+          <Form.Item
+            name="position"
+            label="Position"
+            rules={requiredTextRules}
+          >
+            <Input
+              maxLength={40}
+              placeholder="e.g. Quarterback"
+            />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name="jersey_number" label="Jersey number">
-            <Input maxLength={10} placeholder="e.g. 00" />
+          <Form.Item
+            name="jersey_number"
+            label="Jersey number"
+          >
+            <Input
+              maxLength={10}
+              placeholder="e.g. 00"
+            />
           </Form.Item>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="start_date" label="Start date" rules={requiredRules}>
-            <Input type="date" min={season?.start_date} max={season?.end_date} />
+          <Form.Item
+            name="start_date"
+            label="Start date"
+            rules={requiredRules}
+          >
+            <Input
+              type="date"
+              min={season?.start_date}
+              max={season?.end_date}
+            />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -65,7 +86,11 @@ export function MembershipFields({ form, lookups, labels }: FieldProps) {
               },
             ]}
           >
-            <Input type="date" min={startDate || season?.start_date} max={season?.end_date} />
+            <Input
+              type="date"
+              min={startDate || season?.start_date}
+              max={season?.end_date}
+            />
           </Form.Item>
         </Col>
       </Row>

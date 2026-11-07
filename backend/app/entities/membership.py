@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import date
+
 from sqlalchemy import (
     CheckConstraint,
     Date,
@@ -20,9 +21,7 @@ class Membership(Base):
     __tablename__ = "membership"
     __table_args__ = (
         UniqueConstraint("roster_id", "athlete_id", "start_date"),
-        CheckConstraint(
-            "end_date IS NULL OR end_date >= start_date", name="date_order"
-        ),
+        CheckConstraint("end_date IS NULL OR end_date >= start_date", name="date_order"),
         nonblank("position"),
     )
     membership_id: Mapped[int] = mapped_column(Integer, primary_key=True)

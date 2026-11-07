@@ -13,12 +13,8 @@ DB = Annotated[Session, Depends(get_session)]
 
 
 def page_result(session: Session, statement, view, page: int, page_size: int) -> dict:
-    total = session.scalar(
-        select(func.count()).select_from(statement.order_by(None).subquery())
-    )
-    rows = session.scalars(
-        statement.offset((page - 1) * page_size).limit(page_size)
-    ).all()
+    total = session.scalar(select(func.count()).select_from(statement.order_by(None).subquery()))
+    rows = session.scalars(statement.offset((page - 1) * page_size).limit(page_size)).all()
     return {
         "items": [view(session, row) for row in rows],
         "total": total,

@@ -4,8 +4,8 @@ from fastapi import APIRouter, Query
 from sqlalchemy import select
 
 from ..api_docs import LIST_RESPONSES
-from ..response_docs import PAGINATED_RESPONSE
 from ..models import Season, Standing, Team
+from ..response_docs import PAGINATED_RESPONSE
 from ..services import standing_view
 from .common import DB, page_result
 

@@ -25,16 +25,26 @@ export function Topbar({ title, collapsed, onToggle, onSqlOpen }: Props) {
         <span className="breadcrumb-slash">/</span>
         <strong>{title}</strong>
       </div>
-      <Space className="topbar-status" size="middle">
+      <Space
+        className="topbar-status"
+        size="middle"
+      >
         <Badge
           status={connecting ? 'processing' : connected ? 'success' : 'error'}
           text={connecting ? 'Connecting' : connected ? 'Database connected' : 'Disconnected'}
         />
-        <Button href="/docs/api" target="_blank" rel="noopener noreferrer">
+        <Button
+          href="/docs/api"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           API docs
         </Button>
         {health?.sql_debug_ui && (
-          <Button icon={<CodeOutlined />} onClick={onSqlOpen}>
+          <Button
+            icon={<CodeOutlined />}
+            onClick={onSqlOpen}
+          >
             SQL inspector
           </Button>
         )}

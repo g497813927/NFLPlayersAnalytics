@@ -1,10 +1,11 @@
 """Game view for the sports prototype."""
 
 from datetime import timezone
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from ..models import Game, GameParticipant, Season, Team, Venue
 
+from ..models import Game, GameParticipant, Season, Team, Venue
 from .serialization import row_values
 
 
@@ -17,16 +18,11 @@ def game_view(session: Session, game: Game) -> dict:
         .order_by(GameParticipant.participant_role)
     ).all()
     participants = [
-        {**row_values(p), "team_name": session.get(Team, p.team_id).team_name}
-        for p in entries
+        {**row_values(p), "team_name": session.get(Team, p.team_id).team_name} for p in entries
     ]
     home = next((p for p in participants if p["participant_role"] == "home"), None)
     away = next((p for p in participants if p["participant_role"] == "away"), None)
-    matchup = (
-        f"{away['team_name']} at {home['team_name']}"
-        if home and away
-        else "Teams pending"
-    )
+    matchup = f"{away['team_name']} at {home['team_name']}" if home and away else "Teams pending"
     return {
         **row_values(game),
         "game_time": game.game_time.replace(tzinfo=timezone.utc),

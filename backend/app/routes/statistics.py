@@ -8,8 +8,8 @@ from sqlalchemy.orm import Session
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
 from ..models import Athlete, Game, PerformanceStatistic, Season, StatDefinition, Team
-from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..request_examples import STATISTIC_EXAMPLES
+from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..schemas import StatisticWrite
 from ..services import require_record, statistic_view
 from .common import DB, page_result, save_changes
@@ -70,8 +70,7 @@ def list_statistics(
         .join(Season)
         .join(
             StatDefinition,
-            PerformanceStatistic.stat_definition_id
-            == StatDefinition.stat_definition_id,
+            PerformanceStatistic.stat_definition_id == StatDefinition.stat_definition_id,
         )
         .order_by(Game.game_time.desc(), PerformanceStatistic.performance_statistic_id)
     )
@@ -81,15 +80,11 @@ def list_statistics(
                 StatDefinition.stat_name.icontains(q, autoescape=True),
                 PerformanceStatistic.athlete_id.in_(
                     select(Athlete.athlete_id).where(
-                        (Athlete.first_name + " " + Athlete.last_name).icontains(
-                            q, autoescape=True
-                        )
+                        (Athlete.first_name + " " + Athlete.last_name).icontains(q, autoescape=True)
                     )
                 ),
                 PerformanceStatistic.team_id.in_(
-                    select(Team.team_id).where(
-                        Team.team_name.icontains(q, autoescape=True)
-                    )
+                    select(Team.team_id).where(Team.team_name.icontains(q, autoescape=True))
                 ),
             )
         )
@@ -126,9 +121,7 @@ def get_statistic(statistic_id: int, session: DB):
 
 def require_statistic_references(session: Session, body: StatisticWrite) -> None:
     require_record(session, Game, body.game_id, "game")
-    require_record(
-        session, StatDefinition, body.stat_definition_id, "statistic definition"
-    )
+    require_record(session, StatDefinition, body.stat_definition_id, "statistic definition")
     if body.athlete_id is not None:
         require_record(session, Athlete, body.athlete_id, "athlete")
     if body.team_id is not None:
@@ -205,8 +198,6 @@ def update_statistic(
     responses=WRITE_RESPONSES,
 )
 def delete_statistic(statistic_id: int, session: DB):
-    session.delete(
-        require_record(session, PerformanceStatistic, statistic_id, "statistic")
-    )
+    session.delete(require_record(session, PerformanceStatistic, statistic_id, "statistic"))
     save_changes(session, existing=True)
     return Response(status_code=204)

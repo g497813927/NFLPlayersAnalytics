@@ -7,8 +7,8 @@ from sqlalchemy import or_, select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
 from ..models import Athlete, Membership, Roster, Team
-from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..request_examples import MEMBERSHIP_EXAMPLES
+from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..schemas import MembershipWrite
 from ..services import membership_view, require_record
 from .common import DB, page_result, save_changes
@@ -35,9 +35,7 @@ def list_memberships(
         description="Case-insensitive text contained in an athlete or team name.",
         examples=["Avery"],
     ),
-    roster_id: int | None = Query(
-        None, description="Roster ID from /api/lookups.", examples=[1]
-    ),
+    roster_id: int | None = Query(None, description="Roster ID from /api/lookups.", examples=[1]),
     athlete_id: int | None = Query(
         None, description="Only memberships belonging to this athlete.", examples=[1]
     ),
@@ -65,9 +63,7 @@ def list_memberships(
     if q:
         statement = statement.where(
             or_(
-                (Athlete.first_name + " " + Athlete.last_name).icontains(
-                    q, autoescape=True
-                ),
+                (Athlete.first_name + " " + Athlete.last_name).icontains(q, autoescape=True),
                 Team.team_name.icontains(q, autoescape=True),
             )
         )

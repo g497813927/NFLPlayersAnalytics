@@ -12,7 +12,10 @@ export function WorkspaceNotice() {
         message="The demo database is not ready"
         description={connectionError}
         action={
-          <Button loading={connecting} onClick={refresh}>
+          <Button
+            loading={connecting}
+            onClick={refresh}
+          >
             Reconnect
           </Button>
         }

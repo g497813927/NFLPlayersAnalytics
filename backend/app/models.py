@@ -4,24 +4,24 @@ Entity definitions live in app.entities, with one mapped class per file.
 Importing this module registers all 17 tables on Base.metadata.
 """
 
-from .entities.base import Base
-from .entities.user import User
-from .entities.sport import Sport
-from .entities.league import League
-from .entities.team import Team
 from .entities.athlete import Athlete
-from .entities.season import Season
-from .entities.venue import Venue
-from .entities.roster import Roster
-from .entities.membership import Membership
+from .entities.base import Base
+from .entities.data_import import DataImport
+from .entities.favorite import Favorite
 from .entities.game import Game
 from .entities.game_participant import GameParticipant
-from .entities.stat_definition import StatDefinition
+from .entities.league import League
+from .entities.membership import Membership
 from .entities.performance_statistic import PerformanceStatistic
-from .entities.standing import Standing
-from .entities.favorite import Favorite
+from .entities.roster import Roster
 from .entities.saved_comparison import SavedComparison
-from .entities.data_import import DataImport
+from .entities.season import Season
+from .entities.sport import Sport
+from .entities.standing import Standing
+from .entities.stat_definition import StatDefinition
+from .entities.team import Team
+from .entities.user import User
+from .entities.venue import Venue
 
 __all__ = [
     "Base",

@@ -51,7 +51,12 @@ export function RecordEditorModal({
         disabled={saving}
         requiredMark="optional"
       >
-        <EntityFields entity={entity} form={form} lookups={lookups} labels={labels} />
+        <EntityFields
+          entity={entity}
+          form={form}
+          lookups={lookups}
+          labels={labels}
+        />
       </Form>
     </Modal>
   );

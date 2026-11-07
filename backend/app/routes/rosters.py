@@ -7,8 +7,8 @@ from sqlalchemy import or_, select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
 from ..models import Membership, Roster, Season, Team
-from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..request_examples import ROSTER_EXAMPLES
+from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..schemas import RosterWrite
 from ..services import membership_view, require_record, roster_view
 from .common import DB, page_result, save_changes
@@ -34,12 +34,8 @@ def list_rosters(
         description="Case-insensitive text contained in a team or season name.",
         examples=["2026"],
     ),
-    team_id: int | None = Query(
-        None, description="Team ID from /api/lookups.", examples=[1]
-    ),
-    season_id: int | None = Query(
-        None, description="Season ID from /api/lookups.", examples=[1]
-    ),
+    team_id: int | None = Query(None, description="Team ID from /api/lookups.", examples=[1]),
+    season_id: int | None = Query(None, description="Season ID from /api/lookups.", examples=[1]),
     league_id: int | None = Query(
         None, description="Only rosters for teams in this league.", examples=[1]
     ),
@@ -82,9 +78,7 @@ def list_rosters(
 )
 def get_roster(roster_id: int, session: DB):
     roster = require_record(session, Roster, roster_id, "roster")
-    memberships = session.scalars(
-        select(Membership).where(Membership.roster_id == roster_id)
-    )
+    memberships = session.scalars(select(Membership).where(Membership.roster_id == roster_id))
     return {
         **roster_view(session, roster),
         "memberships": [membership_view(session, row) for row in memberships],

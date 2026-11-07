@@ -9,10 +9,9 @@ Python, FastAPI, and SQLAlchemy with SQLite for the demo.
 
 ## First-time setup
 
-Requirements: Git, [uv](https://docs.astral.sh/uv/), and Node.js 22.12+ with npm.
+Requirements: Git, [uv](https://docs.astral.sh/uv/), and Node.js 22.13+ LTS or 24+ with npm.
 Setup uses Python 3.12; `uv` can install it if it is not already available.
 Use the committed lockfiles to install the same dependencies as your teammates.
-This repository is private, so your GitHub account needs repository access to clone it.
 
 Clone the repository, run setup once, then start the app:
 
@@ -78,13 +77,13 @@ The table shows the values in the example used by new setups. Missing values
 use the same application defaults except `SQL_ECHO`, whose fallback is `false`.
 Restart FastAPI after editing the file.
 
-| Backend setting | New setup value | Purpose |
-| --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///data/prototype.db` | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`. |
-| `APP_ENV` | `development` | Browser SQL inspection is available only with this value. |
-| `SQL_ECHO` | `true` | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
-| `SQL_DEBUG_UI` | `false` | Capture request SQL for the browser inspector when `APP_ENV=development`. |
-| `CORS_ORIGINS` | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly. |
+| Backend setting | New setup value                                     | Purpose                                                                                 |
+| --------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `DATABASE_URL`  | `sqlite:///data/prototype.db`                       | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`.               |
+| `APP_ENV`       | `development`                                       | Browser SQL inspection is available only with this value.                               |
+| `SQL_ECHO`      | `true`                                              | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
+| `SQL_DEBUG_UI`  | `false`                                             | Capture request SQL for the browser inspector when `APP_ENV=development`.               |
+| `CORS_ORIGINS`  | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly.                        |
 
 For example, `backend/.env` can contain:
 
@@ -239,14 +238,14 @@ writes; that setting is per connection. The application enables it automatically
 The Python seeder uses fixed random seed `5614` and fictional data for
 2022–2026. A fresh seed creates:
 
-| Records | Count |
-| --- | ---: |
-| Sports / leagues | 1 / 1 |
-| Teams / athletes | 20 / 100 |
-| Seasons / venues / statistic definitions | 5 / 10 / 6 |
-| Rosters / memberships | 100 / 500 |
-| Games / game participants | 100 / 200 |
-| Performance statistics / standings | 1,260 / 100 |
+| Records                                                     |           Count |
+| ----------------------------------------------------------- | --------------: |
+| Sports / leagues                                            |           1 / 1 |
+| Teams / athletes                                            |        20 / 100 |
+| Seasons / venues / statistic definitions                    |      5 / 10 / 6 |
+| Rosters / memberships                                       |       100 / 500 |
+| Games / game participants                                   |       100 / 200 |
+| Performance statistics / standings                          |     1,260 / 100 |
 | Demo users / favorites / saved comparisons / import history | 5 / 20 / 20 / 5 |
 
 The latest season includes scheduled games. Demo users are sample rows, not
@@ -331,6 +330,41 @@ is the submission artifact and is unchanged by this refactor.
 From `frontend`, run `npm run typecheck` for TypeScript diagnostics or
 `npm run build` for type checking followed by the production bundle. These are
 compile/build checks, not the deferred automated test suite.
+
+## Formatting, linting, and CI
+
+After `npm run setup`, run the complete local quality check from the root:
+
+```sh
+npm run check
+```
+
+This runs the same checks as `.github/workflows/quality.yml`:
+
+| Runtime                    | Checks                                                         | Local commands                                       |
+| -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------- |
+| Node / frontend / launcher | Prettier, ESLint (including React hooks), Stylelint            | `npm run format:check`, `npm run lint`               |
+| React TypeScript           | Strict type checking and Vite production build                 | `npm run build --prefix frontend`                    |
+| Python API / scripts       | Ruff formatting, lint/import checks, Python syntax compilation | `npm run format:python:check`, `npm run lint:python` |
+
+To fix formatting, run `npm run format` for TSX/TS/JS/CSS/JSON/Markdown/YAML and
+`npm run format:python` for Python. Review the diff before committing. Prettier
+uses one JSX attribute per line on multiline tags and expands CSS declarations;
+Ruff formats Python consistently at 100 columns. Keep each React component in
+its own file and avoid packing several nested JSX elements onto one line.
+These are source formatting checks; Vite still minifies the production bundle.
+
+ESLint covers frontend files and the Node setup launcher/configuration files.
+Its syntax parser uses the root TypeScript 6 dependency supported by
+`typescript-eslint`; the frontend retains its own TypeScript 7 compiler for
+strict checking. The scoped `minimatch` overrides supply the patched glob
+matcher for ESLint and its TypeScript parser. Ruff is a locked backend development dependency.
+
+CI runs both jobs for pull requests (including stacked PRs), pushes to `main`,
+and manual dispatches, using Node 24 and Python 3.12. It needs no `.env`, database,
+credentials, or external sports feed. It does not initialize or seed a database.
+Formatting, linting, compilation, and builds do not replace the deferred
+functional/integrity test suite or manual browser checks.
 
 ## Troubleshooting
 

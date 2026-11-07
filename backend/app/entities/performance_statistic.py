@@ -29,9 +29,7 @@ class PerformanceStatistic(Base):
         ),
     )
     performance_statistic_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    game_id: Mapped[int] = mapped_column(
-        ForeignKey("game.game_id", ondelete="CASCADE"), index=True
-    )
+    game_id: Mapped[int] = mapped_column(ForeignKey("game.game_id", ondelete="CASCADE"), index=True)
     stat_definition_id: Mapped[int] = mapped_column(
         ForeignKey("stat_definition.stat_definition_id", ondelete="RESTRICT"),
         index=True,
