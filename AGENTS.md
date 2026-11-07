@@ -91,7 +91,8 @@ Run `npm run check` from the root before handing off runtime changes. This
 runs Prettier, ESLint for frontend and Node scripts, Stylelint, the TypeScript
 production build, and Ruff format/lint plus Python syntax compilation. Use
 `npm run format` and `npm run format:python` for formatting fixes; review the
-diff. CI applies these checks to both runtimes on every PR and `main` push.
+diff. CI applies these checks to both runtimes on every PR and pushes to `main`
+or `codex/**` branches.
 Do not compact source to silence formatting checks, disable rules to hide
 errors, or add a test suite as part of routine cleanup. Keep the SQL submission
 artifact outside the formatters.
