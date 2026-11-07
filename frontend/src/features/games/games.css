@@ -90,8 +90,12 @@
 }
 
 .game-center button:focus-visible {
-  outline: 3px solid #53a99e;
+  outline: 3px solid #327b71;
   outline-offset: 3px;
+}
+
+.game-scoreboard button:focus-visible {
+  outline-color: #53a99e;
 }
 
 .game-experience-heading,

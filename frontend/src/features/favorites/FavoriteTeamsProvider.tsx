@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 import { FavoritesContext } from './FavoritesContext';
-import { FAVORITES_KEY, parseFavorites, readFavorites } from './favoriteStorage';
+import { FAVORITES_KEY, readFavorites } from './favoriteStorage';
 
 export function FavoriteTeamsProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState(readFavorites);
@@ -9,7 +9,7 @@ export function FavoriteTeamsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     function synchronize(event: StorageEvent) {
       if (event.key === FAVORITES_KEY || event.key === null) {
-        setState({ teamIds: parseFavorites(event.newValue), storageAvailable: true });
+        setState(readFavorites());
       }
     }
     window.addEventListener('storage', synchronize);
