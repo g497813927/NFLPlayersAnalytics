@@ -18,6 +18,8 @@ export function Topbar({ title, collapsed, onToggle, onSqlOpen }: Props) {
         <Button
           type="text"
           aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+          aria-expanded={!collapsed}
+          aria-controls="app-navigation"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={onToggle}
         />

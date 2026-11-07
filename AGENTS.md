@@ -12,7 +12,7 @@ sample is one fictional football league; the schema supports multiple sports.
 
 Keep changes small and readable. The current priority is the prototype and
 skeleton, not production infrastructure or additional features. Authentication,
-role enforcement, working favorites/comparisons, real imports/exports, advanced
+role enforcement, account-backed favorites/comparisons, real imports/exports, advanced
 analytics, migrations, automated tests, and the formal coursework evidence
 package are deferred unless the current task explicitly requests them.
 
@@ -95,6 +95,13 @@ diff. CI applies these checks to both runtimes on every PR and `main` push.
 Do not compact source to silence formatting checks, disable rules to hide
 errors, or add a test suite as part of routine cleanup. Keep the SQL submission
 artifact outside the formatters.
+
+The Games page includes an explicitly simulated replay, drive visualization,
+and low-key play explanations in separate components. Demo events never write
+to the database. Favorites are browser-local, with an in-memory storage fallback;
+account-backed favorites remain deferred. Keep mock and saved scores clearly
+identified. Games use the complete lookup data before client-side filtering and
+pagination; do not filter only the first API page.
 
 ## Database rules
 

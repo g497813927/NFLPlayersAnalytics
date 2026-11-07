@@ -21,9 +21,9 @@ export function HomeHero() {
         <Button
           type="primary"
           size="large"
-          onClick={() => navigate('/athletes')}
+          onClick={() => navigate('/games')}
         >
-          Explore athletes <ArrowRightOutlined />
+          Explore game center <ArrowRightOutlined />
         </Button>
       </div>
       <FootballFieldArt />

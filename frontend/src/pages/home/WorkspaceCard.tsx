@@ -31,7 +31,7 @@ export function WorkspaceCard() {
       </Button>
       <div className="future-note">
         <span className="eyebrow">COMING LATER</span>
-        <p>Sign-in, favorites, comparisons, imports, and exports.</p>
+        <p>Sign-in, synced favorites, comparisons, imports, and exports.</p>
       </div>
     </Card>
   );

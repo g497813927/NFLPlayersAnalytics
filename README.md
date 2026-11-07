@@ -64,6 +64,37 @@ Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000.
 The setup and development commands work in macOS/Linux shells and Windows
 PowerShell without manually copying files or activating a virtual environment.
 
+## Game center
+
+Open **Games** or **Explore game center** on the homepage. The layout takes
+inspiration from [Apple Sports](https://www.apple.com/newsroom/2024/08/apple-sports-is-ready-for-football-season/):
+prominent scores, team colors, a drive tracker, and a compact event feed.
+Team initials are generated from the synthetic database names.
+The header button collapses or expands navigation at every screen size. Below
+768px, expansion opens a full-screen menu; selecting a page or pressing the
+close button/Escape returns to the content.
+
+- **Mock live** plays a fictional fourth-quarter drive using the selected teams.
+  Play/pause, advance one play, scrub, change speed, or restart. Changing games
+  resets playback. All mock scores, quarter totals, and events are simulated in
+  memory; the replay never writes to the database or modifies saved scores.
+- **Low-key impact** highlights a simulated block, pass breakup, or third-down
+  conversion and explains why it mattered. These are editorial examples of
+  understated contributions, not player rankings or claims about real athletes.
+- **Saved game** shows the stored score and available team statistics. The saved
+  record drawer includes recorded player statistics. Non-football and cancelled
+  games only offer the saved view.
+- Star a team or use **Follow a team**, then select **My teams** to filter the
+  schedule. Favorites persist in this browser's local storage, with an in-memory
+  fallback if storage is unavailable. They do not write to the `favorite` table
+  or sync to an account; no login is required.
+- Search/filter by team, season, status, and UTC date. All games from `/api/lookups`
+  are filtered before client-side pagination. Game times display in your local
+  timezone. This is suitable for the prototype dataset; a larger dataset will
+  need server-side filtering and pagination.
+
+No live sports feed, real player information, or external sports API is used.
+
 ## Configuration with `.env`
 
 Setup copies each committed example to a local `.env` only if that file is
@@ -388,16 +419,16 @@ functional/integrity test suite or manual browser checks.
 ## Current boundaries and next steps
 
 This is an unauthenticated local prototype; there is no login or pretend access
-control. Keep the demo bound to loopback. User, favorite, comparison, and import
-history tables are included for the future application, but their full feature
-flows are deferred.
+control. Keep the demo bound to loopback. Browser-local team favorites are
+available; account-backed favorites, comparisons, user management, and import
+history flows remain deferred.
 
 There is no automated test suite yet. Tests, formal integrity demonstrations,
 screenshots, and the coursework evidence report are deferred at the current
 request so this phase can focus on the working skeleton. Do not interpret the
 prototype as fully tested.
 
-Later phases can add authentication/roles, favorites and comparisons, advanced
+Later phases can add authentication/roles, synced favorites and comparisons, advanced
 analytics, import/export, a migration history, and the deferred test/evidence
 work. `DATABASE_URL` and SQLAlchemy isolate the connection configuration, but
 changing RDBMS still requires its driver, migrations, and compatibility checks;
