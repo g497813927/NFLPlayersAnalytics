@@ -25,7 +25,11 @@ export function GamesPage() {
   const [details, setDetails] = useState<Game | null>(null);
   const spotlight = useRef<HTMLDivElement>(null);
   const games = filterGames(lookups.games, filters, teamIds);
-  const selectionKey = JSON.stringify([filters, teamIds, revision]);
+  const selectionKey = JSON.stringify([
+    filters,
+    filters.view === 'favorites' ? teamIds : [],
+    revision,
+  ]);
   const page =
     pagination.key === selectionKey
       ? Math.min(pagination.page, Math.max(1, Math.ceil(games.length / PAGE_SIZE)))

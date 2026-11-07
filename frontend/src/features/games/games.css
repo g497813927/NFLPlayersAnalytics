@@ -82,6 +82,10 @@
 }
 
 .favorite-button.is-favorite {
+  color: #967018;
+}
+
+.game-scoreboard .favorite-button.is-favorite {
   color: #c6952b;
 }
 
