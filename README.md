@@ -214,7 +214,7 @@ The default database is `backend/data/prototype.db`. Relative SQLite paths in
 `DATABASE_URL` resolve from the backend directory, regardless of the shell's
 working directory. Startup does not automatically create tables or reseed data.
 
-The standalone script is [database/schema.sql](database/schema.sql); the ORM
+The standalone script is [db/schema.sql](db/schema.sql); the ORM
 source is [backend/app/models.py](backend/app/models.py). Regenerate and review
 the SQL after changing models, then commit both together:
 
@@ -228,7 +228,7 @@ cross-table sports rules before updating anything.
 
 To execute the DDL directly with the optional SQLite CLI, run `mkdir -p data`
 from `backend` and create a fresh database file with
-`sqlite3 -bail data/prototype.db < ../database/schema.sql`. Then run the seeder
+`sqlite3 -bail data/prototype.db < ../db/schema.sql`. Then run the seeder
 as above. Always enable
 `PRAGMA foreign_keys=ON;` when using a separate SQLite connection for manual
 writes; that setting is per connection. The application enables it automatically.
@@ -307,7 +307,7 @@ backend/
   scripts/      safe setup, schema export, explicit initialization, seeding
   data/         ignored local SQLite database
   pyproject.toml / uv.lock
-database/
+db/
   schema.sql    standalone SQLite schema
 frontend/
   src/          TypeScript pages, individual TSX components, hooks, and types
@@ -324,7 +324,7 @@ local caches are ignored; do not commit them.
 Each React component belongs in its own file. Keep nested JSX and long prop lists
 on separate, indented lines. Keep hooks, types, and non-UI helpers outside component
 files, and group backend modules by entity or responsibility. `models.py` remains
-the stable entry point for database scripts. The checked-in `database/schema.sql`
+the stable entry point for database scripts. The checked-in `db/schema.sql`
 is the submission artifact and is unchanged by this refactor.
 
 From `frontend`, run `npm run typecheck` for TypeScript diagnostics or

@@ -99,11 +99,11 @@ artifact outside the formatters.
 ## Database rules
 
 - Treat `models.py` and its imported entity definitions as the schema source.
-  `database/schema.sql` is a coursework submission artifact: preserve it
+  `db/schema.sql` is a coursework submission artifact: preserve it
   byte-for-byte during refactors and documentation work. Only change it when the
   current task explicitly authorizes a schema change. For authorized schema changes, run
   `uv run --frozen python -m scripts.export_schema` from `backend` and include
-  `database/schema.sql` in the same change. The SQL file is a standalone SQLite
+  `db/schema.sql` in the same change. The SQL file is a standalone SQLite
   creation path; the ORM path must describe the same tables and constraints.
 - Enable SQLite foreign keys on every connection, including manual SQL sessions.
   Preserve named constraints, matching key types, and explicit `ON DELETE`
