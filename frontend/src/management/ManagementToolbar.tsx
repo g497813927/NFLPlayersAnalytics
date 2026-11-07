@@ -27,7 +27,11 @@ export function ManagementToolbar({ entity, total, onSearch, onAdd }: Props) {
             onSearch={onSearch}
           />
         )}
-        <Button type="primary" icon={<PlusOutlined />} onClick={onAdd}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={onAdd}
+        >
           Add {config.singular}
         </Button>
       </Space>

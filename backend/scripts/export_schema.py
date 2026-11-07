@@ -10,7 +10,7 @@ from sqlalchemy.schema import CreateColumn, CreateIndex
 
 from app.models import Base
 
-SCHEMA_PATH = Path(__file__).resolve().parents[2] / "database" / "schema.sql"
+SCHEMA_PATH = Path(__file__).resolve().parents[2] / "db" / "schema.sql"
 
 
 def render_schema() -> str:

@@ -6,10 +6,21 @@ import { DatabaseSelectField } from '../DatabaseSelectField';
 export function TeamFields({ lookups }: FieldProps) {
   return (
     <>
-      <Form.Item name="team_name" label="Team name" rules={requiredTextRules}>
-        <Input maxLength={120} placeholder="e.g. Harbor City Owls" />
+      <Form.Item
+        name="team_name"
+        label="Team name"
+        rules={requiredTextRules}
+      >
+        <Input
+          maxLength={120}
+          placeholder="e.g. Harbor City Owls"
+        />
       </Form.Item>
-      <Form.Item name="city" label="City" rules={requiredTextRules}>
+      <Form.Item
+        name="city"
+        label="City"
+        rules={requiredTextRules}
+      >
         <Input maxLength={100} />
       </Form.Item>
       <DatabaseSelectField

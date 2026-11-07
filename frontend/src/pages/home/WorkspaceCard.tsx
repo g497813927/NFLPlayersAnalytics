@@ -8,7 +8,10 @@ export function WorkspaceCard() {
   const { health } = useData();
 
   return (
-    <Card title="Your demo workspace" className="section-card workspace-card">
+    <Card
+      title="Your demo workspace"
+      className="section-card workspace-card"
+    >
       <div className="workspace-status">
         <DatabaseOutlined />
         <div>
@@ -20,12 +23,15 @@ export function WorkspaceCard() {
         All people, teams, and results in this prototype are synthetic. Browse records or use Data
         Management to try changes.
       </p>
-      <Button block onClick={() => navigate('/manage')}>
+      <Button
+        block
+        onClick={() => navigate('/manage')}
+      >
         Manage records <ArrowRightOutlined />
       </Button>
       <div className="future-note">
         <span className="eyebrow">COMING LATER</span>
-        <p>Sign-in, favorites, comparisons, imports, and exports.</p>
+        <p>Sign-in, synced favorites, comparisons, imports, and exports.</p>
       </div>
     </Card>
   );

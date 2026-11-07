@@ -9,10 +9,9 @@ Python, FastAPI, and SQLAlchemy with SQLite for the demo.
 
 ## First-time setup
 
-Requirements: Git, [uv](https://docs.astral.sh/uv/), and Node.js 22.12+ with npm.
+Requirements: Git, [uv](https://docs.astral.sh/uv/), and Node.js 22.13+ LTS or 24+ with npm.
 Setup uses Python 3.12; `uv` can install it if it is not already available.
 Use the committed lockfiles to install the same dependencies as your teammates.
-This repository is private, so your GitHub account needs repository access to clone it.
 
 Clone the repository, run setup once, then start the app:
 
@@ -65,6 +64,37 @@ Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000.
 The setup and development commands work in macOS/Linux shells and Windows
 PowerShell without manually copying files or activating a virtual environment.
 
+## Game center
+
+Open **Games** or **Explore game center** on the homepage. The layout takes
+inspiration from [Apple Sports](https://www.apple.com/newsroom/2024/08/apple-sports-is-ready-for-football-season/):
+prominent scores, team colors, a drive tracker, and a compact event feed.
+Team initials are generated from the synthetic database names.
+The header button collapses or expands navigation at every screen size. Below
+768px, expansion opens a full-screen menu; selecting a page or pressing the
+close button/Escape returns to the content.
+
+- **Mock live** plays a fictional fourth-quarter drive using the selected teams.
+  Play/pause, advance one play, scrub, change speed, or restart. Changing games
+  resets playback. All mock scores, quarter totals, and events are simulated in
+  memory; the replay never writes to the database or modifies saved scores.
+- **Low-key impact** highlights a simulated block, pass breakup, or third-down
+  conversion and explains why it mattered. These are editorial examples of
+  understated contributions, not player rankings or claims about real athletes.
+- **Saved game** shows the stored score and available team statistics. The saved
+  record drawer includes recorded player statistics. Non-football and cancelled
+  games only offer the saved view.
+- Star a team or use **Follow a team**, then select **My teams** to filter the
+  schedule. Favorites persist in this browser's local storage, with an in-memory
+  fallback if storage is unavailable. They do not write to the `favorite` table
+  or sync to an account; no login is required.
+- Search/filter by team, season, status, and UTC date. All games from `/api/lookups`
+  are filtered before client-side pagination. Game times display in your local
+  timezone. This is suitable for the prototype dataset; a larger dataset will
+  need server-side filtering and pagination.
+
+No live sports feed, real player information, or external sports API is used.
+
 ## Configuration with `.env`
 
 Setup copies each committed example to a local `.env` only if that file is
@@ -78,13 +108,13 @@ The table shows the values in the example used by new setups. Missing values
 use the same application defaults except `SQL_ECHO`, whose fallback is `false`.
 Restart FastAPI after editing the file.
 
-| Backend setting | New setup value | Purpose |
-| --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///data/prototype.db` | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`. |
-| `APP_ENV` | `development` | Browser SQL inspection is available only with this value. |
-| `SQL_ECHO` | `true` | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
-| `SQL_DEBUG_UI` | `false` | Capture request SQL for the browser inspector when `APP_ENV=development`. |
-| `CORS_ORIGINS` | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly. |
+| Backend setting | New setup value                                     | Purpose                                                                                 |
+| --------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `DATABASE_URL`  | `sqlite:///data/prototype.db`                       | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`.               |
+| `APP_ENV`       | `development`                                       | Browser SQL inspection is available only with this value.                               |
+| `SQL_ECHO`      | `true`                                              | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
+| `SQL_DEBUG_UI`  | `false`                                             | Capture request SQL for the browser inspector when `APP_ENV=development`.               |
+| `CORS_ORIGINS`  | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly.                        |
 
 For example, `backend/.env` can contain:
 
@@ -215,7 +245,7 @@ The default database is `backend/data/prototype.db`. Relative SQLite paths in
 `DATABASE_URL` resolve from the backend directory, regardless of the shell's
 working directory. Startup does not automatically create tables or reseed data.
 
-The standalone script is [database/schema.sql](database/schema.sql); the ORM
+The standalone script is [db/schema.sql](db/schema.sql); the ORM
 source is [backend/app/models.py](backend/app/models.py). Regenerate and review
 the SQL after changing models, then commit both together:
 
@@ -229,7 +259,7 @@ cross-table sports rules before updating anything.
 
 To execute the DDL directly with the optional SQLite CLI, run `mkdir -p data`
 from `backend` and create a fresh database file with
-`sqlite3 -bail data/prototype.db < ../database/schema.sql`. Then run the seeder
+`sqlite3 -bail data/prototype.db < ../db/schema.sql`. Then run the seeder
 as above. Always enable
 `PRAGMA foreign_keys=ON;` when using a separate SQLite connection for manual
 writes; that setting is per connection. The application enables it automatically.
@@ -239,14 +269,14 @@ writes; that setting is per connection. The application enables it automatically
 The Python seeder uses fixed random seed `5614` and fictional data for
 2022–2026. A fresh seed creates:
 
-| Records | Count |
-| --- | ---: |
-| Sports / leagues | 1 / 1 |
-| Teams / athletes | 20 / 100 |
-| Seasons / venues / statistic definitions | 5 / 10 / 6 |
-| Rosters / memberships | 100 / 500 |
-| Games / game participants | 100 / 200 |
-| Performance statistics / standings | 1,260 / 100 |
+| Records                                                     |           Count |
+| ----------------------------------------------------------- | --------------: |
+| Sports / leagues                                            |           1 / 1 |
+| Teams / athletes                                            |        20 / 100 |
+| Seasons / venues / statistic definitions                    |      5 / 10 / 6 |
+| Rosters / memberships                                       |       100 / 500 |
+| Games / game participants                                   |       100 / 200 |
+| Performance statistics / standings                          |     1,260 / 100 |
 | Demo users / favorites / saved comparisons / import history | 5 / 20 / 20 / 5 |
 
 The latest season includes scheduled games. Demo users are sample rows, not
@@ -308,7 +338,7 @@ backend/
   scripts/      safe setup, schema export, explicit initialization, seeding
   data/         ignored local SQLite database
   pyproject.toml / uv.lock
-database/
+db/
   schema.sql    standalone SQLite schema
 frontend/
   src/          TypeScript pages, individual TSX components, hooks, and types
@@ -325,12 +355,47 @@ local caches are ignored; do not commit them.
 Each React component belongs in its own file. Keep nested JSX and long prop lists
 on separate, indented lines. Keep hooks, types, and non-UI helpers outside component
 files, and group backend modules by entity or responsibility. `models.py` remains
-the stable entry point for database scripts. The checked-in `database/schema.sql`
+the stable entry point for database scripts. The checked-in `db/schema.sql`
 is the submission artifact and is unchanged by this refactor.
 
 From `frontend`, run `npm run typecheck` for TypeScript diagnostics or
 `npm run build` for type checking followed by the production bundle. These are
 compile/build checks, not the deferred automated test suite.
+
+## Formatting, linting, and CI
+
+After `npm run setup`, run the complete local quality check from the root:
+
+```sh
+npm run check
+```
+
+This runs the same checks as `.github/workflows/quality.yml`:
+
+| Runtime                    | Checks                                                         | Local commands                                       |
+| -------------------------- | -------------------------------------------------------------- | ---------------------------------------------------- |
+| Node / frontend / launcher | Prettier, ESLint (including React hooks), Stylelint            | `npm run format:check`, `npm run lint`               |
+| React TypeScript           | Strict type checking and Vite production build                 | `npm run build --prefix frontend`                    |
+| Python API / scripts       | Ruff formatting, lint/import checks, Python syntax compilation | `npm run format:python:check`, `npm run lint:python` |
+
+To fix formatting, run `npm run format` for TSX/TS/JS/CSS/JSON/Markdown/YAML and
+`npm run format:python` for Python. Review the diff before committing. Prettier
+uses one JSX attribute per line on multiline tags and expands CSS declarations;
+Ruff formats Python consistently at 100 columns. Keep each React component in
+its own file and avoid packing several nested JSX elements onto one line.
+These are source formatting checks; Vite still minifies the production bundle.
+
+ESLint covers frontend files and the Node setup launcher/configuration files.
+Its syntax parser uses the root TypeScript 6 dependency supported by
+`typescript-eslint`; the frontend retains its own TypeScript 7 compiler for
+strict checking. The scoped `minimatch` overrides supply the patched glob
+matcher for ESLint and its TypeScript parser. Ruff is a locked backend development dependency.
+
+CI runs both jobs for pull requests (including stacked PRs), pushes to `main`
+and `codex/**` branches, and manual dispatches, using Node 24 and Python 3.12. It needs no `.env`, database,
+credentials, or external sports feed. It does not initialize or seed a database.
+Formatting, linting, compilation, and builds do not replace the deferred
+functional/integrity test suite or manual browser checks.
 
 ## Troubleshooting
 
@@ -354,16 +419,16 @@ compile/build checks, not the deferred automated test suite.
 ## Current boundaries and next steps
 
 This is an unauthenticated local prototype; there is no login or pretend access
-control. Keep the demo bound to loopback. User, favorite, comparison, and import
-history tables are included for the future application, but their full feature
-flows are deferred.
+control. Keep the demo bound to loopback. Browser-local team favorites are
+available; account-backed favorites, comparisons, user management, and import
+history flows remain deferred.
 
 There is no automated test suite yet. Tests, formal integrity demonstrations,
 screenshots, and the coursework evidence report are deferred at the current
 request so this phase can focus on the working skeleton. Do not interpret the
 prototype as fully tested.
 
-Later phases can add authentication/roles, favorites and comparisons, advanced
+Later phases can add authentication/roles, synced favorites and comparisons, advanced
 analytics, import/export, a migration history, and the deferred test/evidence
 work. `DATABASE_URL` and SQLAlchemy isolate the connection configuration, but
 changing RDBMS still requires its driver, migrations, and compatibility checks;

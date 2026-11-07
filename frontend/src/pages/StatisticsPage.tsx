@@ -73,7 +73,11 @@ export function StatisticsPage() {
             }
           />
         </div>
-        <ResourceTable {...listing} rowKey="performance_statistic_id" columns={columns} />
+        <ResourceTable
+          {...listing}
+          rowKey="performance_statistic_id"
+          columns={columns}
+        />
       </Card>
     </>
   );

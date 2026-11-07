@@ -11,7 +11,10 @@ export function ErrorNotice({ error, retry }: { error: string | null; retry?: ()
       description={error}
       action={
         retry && (
-          <Button size="small" onClick={retry}>
+          <Button
+            size="small"
+            onClick={retry}
+          >
             Try again
           </Button>
         )

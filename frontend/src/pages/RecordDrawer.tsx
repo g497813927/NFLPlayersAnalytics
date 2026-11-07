@@ -66,11 +66,26 @@ export function RecordDrawer(props: RecordDrawerProps) {
     >
       {props.record && (
         <>
-          {props.kind === 'team' && <TeamDetails team={props.record} rosters={rosters} />}
+          {props.kind === 'team' && (
+            <TeamDetails
+              team={props.record}
+              rosters={rosters}
+            />
+          )}
           {props.kind === 'athlete' && <AthleteDetails athlete={props.record} />}
-          {props.kind !== 'game' && <MembershipHistory kind={props.kind} resource={memberships} />}
+          {props.kind !== 'game' && (
+            <MembershipHistory
+              kind={props.kind}
+              resource={memberships}
+            />
+          )}
           {props.kind === 'game' && <GameDetails game={props.record} />}
-          {props.kind !== 'team' && <PerformanceHistory kind={props.kind} resource={statistics} />}
+          {props.kind !== 'team' && (
+            <PerformanceHistory
+              kind={props.kind}
+              resource={statistics}
+            />
+          )}
           {hasMoreRecords && (
             <Alert
               type="info"

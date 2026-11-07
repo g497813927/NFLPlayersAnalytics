@@ -26,13 +26,23 @@ export function ResourceTable<T extends object>({
 }: ResourceTableProps<T>) {
   return (
     <>
-      <ErrorNotice error={resource.error} retry={resource.retry} />
+      <ErrorNotice
+        error={resource.error}
+        retry={resource.retry}
+      />
       <Table<T>
         rowKey={rowKey}
         columns={columns}
         dataSource={resource.data?.items || []}
         loading={resource.loading}
-        locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={empty} /> }}
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={empty}
+            />
+          ),
+        }}
         pagination={
           onPageChange
             ? {

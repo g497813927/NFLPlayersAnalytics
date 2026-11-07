@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+
 from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, text
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -12,9 +13,7 @@ from .base import Base, nonblank
 class DataImport(Base):
     __tablename__ = "data_import"
     __table_args__ = (
-        CheckConstraint(
-            "status IN ('completed', 'failed', 'pending')", name="valid_status"
-        ),
+        CheckConstraint("status IN ('completed', 'failed', 'pending')", name="valid_status"),
         nonblank("source_name"),
     )
     import_id: Mapped[int] = mapped_column(Integer, primary_key=True)

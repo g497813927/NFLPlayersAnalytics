@@ -4,7 +4,6 @@ from fastapi import APIRouter
 from sqlalchemy import func, select
 
 from ..api_docs import LIST_RESPONSES
-from ..response_docs import OVERVIEW_RESPONSE
 from ..models import (
     Athlete,
     Game,
@@ -15,6 +14,7 @@ from ..models import (
     Sport,
     Team,
 )
+from ..response_docs import OVERVIEW_RESPONSE
 from ..services import game_view
 from .common import DB
 
@@ -46,10 +46,7 @@ def overview(session: DB):
         )
     }
     recent = session.scalars(
-        select(Game)
-        .where(Game.status == "completed")
-        .order_by(Game.game_time.desc())
-        .limit(5)
+        select(Game).where(Game.status == "completed").order_by(Game.game_time.desc()).limit(5)
     )
     return {
         "counts": counts,

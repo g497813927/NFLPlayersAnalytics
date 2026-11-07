@@ -56,9 +56,7 @@ class GameWrite(WriteModel):
             raise ValueError("Choose one home team and one away team.")
         if len({p.team_id for p in self.participants}) != 2:
             raise ValueError("Home and away teams must be different.")
-        if self.status == "completed" and any(
-            p.score is None for p in self.participants
-        ):
+        if self.status == "completed" and any(p.score is None for p in self.participants):
             raise ValueError("Enter both scores before marking a game completed.")
         return self
 

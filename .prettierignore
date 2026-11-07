@@ -1,0 +1,14 @@
+**/node_modules/
+**/dist/
+**/.venv/
+**/__pycache__/
+**/.ruff_cache/
+**/.cache/
+**/package-lock.json
+**/uv.lock
+**/.env
+**/.env.*
+**/*.sql
+**/*.docx
+**/*.pdf
+backend/data/

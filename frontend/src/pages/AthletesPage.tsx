@@ -19,7 +19,10 @@ export function AthletesPage() {
       title: 'Athlete',
       key: 'name',
       render: (_, athlete) => (
-        <button className="text-button" onClick={() => setSelected(athlete)}>
+        <button
+          className="text-button"
+          onClick={() => setSelected(athlete)}
+        >
           <span className="record-avatar athlete-avatar">
             {athlete.first_name[0]}
             {athlete.last_name[0]}
@@ -38,7 +41,10 @@ export function AthletesPage() {
       key: 'view',
       align: 'right',
       render: (_, athlete) => (
-        <Button type="link" onClick={() => setSelected(athlete)}>
+        <Button
+          type="link"
+          onClick={() => setSelected(athlete)}
+        >
           View profile <ArrowRightOutlined />
         </Button>
       ),
@@ -68,9 +74,17 @@ export function AthletesPage() {
             onChange={(team_id) => setFilters((current) => ({ ...current, team_id }))}
           />
         </div>
-        <ResourceTable {...listing} rowKey="athlete_id" columns={columns} />
+        <ResourceTable
+          {...listing}
+          rowKey="athlete_id"
+          columns={columns}
+        />
       </Card>
-      <RecordDrawer kind="athlete" record={selected} onClose={() => setSelected(null)} />
+      <RecordDrawer
+        kind="athlete"
+        record={selected}
+        onClose={() => setSelected(null)}
+      />
     </>
   );
 }

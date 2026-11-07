@@ -1,10 +1,10 @@
 """Membership view for the sports prototype."""
 
 from sqlalchemy.orm import Session
-from ..models import Athlete, Membership, Roster
 
-from .serialization import row_values
+from ..models import Athlete, Membership, Roster
 from .roster_view import roster_view
+from .serialization import row_values
 
 
 def membership_view(session: Session, membership: Membership) -> dict:

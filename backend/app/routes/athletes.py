@@ -7,8 +7,8 @@ from sqlalchemy import select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
 from ..models import Athlete, Game, Membership, PerformanceStatistic, Roster, Team
-from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..request_examples import ATHLETE_EXAMPLES
+from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..schemas import AthleteWrite
 from ..services import athlete_view, membership_view, require_record, statistic_view
 from .common import DB, page_result, save_changes
@@ -53,9 +53,7 @@ def list_athletes(
         20, ge=1, le=200, description="Records per page, from 1 to 200.", examples=[20]
     ),
 ):
-    statement = select(Athlete).order_by(
-        Athlete.last_name, Athlete.first_name, Athlete.athlete_id
-    )
+    statement = select(Athlete).order_by(Athlete.last_name, Athlete.first_name, Athlete.athlete_id)
     if q:
         statement = statement.where(
             (Athlete.first_name + " " + Athlete.last_name).icontains(q, autoescape=True)

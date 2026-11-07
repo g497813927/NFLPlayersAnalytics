@@ -45,10 +45,20 @@ export function OverviewMetrics({ counts, loading }: OverviewMetricsProps) {
   ];
 
   return (
-    <Row gutter={[16, 16]} className="metric-row">
+    <Row
+      gutter={[16, 16]}
+      className="metric-row"
+    >
       {metrics.map((metric) => (
-        <Col xs={12} lg={6} key={metric.title}>
-          <MetricCard {...metric} loading={loading} />
+        <Col
+          xs={12}
+          lg={6}
+          key={metric.title}
+        >
+          <MetricCard
+            {...metric}
+            loading={loading}
+          />
         </Col>
       ))}
     </Row>

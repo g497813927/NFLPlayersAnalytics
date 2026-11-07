@@ -28,7 +28,11 @@ export function MembershipHistory({ kind, resource }: MembershipHistoryProps) {
   return (
     <>
       <h3>{kind === 'team' ? 'Roster memberships' : 'Team history'}</h3>
-      <ResourceTable resource={resource} rowKey="membership_id" columns={columns} />
+      <ResourceTable
+        resource={resource}
+        rowKey="membership_id"
+        columns={columns}
+      />
     </>
   );
 }

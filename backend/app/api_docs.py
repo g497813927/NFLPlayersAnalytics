@@ -2,7 +2,6 @@
 
 from .schemas.error_envelope import ErrorEnvelope
 
-
 API_DESCRIPTION = """
 Explore the fictional football dataset used by the CS5614 prototype.
 There is no login in this phase. Interactive writes change your local database.

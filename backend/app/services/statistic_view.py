@@ -1,23 +1,19 @@
 """Statistic view for the sports prototype."""
 
 from sqlalchemy.orm import Session
-from ..models import Athlete, Game, PerformanceStatistic, StatDefinition, Team
 
-from .serialization import row_values
+from ..models import Athlete, Game, PerformanceStatistic, StatDefinition, Team
 from .game_view import game_view
+from .serialization import row_values
 
 
 def statistic_view(session: Session, statistic: PerformanceStatistic) -> dict:
     definition = session.get(StatDefinition, statistic.stat_definition_id)
     game = game_view(session, session.get(Game, statistic.game_id))
     athlete = (
-        session.get(Athlete, statistic.athlete_id)
-        if statistic.athlete_id is not None
-        else None
+        session.get(Athlete, statistic.athlete_id) if statistic.athlete_id is not None else None
     )
-    team = (
-        session.get(Team, statistic.team_id) if statistic.team_id is not None else None
-    )
+    team = session.get(Team, statistic.team_id) if statistic.team_id is not None else None
     athlete_name = f"{athlete.first_name} {athlete.last_name}" if athlete else None
     return {
         **row_values(statistic),

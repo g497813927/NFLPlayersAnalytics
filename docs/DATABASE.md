@@ -4,14 +4,14 @@
 
 The prototype keeps all 17 entities in the supplied normalized ER diagram:
 
-| Area | Tables |
-| --- | --- |
-| Catalog | `sport`, `league`, `team`, `athlete`, `season`, `venue` |
-| Rosters | `roster`, `membership` |
-| Events | `game`, `game_participant` |
-| Performance | `stat_definition`, `performance_statistic`, `standing` |
-| Future account features | `app_user`, `favorite`, `saved_comparison` |
-| Import metadata | `data_import` |
+| Area                    | Tables                                                  |
+| ----------------------- | ------------------------------------------------------- |
+| Catalog                 | `sport`, `league`, `team`, `athlete`, `season`, `venue` |
+| Rosters                 | `roster`, `membership`                                  |
+| Events                  | `game`, `game_participant`                              |
+| Performance             | `stat_definition`, `performance_statistic`, `standing`  |
+| Future account features | `app_user`, `favorite`, `saved_comparison`              |
+| Import metadata         | `data_import`                                           |
 
 `app_user` represents the diagram's User entity without relying on a reserved
 SQL word. `standing.ties` is added for football ties. Integer foreign keys match
@@ -70,8 +70,7 @@ or live APIs are used. The sample demonstrates a selection of athletes per
 team, not full professional rosters.
 
 The football-only prototype intentionally has one sport and one league. Other
-lookup tables have at least five useful records; core entities have at least
-20. Import rows describe synthetic seed batches, not actual third-party imports.
+lookup tables have at least five useful records; core entities have at least 20. Import rows describe synthetic seed batches, not actual third-party imports.
 Future account-feature rows are sample database content, not real accounts or
 authentication credentials.
 

@@ -1,8 +1,8 @@
 """Roster view for the sports prototype."""
 
 from sqlalchemy.orm import Session
-from ..models import Roster, Season, Team
 
+from ..models import Roster, Season, Team
 from .serialization import row_values
 
 

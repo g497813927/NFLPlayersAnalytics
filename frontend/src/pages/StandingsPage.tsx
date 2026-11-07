@@ -62,7 +62,11 @@ export function StandingsPage() {
           />
           <Tag color="cyan">Basic demo standings</Tag>
         </div>
-        <ResourceTable {...listing} rowKey="standing_id" columns={columns} />
+        <ResourceTable
+          {...listing}
+          rowKey="standing_id"
+          columns={columns}
+        />
         <div className="table-footnote">
           Completed games only. Win % = (wins + ½ ties) ÷ games played. Equal percentages share a
           rank. Official NFL tiebreakers are deferred.

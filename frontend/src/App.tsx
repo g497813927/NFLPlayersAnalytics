@@ -1,10 +1,13 @@
 import { DataProvider } from './state/DataProvider';
 import { AppShell } from './layout/AppShell';
+import { FavoriteTeamsProvider } from './features/favorites/FavoriteTeamsProvider';
 
 export default function App() {
   return (
     <DataProvider>
-      <AppShell />
+      <FavoriteTeamsProvider>
+        <AppShell />
+      </FavoriteTeamsProvider>
     </DataProvider>
   );
 }

@@ -12,7 +12,7 @@ sample is one fictional football league; the schema supports multiple sports.
 
 Keep changes small and readable. The current priority is the prototype and
 skeleton, not production infrastructure or additional features. Authentication,
-role enforcement, working favorites/comparisons, real imports/exports, advanced
+role enforcement, account-backed favorites/comparisons, real imports/exports, advanced
 analytics, migrations, automated tests, and the formal coursework evidence
 package are deferred unless the current task explicitly requests them.
 
@@ -43,7 +43,7 @@ the backend. SQLite is the demo database. Preserve `backend/uv.lock`, the root
 `package-lock.json`, and `frontend/package-lock.json`; update the relevant
 lockfile only when its dependencies change.
 
-With Node.js 22.12+, npm, and `uv` installed, run from the repository root:
+With Node.js 22.13+ LTS or 24+, npm, and `uv` installed, run from the repository root:
 
 ```sh
 npm run setup
@@ -87,14 +87,31 @@ startup/manual check. `npm run typecheck` performs type checking alone. Do not
 rerun unrelated checks for documentation-only changes. State exactly what was
 checked; builds and syntax checks are not proof of CRUD or integrity coverage.
 
+Run `npm run check` from the root before handing off runtime changes. This
+runs Prettier, ESLint for frontend and Node scripts, Stylelint, the TypeScript
+production build, and Ruff format/lint plus Python syntax compilation. Use
+`npm run format` and `npm run format:python` for formatting fixes; review the
+diff. CI applies these checks to both runtimes on every PR and pushes to `main`
+or `codex/**` branches.
+Do not compact source to silence formatting checks, disable rules to hide
+errors, or add a test suite as part of routine cleanup. Keep the SQL submission
+artifact outside the formatters.
+
+The Games page includes an explicitly simulated replay, drive visualization,
+and low-key play explanations in separate components. Demo events never write
+to the database. Favorites are browser-local, with an in-memory storage fallback;
+account-backed favorites remain deferred. Keep mock and saved scores clearly
+identified. Games use the complete lookup data before client-side filtering and
+pagination; do not filter only the first API page.
+
 ## Database rules
 
 - Treat `models.py` and its imported entity definitions as the schema source.
-  `database/schema.sql` is a coursework submission artifact: preserve it
+  `db/schema.sql` is a coursework submission artifact: preserve it
   byte-for-byte during refactors and documentation work. Only change it when the
   current task explicitly authorizes a schema change. For authorized schema changes, run
   `uv run --frozen python -m scripts.export_schema` from `backend` and include
-  `database/schema.sql` in the same change. The SQL file is a standalone SQLite
+  `db/schema.sql` in the same change. The SQL file is a standalone SQLite
   creation path; the ORM path must describe the same tables and constraints.
 - Enable SQLite foreign keys on every connection, including manual SQL sessions.
   Preserve named constraints, matching key types, and explicit `ON DELETE`

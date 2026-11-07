@@ -15,9 +15,17 @@ export function MetricCard({ title, value, icon, path, loading }: MetricCardProp
   const navigate = useNavigate();
 
   return (
-    <Card className="metric-card" loading={loading} onClick={() => navigate(path)} hoverable>
+    <Card
+      className="metric-card"
+      loading={loading}
+      onClick={() => navigate(path)}
+      hoverable
+    >
       <span className="metric-icon">{icon}</span>
-      <Statistic title={title} value={value} />
+      <Statistic
+        title={title}
+        value={value}
+      />
       <span className="metric-footer">
         Explore records <ArrowRightOutlined />
       </span>

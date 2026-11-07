@@ -7,8 +7,8 @@ from sqlalchemy import or_, select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
 from ..models import League, Membership, Roster, Team
-from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..request_examples import TEAM_EXAMPLES
+from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
 from ..schemas import TeamWrite
 from ..services import membership_view, require_record, roster_view, team_view
 from .common import DB, page_result, save_changes
@@ -34,9 +34,7 @@ def list_teams(
         description="Case-insensitive text contained in a team name or city.",
         examples=["Harbor"],
     ),
-    league_id: int | None = Query(
-        None, description="League ID from /api/lookups.", examples=[1]
-    ),
+    league_id: int | None = Query(None, description="League ID from /api/lookups.", examples=[1]),
     season_id: int | None = Query(
         None, description="Only teams with a roster in this season.", examples=[1]
     ),
@@ -57,9 +55,7 @@ def list_teams(
         statement = statement.where(Team.league_id == league_id)
     if season_id is not None:
         statement = statement.where(
-            Team.team_id.in_(
-                select(Roster.team_id).where(Roster.season_id == season_id)
-            )
+            Team.team_id.in_(select(Roster.team_id).where(Roster.season_id == season_id))
         )
     return page_result(session, statement, team_view, page, page_size)
 
@@ -105,9 +101,7 @@ def get_team(team_id: int, session: DB):
     status_code=201,
     responses={201: RECORD_RESPONSE, **WRITE_RESPONSES},
 )
-def create_team(
-    body: Annotated[TeamWrite, Body(openapi_examples=TEAM_EXAMPLES)], session: DB
-):
+def create_team(body: Annotated[TeamWrite, Body(openapi_examples=TEAM_EXAMPLES)], session: DB):
     require_record(session, League, body.league_id, "league")
     team = Team(**body.model_dump())
     session.add(team)

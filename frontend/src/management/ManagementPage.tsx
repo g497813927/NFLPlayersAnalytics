@@ -29,7 +29,10 @@ export default function ManagementPage() {
           }}
           items={Object.entries(ENTITIES).map(([key, value]) => ({ key, label: value.label }))}
         />
-        <ManagementTable key={entity} entity={entity} />
+        <ManagementTable
+          key={entity}
+          entity={entity}
+        />
       </Card>
     </>
   );

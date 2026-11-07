@@ -1,8 +1,10 @@
 """Recalculate standings for the sports prototype."""
 
 from fractions import Fraction
+
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
+
 from ..errors import AppError
 from ..models import Game, GameParticipant, Roster, Standing
 
@@ -10,9 +12,7 @@ from ..models import Game, GameParticipant, Roster, Standing
 def recalculate_standings(session: Session, season_ids) -> None:
     """Refresh derived rows inside the caller's transaction; never commit here."""
     for season_id in set(season_ids):
-        team_ids = set(
-            session.scalars(select(Roster.team_id).where(Roster.season_id == season_id))
-        )
+        team_ids = set(session.scalars(select(Roster.team_id).where(Roster.season_id == season_id)))
         records = {team_id: {"wins": 0, "losses": 0, "ties": 0} for team_id in team_ids}
         completed = session.scalars(
             select(Game).where(Game.season_id == season_id, Game.status == "completed")
@@ -47,15 +47,11 @@ def recalculate_standings(session: Session, season_ids) -> None:
         for team_id, record in records.items():
             played = sum(record.values())
             percentages[team_id] = (
-                Fraction(2 * record["wins"] + record["ties"], 2 * played)
-                if played
-                else Fraction(0)
+                Fraction(2 * record["wins"] + record["ties"], 2 * played) if played else Fraction(0)
             )
         ranking = {
             value: rank
-            for rank, value in enumerate(
-                sorted(set(percentages.values()), reverse=True), 1
-            )
+            for rank, value in enumerate(sorted(set(percentages.values()), reverse=True), 1)
         }
         session.execute(delete(Standing).where(Standing.season_id == season_id))
         for team_id, record in records.items():

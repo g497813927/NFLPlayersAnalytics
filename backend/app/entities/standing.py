@@ -13,15 +13,11 @@ class Standing(Base):
     __table_args__ = (
         UniqueConstraint("team_id", "season_id"),
         CheckConstraint("rank > 0", name="positive_rank"),
-        CheckConstraint(
-            "wins >= 0 AND losses >= 0 AND ties >= 0", name="nonnegative_record"
-        ),
+        CheckConstraint("wins >= 0 AND losses >= 0 AND ties >= 0", name="nonnegative_record"),
         CheckConstraint("points >= 0", name="nonnegative_points"),
     )
     standing_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    team_id: Mapped[int] = mapped_column(
-        ForeignKey("team.team_id", ondelete="CASCADE"), index=True
-    )
+    team_id: Mapped[int] = mapped_column(ForeignKey("team.team_id", ondelete="CASCADE"), index=True)
     season_id: Mapped[int] = mapped_column(
         ForeignKey("season.season_id", ondelete="CASCADE"), index=True
     )

@@ -20,7 +20,10 @@ export function TeamsPage() {
       title: 'Team',
       dataIndex: 'team_name',
       render: (name: string, team) => (
-        <button className="text-button" onClick={() => setSelected(team)}>
+        <button
+          className="text-button"
+          onClick={() => setSelected(team)}
+        >
           <span className="record-avatar">
             {name
               .split(' ')
@@ -71,9 +74,17 @@ export function TeamsPage() {
             onChange={(league_id) => setFilters((current) => ({ ...current, league_id }))}
           />
         </div>
-        <ResourceTable {...listing} rowKey="team_id" columns={columns} />
+        <ResourceTable
+          {...listing}
+          rowKey="team_id"
+          columns={columns}
+        />
       </Card>
-      <RecordDrawer kind="team" record={selected} onClose={() => setSelected(null)} />
+      <RecordDrawer
+        kind="team"
+        record={selected}
+        onClose={() => setSelected(null)}
+      />
     </>
   );
 }

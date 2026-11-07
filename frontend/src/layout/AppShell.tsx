@@ -6,6 +6,8 @@ import { useData } from '../hooks/useData';
 import { SqlDrawer } from '../components/SqlDrawer';
 import { navigation } from './navigation';
 import { Sidebar } from './Sidebar';
+import { MobileNavigation } from './MobileNavigation';
+import { useNavigationLayout } from './useNavigationLayout';
 import { Topbar } from './Topbar';
 import { DatasetRibbon } from './DatasetRibbon';
 import { WorkspaceNotice } from './WorkspaceNotice';
@@ -15,7 +17,7 @@ import { AppRoutes } from './AppRoutes';
 export function AppShell() {
   const location = useLocation();
   const { health } = useData();
-  const [collapsed, setCollapsed] = useState(false);
+  const navigationLayout = useNavigationLayout();
   const [sqlOpen, setSqlOpen] = useState(false);
   const [traceId, setTraceId] = useState<string | null>(null);
   const requests = useSyncExternalStore(subscribeToRequests, getRequestHistory);
@@ -24,12 +26,23 @@ export function AppShell() {
 
   return (
     <Layout className="app-layout">
-      <Sidebar collapsed={collapsed} pathname={location.pathname} onBreakpoint={setCollapsed} />
+      {navigationLayout.isMobile ? (
+        <MobileNavigation
+          open={navigationLayout.mobileOpen}
+          pathname={location.pathname}
+          onClose={navigationLayout.closeMobile}
+        />
+      ) : (
+        <Sidebar
+          collapsed={navigationLayout.collapsed}
+          pathname={location.pathname}
+        />
+      )}
       <Layout className="workspace">
         <Topbar
           title={currentTitle}
-          collapsed={collapsed}
-          onToggle={() => setCollapsed(!collapsed)}
+          collapsed={navigationLayout.collapsed}
+          onToggle={navigationLayout.toggle}
           onSqlOpen={() => {
             setTraceId(requests[0]?.id || null);
             setSqlOpen(true);

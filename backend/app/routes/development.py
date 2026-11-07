@@ -53,9 +53,7 @@ router = APIRouter()
 def debug_sql(
     request_id: Annotated[
         str,
-        Path(
-            description="X-Request-ID header from the API response you want to inspect."
-        ),
+        Path(description="X-Request-ID header from the API response you want to inspect."),
     ],
 ):
     if not settings.debug_ui_enabled:
