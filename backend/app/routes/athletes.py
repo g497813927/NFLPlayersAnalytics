@@ -2,10 +2,11 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, Response
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
+from ..auth.dependencies import require_admin
 from ..models import Athlete, Game, Membership, PerformanceStatistic, Roster, Team
 from ..request_examples import ATHLETE_EXAMPLES
 from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
@@ -103,6 +104,7 @@ def get_athlete(athlete_id: int, session: DB):
 
 @router.post(
     "/athletes",
+    dependencies=[Depends(require_admin)],
     tags=["Athletes"],
     summary="Create an athlete profile",
     description="""
@@ -124,6 +126,7 @@ def create_athlete(
 
 @router.put(
     "/athletes/{athlete_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Athletes"],
     summary="Replace an athlete's profile values",
     description="""
@@ -147,6 +150,7 @@ def update_athlete(
 
 @router.delete(
     "/athletes/{athlete_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Athletes"],
     summary="Delete an unreferenced athlete",
     description="""

@@ -9,6 +9,8 @@ from sqlalchemy.engine import Connection, make_url
 from sqlalchemy.exc import OperationalError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.auth.schema import AUTH_TABLES
+
 
 class SetupError(Exception):
     """An expected setup refusal with a message safe to show in the terminal."""
@@ -20,7 +22,7 @@ def normalized_sql(value: str | None) -> str | None:
     return re.sub(r"\s+", " ", value).strip()
 
 
-def inspect_schema(connection: Connection, metadata) -> bool:
+def inspect_schema(connection: Connection, metadata, optional_tables=frozenset()) -> bool:
     """Return True only for a database with no application objects.
 
     A populated but incompatible schema is still refused: automatic setup is
@@ -40,7 +42,7 @@ def inspect_schema(connection: Connection, metadata) -> bool:
     inspector = inspect(connection)
     actual_tables = {name for kind, name in objects if kind == "table"}
     expected_tables = set(metadata.tables)
-    if actual_tables != expected_tables:
+    if actual_tables not in (expected_tables, expected_tables - optional_tables):
         raise SetupError(
             "Setup stopped: the database has a partial or different schema. "
             "No data or schema was changed. Choose a new empty SQLite file in "
@@ -49,6 +51,8 @@ def inspect_schema(connection: Connection, metadata) -> bool:
 
     compiler = connection.dialect.ddl_compiler(connection.dialect, None)
     for table in metadata.sorted_tables:
+        if table.name not in actual_tables:
+            continue
         columns = {column["name"]: column for column in inspector.get_columns(table.name)}
         if set(columns) != set(table.columns.keys()):
             incompatible_schema(table.name)
@@ -156,9 +160,16 @@ def setup_database() -> None:
             # Explicit BEGIN also makes SQLite DDL part of this transaction.
             connection.exec_driver_sql("BEGIN IMMEDIATE")
             try:
-                empty_database = inspect_schema(connection, Base.metadata)
+                empty_database = inspect_schema(connection, Base.metadata, AUTH_TABLES)
+                upgraded_auth = not empty_database and not AUTH_TABLES.intersection(
+                    inspect(connection).get_table_names()
+                )
                 if empty_database:
                     Base.metadata.create_all(connection)
+                elif upgraded_auth:
+                    Base.metadata.create_all(
+                        connection, tables=[Base.metadata.tables[name] for name in AUTH_TABLES]
+                    )
 
                 with Session(bind=connection, autoflush=False) as session:
                     counts = row_counts(session)
@@ -170,10 +181,7 @@ def setup_database() -> None:
                     # externally owned connection transaction.
                     session.commit()
 
-                if populated:
-                    connection.rollback()
-                else:
-                    connection.commit()
+                connection.commit()
             except Exception:
                 connection.rollback()
                 raise
@@ -181,9 +189,11 @@ def setup_database() -> None:
         engine.dispose()
 
     if populated:
-        print(
-            "Database already contains records. Preserved all data; setup skipped creation and seeding."
-        )
+        print("Database already contains records. Preserved all data; setup skipped seeding.")
+        if upgraded_auth:
+            print(
+                "Added the two authentication tables; existing accounts have no login credentials."
+            )
     else:
         if empty_database:
             print(f"Created {len(Base.metadata.tables)} tables using SQLAlchemy ORM.")

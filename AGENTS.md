@@ -11,8 +11,7 @@ relational sports schema, a working API, and simple browser-based CRUD. The
 sample is one fictional football league; the schema supports multiple sports.
 
 Keep changes small and readable. The current priority is the prototype and
-skeleton, not production infrastructure or additional features. Authentication,
-role enforcement, account-backed favorites/comparisons, real imports/exports, advanced
+skeleton, not production infrastructure or additional features. Account recovery/administration, account-backed comparisons, real imports/exports, advanced
 analytics, migrations, automated tests, and the formal coursework evidence
 package are deferred unless the current task explicitly requests them.
 
@@ -56,7 +55,8 @@ It initializes/seeds an empty SQLite file, seeds a complete compatible empty
 application schema, and skips populated application data. It rejects partial or
 unrelated schemas, in-memory SQLite, SQLite URI options, and other RDBMS
 connectors. It respects the configured `DATABASE_URL`; preserve existing
-environment files and data, with no automatic reset or migration.
+environment files and data, with no automatic reset. The only automatic schema upgrade is adding both
+authentication tables to a fully compatible older 17-table database.
 Stop running servers before setup because `npm ci`
 replaces dependency directories. `uv` can install the required Python version.
 
@@ -68,7 +68,7 @@ instances first. The launcher must not reset/seed databases or overwrite `.env`
 files, and Vite must fail when its port is occupied rather than select another.
 
 For individual services or custom ports, run
-`uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000` from
+`uv run --frozen uvicorn app.main:app --no-proxy-headers --host 127.0.0.1 --port 8000` from
 `backend` and `npm run dev -- --port 5173 --strictPort` from `frontend` in
 separate terminals. Vite forwards `/api`, `/docs/api`, and `/openapi.json`
 to port 8000. Swagger UI lives at `/docs/api`; the app header links to it with
@@ -99,8 +99,10 @@ artifact outside the formatters.
 
 The Games page includes an explicitly simulated replay, drive visualization,
 and low-key play explanations in separate components. Demo events never write
-to the database. Favorites are browser-local, with an in-memory storage fallback;
-account-backed favorites remain deferred. Keep mock and saved scores clearly
+to the database. Signed-in favorites are account-owned and stored in the existing favorite table.
+Guests use browser-local favorites with an in-memory fallback; never silently
+import them into a signed-in account. Refetch on focus and guard stale responses
+when accounts change. Keep mock and saved scores clearly
 identified. Games use the complete lookup data before client-side filtering and
 pagination; do not filter only the first API page.
 
@@ -111,8 +113,9 @@ pagination; do not filter only the first API page.
   byte-for-byte during refactors and documentation work. Only change it when the
   current task explicitly authorizes a schema change. For authorized schema changes, run
   `uv run --frozen python -m scripts.export_schema` from `backend` and include
-  `db/schema.sql` in the same change. The SQL file is a standalone SQLite
-  creation path; the ORM path must describe the same tables and constraints.
+  `db/schema.sql` in the same change. The original SQL file creates the 17 core tables. Authentication adds only
+  `db/auth_schema.sql`; export that extension with `--auth`. ORM initialization
+  and both SQL scripts together describe the same 19 tables and constraints.
 - Enable SQLite foreign keys on every connection, including manual SQL sessions.
   Preserve named constraints, matching key types, and explicit `ON DELETE`
   actions. Do not weaken constraints to make invalid writes succeed.
@@ -163,8 +166,9 @@ pagination; do not filter only the first API page.
   Refresh affected data after successful writes; preserve useful errors after
   rejected writes. Handle empty, loading, and unavailable-backend states.
 - Keep the synthetic-data label and the local prototype boundary visible. Do
-  not introduce a login screen or claim that the stored user role enforces
-  authorization.
+  preserve the login/register flow and server-enforced permissions. Public
+  registration always creates a fan; analyst also has normal-user access. Only
+  admin may mutate shared sports records or access the SQL inspector.
 - The backend `.env.example` sets `SQL_ECHO=true` for new demo setups so actual
   SQL and parameters appear in the API terminal. Setup preserves existing `.env`
   values; change that flag explicitly and restart when requested. The Settings
@@ -185,3 +189,29 @@ file, reproducible source/scripts, and dependency lockfiles instead. Review the
 staged diff and preserve unrelated changes. Use `codex/` for new agent-created
 branches unless a task specifies otherwise. Push only when the task authorizes
 it, without overwriting remote work or force-pushing as routine conflict repair.
+
+## Account boundaries
+
+- Use Argon2 hashes and revocable, expiring opaque sessions in HttpOnly cookies.
+  Store only token hashes in the database. Never log passwords, hashes, session
+  cookies, or CSRF tokens. Account queries use the private engine with SQL
+  logging/capture disabled even when SQL_ECHO and SQL_DEBUG_UI are enabled.
+- Every shared-data mutation requires `require_admin`. Every favorite read/write
+  derives its owner from `require_user`; never accept a user ID from the client.
+  Validate CSRF headers on authenticated writes and origin/JSON on login/register.
+- Create admins explicitly with `python -m scripts.create_admin`; never add
+  shared default passwords or let registration choose its role. Seeded users
+  remain synthetic records without credentials.
+- Setup/upgrade_auth may add the two new auth tables to an intact legacy schema;
+  never alter core tables or reset data for this feature. Existing .env values
+  remain intact. Normal startup does not perform upgrades.
+
+## Request guard
+
+- Keep SQLAlchemy queries parameterized regardless of WAF_ENABLED. The optional
+  ASGI request guard is a small defensive layer, not a comprehensive WAF.
+- Never scan/log password contents or log request bodies/cookies. Guard logs
+  contain only a reason code, peer IP, and retry duration.
+- Keep --no-proxy-headers in the local Uvicorn launcher to prevent forged
+  forwarded IPs bypassing limits. Vite shares one peer-IP bucket; per-process
+  bans reset on restart and are not distributed production protection.

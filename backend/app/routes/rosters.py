@@ -2,10 +2,11 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, Response
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import or_, select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
+from ..auth.dependencies import require_admin
 from ..models import Membership, Roster, Season, Team
 from ..request_examples import ROSTER_EXAMPLES
 from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
@@ -87,6 +88,7 @@ def get_roster(roster_id: int, session: DB):
 
 @router.post(
     "/rosters",
+    dependencies=[Depends(require_admin)],
     tags=["Rosters"],
     summary="Create a team's season roster",
     description="""
@@ -112,6 +114,7 @@ def create_roster(
 
 @router.put(
     "/rosters/{roster_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Rosters"],
     summary="Replace a roster's team and season",
     description="""
@@ -141,6 +144,7 @@ def update_roster(
 
 @router.delete(
     "/rosters/{roster_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Rosters"],
     summary="Delete a roster and its memberships",
     description="""

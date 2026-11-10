@@ -2,11 +2,12 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, Response
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
+from ..auth.dependencies import require_admin
 from ..models import Athlete, Game, PerformanceStatistic, Season, StatDefinition, Team
 from ..request_examples import STATISTIC_EXAMPLES
 from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
@@ -130,6 +131,7 @@ def require_statistic_references(session: Session, body: StatisticWrite) -> None
 
 @router.post(
     "/performance-statistics",
+    dependencies=[Depends(require_admin)],
     tags=["Performance statistics"],
     summary="Record an athlete or team statistic",
     description="""
@@ -158,6 +160,7 @@ def create_statistic(
 
 @router.put(
     "/performance-statistics/{statistic_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Performance statistics"],
     summary="Replace a performance statistic's values",
     description="""
@@ -185,6 +188,7 @@ def update_statistic(
 
 @router.delete(
     "/performance-statistics/{statistic_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Performance statistics"],
     summary="Delete a recorded statistic",
     description="""

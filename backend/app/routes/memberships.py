@@ -2,10 +2,11 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, Response
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import or_, select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
+from ..auth.dependencies import require_admin
 from ..models import Athlete, Membership, Roster, Team
 from ..request_examples import MEMBERSHIP_EXAMPLES
 from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
@@ -97,6 +98,7 @@ def get_membership(membership_id: int, session: DB):
 
 @router.post(
     "/memberships",
+    dependencies=[Depends(require_admin)],
     tags=["Memberships"],
     summary="Add an athlete to a roster",
     description="""
@@ -124,6 +126,7 @@ def create_membership(
 
 @router.put(
     "/memberships/{membership_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Memberships"],
     summary="Replace a membership's editable values",
     description="""
@@ -151,6 +154,7 @@ def update_membership(
 
 @router.delete(
     "/memberships/{membership_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Memberships"],
     summary="Delete a membership stint",
     description="""

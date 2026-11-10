@@ -4,7 +4,9 @@ from fastapi import APIRouter
 
 from . import (
     athletes,
+    auth,
     development,
+    favorites,
     games,
     lookups,
     memberships,
@@ -18,6 +20,8 @@ from . import (
 
 router = APIRouter(prefix="/api")
 
+router.include_router(auth.router)
+router.include_router(favorites.router)
 router.include_router(system.router)
 router.include_router(overview.router)
 router.include_router(lookups.router)

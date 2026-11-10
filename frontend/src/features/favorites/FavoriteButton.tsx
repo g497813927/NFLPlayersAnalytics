@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function FavoriteButton({ teamId, teamName }: Props) {
-  const { teamIds, toggle } = useFavoriteTeams();
+  const { teamIds, toggle, loading } = useFavoriteTeams();
   const selected = teamIds.includes(teamId);
 
   return (
@@ -16,6 +16,7 @@ export function FavoriteButton({ teamId, teamName }: Props) {
       className={`favorite-button${selected ? ' is-favorite' : ''}`}
       aria-label={`${selected ? 'Unfollow' : 'Follow'} ${teamName}`}
       aria-pressed={selected}
+      disabled={loading}
       title={`${selected ? 'Unfollow' : 'Follow'} ${teamName}`}
       onClick={() => toggle(teamId)}
     >

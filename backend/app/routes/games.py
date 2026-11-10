@@ -3,11 +3,12 @@
 from datetime import date, datetime, time
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, Response
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
+from ..auth.dependencies import require_admin
 from ..errors import AppError
 from ..models import Game, GameParticipant, Season, Team, Venue
 from ..request_examples import GAME_EXAMPLES
@@ -126,6 +127,7 @@ def require_game_references(session: Session, body: GameWrite) -> None:
 
 @router.post(
     "/games",
+    dependencies=[Depends(require_admin)],
     tags=["Games"],
     summary="Create a game with home and away teams",
     description="""
@@ -156,6 +158,7 @@ def create_game(body: Annotated[GameWrite, Body(openapi_examples=GAME_EXAMPLES)]
 
 @router.put(
     "/games/{game_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Games"],
     summary="Replace a game and its two participants",
     description="""
@@ -189,6 +192,7 @@ def update_game(
 
 @router.delete(
     "/games/{game_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Games"],
     summary="Delete a game and its recorded statistics",
     description="""

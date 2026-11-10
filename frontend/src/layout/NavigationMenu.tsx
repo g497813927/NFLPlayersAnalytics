@@ -2,6 +2,7 @@ import { ApartmentOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { navigation } from './navigation';
+import { useAuth } from '../features/auth/useAuth';
 
 interface Props {
   collapsed: boolean;
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function NavigationMenu({ collapsed, pathname, onNavigate }: Props) {
+  const { isAdmin } = useAuth();
   return (
     <nav
       id="app-navigation"
@@ -39,11 +41,13 @@ export function NavigationMenu({ collapsed, pathname, onNavigate }: Props) {
         inlineCollapsed={collapsed}
         selectedKeys={[pathname]}
         onClick={onNavigate}
-        items={navigation.map((item) =>
-          item.type === 'divider'
-            ? item
-            : { ...item, label: <Link to={item.key}>{item.label}</Link> },
-        )}
+        items={navigation
+          .filter((item) => isAdmin || (item.type !== 'divider' && item.key !== '/manage'))
+          .map((item) =>
+            item.type === 'divider'
+              ? item
+              : { ...item, label: <Link to={item.key}>{item.label}</Link> },
+          )}
       />
     </nav>
   );

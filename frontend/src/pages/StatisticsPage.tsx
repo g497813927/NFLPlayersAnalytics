@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Card } from 'antd';
+import { Button, Card } from 'antd';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../features/auth/useAuth';
 import { FilterSelect, PageHeading, ResourceTable } from '../components';
 import { athleteName, useData, useLabels } from '../context';
 import type { PageFilters } from './filters';
@@ -8,6 +10,7 @@ import { useStatisticColumns } from './hooks/useStatisticColumns';
 
 export function StatisticsPage() {
   const { lookups } = useData();
+  const { isAdmin } = useAuth();
   const labels = useLabels();
   const [filters, setFilters] = useState<PageFilters>({});
   const listing = useList('performance-statistics', filters);
@@ -18,6 +21,13 @@ export function StatisticsPage() {
       <PageHeading
         title="Statistics"
         description="Connect individual and team performance to the game where it happened."
+        action={
+          isAdmin ? (
+            <Link to="/manage?entity=performance-statistics">
+              <Button>Edit statistics</Button>
+            </Link>
+          ) : undefined
+        }
       />
       <Card className="data-card">
         <div className="filter-bar">

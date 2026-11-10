@@ -4,14 +4,14 @@
 
 The prototype keeps all 17 entities in the supplied normalized ER diagram:
 
-| Area                    | Tables                                                  |
-| ----------------------- | ------------------------------------------------------- |
-| Catalog                 | `sport`, `league`, `team`, `athlete`, `season`, `venue` |
-| Rosters                 | `roster`, `membership`                                  |
-| Events                  | `game`, `game_participant`                              |
-| Performance             | `stat_definition`, `performance_statistic`, `standing`  |
-| Future account features | `app_user`, `favorite`, `saved_comparison`              |
-| Import metadata         | `data_import`                                           |
+| Area                     | Tables                                                  |
+| ------------------------ | ------------------------------------------------------- |
+| Catalog                  | `sport`, `league`, `team`, `athlete`, `season`, `venue` |
+| Rosters                  | `roster`, `membership`                                  |
+| Events                   | `game`, `game_participant`                              |
+| Performance              | `stat_definition`, `performance_statistic`, `standing`  |
+| Accounts and comparisons | `app_user`, `favorite`, `saved_comparison`              |
+| Import metadata          | `data_import`                                           |
 
 `app_user` represents the diagram's User entity without relying on a reserved
 SQL word. `standing.ties` is added for football ties. Integer foreign keys match
@@ -78,3 +78,25 @@ authentication credentials.
 
 Automated integrity/CRUD tests, repeatable rejection demonstrations, and the
 formal screenshot evidence package are intentionally left for a later phase.
+
+## Account extension
+
+`db/schema.sql` remains the original 17-table submission artifact.
+`db/auth_schema.sql` adds `user_credential` (one Argon2 hash per account) and
+`auth_session` (hashed opaque token, owner, creation time, and expiry). Each
+credential belongs to `app_user`; sessions belong to credentials. Both foreign
+keys cascade on deletion. Credentials and session cookies never appear in API
+responses or SQL traces. Only the separate CSRF token is returned to the client.
+
+The existing `favorite` constraints provide one link per user/team. The API
+derives ownership from a valid session and accepts no client-selected owner;
+its request path contains only the team ID. Only an admin can mutate sports
+records. Normal users (`fan` or legacy `analyst`) can browse and manage their own
+favorites. Direct database access still bypasses application authorization.
+
+`npm run setup` recognizes both the intact 17-table legacy schema and the full
+19-table schema. It can add the two new tables without replacing rows. For an
+existing installation with dependencies ready, run `python -m scripts.upgrade_auth`
+from `backend`. A partial/incompatible schema is rejected before any changes.
+Seeded users have no credentials, and public registration cannot claim them.
+Use the explicit `create_admin` CLI for a new administrator.

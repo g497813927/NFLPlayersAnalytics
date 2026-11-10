@@ -2,10 +2,11 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Query, Response
+from fastapi import APIRouter, Body, Depends, Query, Response
 from sqlalchemy import or_, select
 
 from ..api_docs import LIST_RESPONSES, READ_RESPONSES, WRITE_RESPONSES
+from ..auth.dependencies import require_admin
 from ..models import League, Membership, Roster, Team
 from ..request_examples import TEAM_EXAMPLES
 from ..response_docs import PAGINATED_RESPONSE, RECORD_RESPONSE
@@ -91,6 +92,7 @@ def get_team(team_id: int, session: DB):
 
 @router.post(
     "/teams",
+    dependencies=[Depends(require_admin)],
     tags=["Teams"],
     summary="Create a team",
     description="""
@@ -111,6 +113,7 @@ def create_team(body: Annotated[TeamWrite, Body(openapi_examples=TEAM_EXAMPLES)]
 
 @router.put(
     "/teams/{team_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Teams"],
     summary="Replace a team's editable values",
     description="""
@@ -137,6 +140,7 @@ def update_team(
 
 @router.delete(
     "/teams/{team_id}",
+    dependencies=[Depends(require_admin)],
     tags=["Teams"],
     summary="Delete an unreferenced team",
     description="""

@@ -9,6 +9,7 @@ from .database import engine
 from .errors import install_error_handlers
 from .request_tracking import correlate_request
 from .routes import router
+from .security.middleware import RequestGuardMiddleware
 from .sql_debug import install_sql_capture
 
 app = FastAPI(
@@ -26,12 +27,14 @@ app = FastAPI(
         "displayRequestDuration": True,
     },
 )
+app.add_middleware(RequestGuardMiddleware, settings=settings)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type"],
-    expose_headers=["X-Request-ID"],
+    allow_headers=["Content-Type", "X-CSRF-Token"],
+    allow_credentials=True,
+    expose_headers=["X-Request-ID", "Retry-After"],
 )
 install_error_handlers(app)
 

@@ -1,0 +1,55 @@
+.auth-card {
+  max-width: 460px;
+  margin: 45px auto;
+}
+.auth-card h1 {
+  margin: 12px 0;
+  font-size: 28px;
+  letter-spacing: -0.7px;
+}
+.auth-card p {
+  color: #657986;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.auth-card small {
+  color: #657986;
+}
+.auth-loading {
+  min-height: 200px;
+}
+.account-button > span:not(.anticon) {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.account-sign-in {
+  white-space: nowrap;
+  font-weight: 600;
+}
+.topbar-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+@media (max-width: 1000px) {
+  .topbar-status .ant-badge {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .topbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 62px;
+    padding-block: 10px;
+    gap: 8px;
+  }
+  .topbar-status {
+    margin-left: auto;
+  }
+  .auth-card {
+    margin: 20px auto;
+  }
+}
