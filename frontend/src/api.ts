@@ -3,6 +3,11 @@ import type { ApiErrorEnvelope, CapturedRequest, FieldError, QueryParams } from 
 let latestRequestId: string | null = null;
 let requestHistory: CapturedRequest[] = [];
 const listeners = new Set<() => void>();
+let csrfToken: string | null = null;
+
+export function setCsrfToken(token: string | null) {
+  csrfToken = token;
+}
 
 export const subscribeToRequests = (listener: () => void): (() => void) => {
   listeners.add(listener);
@@ -17,6 +22,8 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public readonly fields?: FieldError[],
+    public readonly status?: number,
+    public readonly code?: string,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -66,14 +73,18 @@ export async function api<T>(
     response = await fetch(`/api${path}`, {
       method,
       signal,
-      headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      headers: {
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...(method !== 'GET' && csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+      },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') throw error;
     throw new ApiError('The API is unavailable. Start the backend, then try again.');
   }
-  if (!path.startsWith('/debug/') && path !== '/health') {
+  if (!path.startsWith('/debug/') && !path.startsWith('/auth/') && path !== '/health') {
     const requestId = response.headers.get('X-Request-ID');
     if (requestId) {
       latestRequestId = requestId;
@@ -92,11 +103,16 @@ export async function api<T>(
     throw new ApiError('The server returned an unreadable response. Please try again.');
   }
   if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/auth/')) {
+      window.dispatchEvent(new Event('account-session-expired'));
+    }
     throw new ApiError(
       isErrorEnvelope(data)
         ? data.error.message
         : 'This action could not be completed. Please check your entries and try again.',
       isErrorEnvelope(data) ? data.error.fields : undefined,
+      response.status,
+      isErrorEnvelope(data) ? data.error.code : undefined,
     );
   }
   return data as T;

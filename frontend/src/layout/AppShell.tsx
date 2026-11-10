@@ -13,16 +13,18 @@ import { DatasetRibbon } from './DatasetRibbon';
 import { WorkspaceNotice } from './WorkspaceNotice';
 import { PageFooter } from './PageFooter';
 import { AppRoutes } from './AppRoutes';
+import { useAuth } from '../features/auth/useAuth';
 
 export function AppShell() {
   const location = useLocation();
   const { health } = useData();
+  const { isAdmin } = useAuth();
   const navigationLayout = useNavigationLayout();
   const [sqlOpen, setSqlOpen] = useState(false);
   const [traceId, setTraceId] = useState<string | null>(null);
   const requests = useSyncExternalStore(subscribeToRequests, getRequestHistory);
   const currentTitle =
-    navigation.find((item) => item.key === location.pathname)?.label || 'Overview';
+    navigation.find((item) => item.key === location.pathname)?.label || 'Account';
 
   return (
     <Layout className="app-layout">
@@ -55,7 +57,7 @@ export function AppShell() {
           <PageFooter />
         </Layout.Content>
       </Layout>
-      {health?.sql_debug_ui && (
+      {isAdmin && health?.sql_debug_ui && (
         <SqlDrawer
           open={sqlOpen}
           onClose={() => setSqlOpen(false)}

@@ -95,6 +95,9 @@ function setup() {
   ]);
 
   console.log('\n[setup] Ready. Start both servers with npm run dev.');
+  console.log(
+    '[setup] Create your own admin: uv run --directory backend --frozen python -m scripts.create_admin',
+  );
   console.log('[setup] Terminal SQL output: set SQL_ECHO=true in backend/.env, then restart.');
   console.log(
     '[setup] New environment files enable terminal SQL; existing settings are preserved.',

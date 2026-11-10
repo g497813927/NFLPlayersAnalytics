@@ -27,11 +27,14 @@ Python dependencies, creates only missing `backend/.env` and `frontend/.env`
 files from their examples, and prepares the configured SQLite database. The
 default is `backend/data/prototype.db`; existing `.env` files remain unchanged.
 
-- An empty database receives all 17 ORM tables and synthetic sample data.
+- An empty database receives 17 core tables plus two authentication tables and synthetic sample data.
 - A complete, compatible empty application schema receives the sample data.
   If it already contains any rows, setup preserves the data and skips seeding.
+- A compatible older 17-table database receives only the two new authentication
+  tables. Existing sports records, demo users, and favorites remain unchanged.
 - Partial or unrelated schemas stop setup with a readable explanation. Setup
-  never resets a database, migrates a schema, or overwrites existing records.
+  never resets a database or overwrites existing records. No other automatic
+  schema migrations are supported.
 
 Setup supports a plain SQLite file, respects `DATABASE_URL`, and refuses
 in-memory SQLite, SQLite URI options, or other RDBMS connectors; configure those
@@ -64,6 +67,68 @@ Vite forwards `/api`, `/docs/api`, and `/openapi.json` requests to port 8000.
 The setup and development commands work in macOS/Linux shells and Windows
 PowerShell without manually copying files or activating a virtual environment.
 
+## Accounts, synced favorites, and admins
+
+Open **Sign in → Create an account** to register a normal user. Email addresses
+are case-insensitive; passwords use 12–128 characters and preserve whitespace.
+Use fictional details for the local prototype. There are no default passwords.
+The five seeded users are sample records without credentials, even the seeded
+`admin` row. Registration cannot claim them or choose an admin role.
+
+| Capability                                 | Guest | Normal user (`fan` / `analyst`) | Admin                  |
+| ------------------------------------------ | ----- | ------------------------------- | ---------------------- |
+| Browse sports data and mock game replays   | Yes   | Yes                             | Yes                    |
+| Favorite teams in this browser             | Yes   | Uses account favorites          | Uses account favorites |
+| Sync own favorites to the database         | No    | Yes                             | Yes                    |
+| Create, edit, or delete shared sports data | No    | No                              | Yes                    |
+| Inspect development SQL in the browser     | No    | No                              | When enabled           |
+
+Create the first admin explicitly after setup, from the repository root:
+
+```sh
+uv run --directory backend --frozen python -m scripts.create_admin
+```
+
+The command prompts for email, display name, and a new password twice without
+echoing the password. It saves the account and an Argon2 hash to the configured
+database, never a plaintext credentials file or `.env` entry. It refuses
+existing emails and never promotes or overwrites another account. Then sign in
+normally and open **Data management → Performance statistics**, or use
+**Statistics → Edit statistics**. Select a team as the statistic's subject and
+choose its game/statistic definition from the database-backed selectors.
+Admins can also edit teams, athletes, memberships, rosters, and games/scores.
+Standings continue to recalculate from saved games; they are not manually edited.
+Normal users calling those write APIs directly receive a readable 403.
+
+For an existing checkout, stop both servers and run `npm run setup`. It adds
+only the missing authentication extension to a compatible 17-table database
+and preserves existing data. If dependencies are already installed, the smaller
+upgrade command is:
+
+```sh
+uv run --directory backend --frozen python -m scripts.upgrade_auth
+```
+
+Both paths refuse partial/incompatible schemas. Back up the database before
+manual administration. `db/schema.sql` remains unchanged; `db/auth_schema.sql`
+contains the two new tables. Startup itself never upgrades the schema.
+
+Sessions are stored server-side with a fixed expiry (seven days by default).
+Passwords use Argon2; only hashes of opaque session tokens are stored. The
+session cookie is HttpOnly and SameSite=Lax. Logging out revokes that session;
+other devices keep theirs. Authenticated writes require `X-CSRF-Token`, and
+account creation/sign-in require JSON from an allowed origin. No account
+credentials, password hashes, or session tokens enter the SQL terminal/browser
+traces, even with both SQL debug flags enabled. Sports SQL remains visible.
+
+In Swagger at `/docs/api`, use **Accounts → Sign in** first, then copy the
+returned `csrf_token` into the `X-CSRF-Token` field on a write operation. The
+browser sends the session cookie automatically. API clients must retain cookies
+and send the same header. Request examples are illustrative, not seeded logins.
+Favorite routes under `/api/me/favorite-teams` always use the signed-in owner.
+Devices must reach the same backend/database; separate local checkouts do not
+share favorites. Reload or refocus the app to fetch changes made elsewhere.
+
 ## Game center
 
 Open **Games** or **Explore game center** on the homepage. The layout takes
@@ -85,9 +150,11 @@ close button/Escape returns to the content.
   record drawer includes recorded player statistics. Non-football and cancelled
   games only offer the saved view.
 - Star a team or use **Follow a team**, then select **My teams** to filter the
-  schedule. Favorites persist in this browser's local storage, with an in-memory
-  fallback if storage is unavailable. They do not write to the `favorite` table
-  or sync to an account; no login is required.
+  schedule. Signed-in users save their favorites in the `favorite` table and
+  retrieve them on any device connected to the same backend. Guests use browser
+  storage with an in-memory fallback. Guest favorites stay separate and are not
+  automatically imported into an account. Reload or refocus to fetch changes
+  made on another device; this is not a real-time push feed.
 - Search/filter by team, season, status, and UTC date. All games from `/api/lookups`
   are filtered before client-side pagination. Game times display in your local
   timezone. This is suitable for the prototype dataset; a larger dataset will
@@ -108,13 +175,20 @@ The table shows the values in the example used by new setups. Missing values
 use the same application defaults except `SQL_ECHO`, whose fallback is `false`.
 Restart FastAPI after editing the file.
 
-| Backend setting | New setup value                                     | Purpose                                                                                 |
-| --------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `DATABASE_URL`  | `sqlite:///data/prototype.db`                       | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`.               |
-| `APP_ENV`       | `development`                                       | Browser SQL inspection is available only with this value.                               |
-| `SQL_ECHO`      | `true`                                              | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
-| `SQL_DEBUG_UI`  | `false`                                             | Capture request SQL for the browser inspector when `APP_ENV=development`.               |
-| `CORS_ORIGINS`  | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly.                        |
+| Backend setting         | New setup value                                     | Purpose                                                                                 |
+| ----------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `DATABASE_URL`          | `sqlite:///data/prototype.db`                       | SQLAlchemy connection URL. Relative SQLite paths resolve from `backend/`.               |
+| `APP_ENV`               | `development`                                       | Browser SQL inspection is available only with this value.                               |
+| `SQL_ECHO`              | `true`                                              | Print emitted SQL and parameters in the backend terminal; fallback is `false` if unset. |
+| `SQL_DEBUG_UI`          | `false`                                             | Capture request SQL for the browser inspector when `APP_ENV=development`.               |
+| `CORS_ORIGINS`          | `["http://127.0.0.1:5173","http://localhost:5173"]` | JSON array of frontend origins allowed to call FastAPI directly.                        |
+| `SESSION_HOURS`         | `168`                                               | Fixed session lifetime in hours, from 1 to 720; applies to new sessions.                |
+| `SESSION_COOKIE_SECURE` | `false`                                             | Loopback HTTP demo only. Set `true` when serving over HTTPS.                            |
+
+Use the same host consistently (`127.0.0.1` or `localhost`), since cookies belong
+to a host. Add custom frontend origins, including port, to `CORS_ORIGINS` for
+login and authenticated writes. Keep the production frontend/API on one HTTPS
+origin and enable secure cookies before considering a remote deployment.
 
 For example, `backend/.env` can contain:
 
@@ -143,7 +217,7 @@ The root launcher uses ports 8000 and 5173. For custom ports, use the separate
 service commands below. To use backend port 8001, start Uvicorn with
 `--port 8001`, set `API_PROXY_TARGET=http://127.0.0.1:8001`, and restart Vite.
 To use frontend port 5174, run `npm run dev -- --port 5174 --strictPort` from
-`frontend` and update `CORS_ORIGINS` if accessing the backend directly. Changing
+`frontend` and add its origin to `CORS_ORIGINS` for authenticated writes. Changing
 a database URL selects a different database; it does not create its tables or
 migrate data automatically.
 
@@ -164,7 +238,7 @@ root:
 ```sh
 # Terminal 1
 cd backend
-uv run --frozen uvicorn app.main:app --host 127.0.0.1 --port 8000
+uv run --frozen uvicorn app.main:app --no-proxy-headers --host 127.0.0.1 --port 8000
 ```
 
 ```sh
@@ -181,9 +255,9 @@ dependencies while preserving existing environment files and populated data.
 Alternatively, run `uv sync --frozen --python 3.12` in `backend` and `npm ci`
 in the root or `frontend` when their respective dependencies changed. The root
 lockfile covers the shared launcher; the frontend lockfile covers the browser
-app. There is no migration history yet: setup does not update an existing
-schema. For a changed schema, deliberately rebuild only disposable demo data
-as described below.
+app. This update adds only the two authentication tables to a compatible
+existing schema. There is no general migration history yet; other schema
+changes still need a deliberate migration or a disposable database rebuild.
 
 If a sandbox prevents writes to the normal package caches, use
 `UV_CACHE_DIR=.cache/uv uv sync --frozen --python 3.12` and
@@ -194,7 +268,7 @@ If a sandbox prevents writes to the normal package caches, use
 
 - Home with connection status, record counts, and recent results.
 - Teams, athletes, games, statistics, and basic standings backed by the API.
-- Data Management forms for teams, athletes, rosters, memberships, games and
+- Admin-only Data Management forms for teams, athletes, rosters, memberships, games and
   their participants, and individual/team performance statistics.
 - Search and filters, database-backed relationship selectors, edit forms, and
   delete confirmation.
@@ -246,11 +320,13 @@ The default database is `backend/data/prototype.db`. Relative SQLite paths in
 working directory. Startup does not automatically create tables or reseed data.
 
 The standalone script is [db/schema.sql](db/schema.sql); the ORM
-source is [backend/app/models.py](backend/app/models.py). Regenerate and review
-the SQL after changing models, then commit both together:
+source is [backend/app/models.py](backend/app/models.py). The original
+`db/schema.sql` is preserved byte-for-byte for submission. Authentication lives
+in the separate [db/auth_schema.sql](db/auth_schema.sql) extension. Both the
+ORM initializer and `--method sql` create all 19 tables. Export the extension with:
 
 ```sh
-uv run --frozen python -m scripts.export_schema
+uv run --frozen python -m scripts.export_schema --auth
 ```
 
 After deliberate direct SQL edits, refresh derived standings with
@@ -259,8 +335,9 @@ cross-table sports rules before updating anything.
 
 To execute the DDL directly with the optional SQLite CLI, run `mkdir -p data`
 from `backend` and create a fresh database file with
-`sqlite3 -bail data/prototype.db < ../db/schema.sql`. Then run the seeder
-as above. Always enable
+`sqlite3 -bail data/prototype.db < ../db/schema.sql`, followed by
+`sqlite3 -bail data/prototype.db < ../db/auth_schema.sql`. Then run the seeder
+as above. Do not reapply these creation scripts to an existing database. Always enable
 `PRAGMA foreign_keys=ON;` when using a separate SQLite connection for manual
 writes; that setting is per connection. The application enables it automatically.
 
@@ -339,7 +416,8 @@ backend/
   data/         ignored local SQLite database
   pyproject.toml / uv.lock
 db/
-  schema.sql    standalone SQLite schema
+  schema.sql    unchanged 17-table SQLite submission schema
+  auth_schema.sql  additive credential/session tables
 frontend/
   src/          TypeScript pages, individual TSX components, hooks, and types
   .env.example  development API proxy configuration
@@ -418,17 +496,19 @@ functional/integrity test suite or manual browser checks.
 
 ## Current boundaries and next steps
 
-This is an unauthenticated local prototype; there is no login or pretend access
-control. Keep the demo bound to loopback. Browser-local team favorites are
-available; account-backed favorites, comparisons, user management, and import
-history flows remain deferred.
+This remains a local prototype with real server-enforced account permissions.
+Keep the demo bound to loopback. Public registration creates normal users;
+admin provisioning requires the local CLI. Password reset, email verification,
+account deletion, a user-administration UI, shared rate limiting, and production
+deployment hardening remain deferred. The login limiter is per process, with
+ten account attempts per client IP per minute; it is not distributed protection.
 
 There is no automated test suite yet. Tests, formal integrity demonstrations,
 screenshots, and the coursework evidence report are deferred at the current
 request so this phase can focus on the working skeleton. Do not interpret the
 prototype as fully tested.
 
-Later phases can add authentication/roles, synced favorites and comparisons, advanced
+Later phases can add account management, synced comparisons, advanced
 analytics, import/export, a migration history, and the deferred test/evidence
 work. `DATABASE_URL` and SQLAlchemy isolate the connection configuration, but
 changing RDBMS still requires its driver, migrations, and compatibility checks;

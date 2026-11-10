@@ -4,13 +4,16 @@ from .schemas.error_envelope import ErrorEnvelope
 
 API_DESCRIPTION = """
 Explore the fictional football dataset used by the CS5614 prototype.
-There is no login in this phase. Interactive writes change your local database.
+Browsing is public. Sign in to sync favorites; only admins can change shared sports data.
+Interactive writes change your local database.
 
 ### Start here
 
-1. Check **System → Check database connection**.
-2. Use **Lookups** to choose existing IDs by their readable labels.
-3. Open an entity section and choose a request example before using **Try it out**.
+1. Sign in using **Accounts → Sign in**. For writes, paste the returned `csrf_token`
+   into the `X-CSRF-Token` header field. The browser sends the HttpOnly cookie automatically.
+2. Check **System → Check database connection**.
+3. Use **Lookups** to choose existing IDs by their readable labels.
+4. Open an entity section and choose a request example before using **Try it out**.
    Example descriptions explain any records you need to create first.
 
 ### Request conventions
@@ -23,10 +26,18 @@ There is no login in this phase. Interactive writes change your local database.
 - Failed writes roll back and return a readable `error.message`.
   The Responses section documents the actual error envelope.
 - Every response includes `X-Request-ID`. With development SQL inspection
-  enabled, use this ID in the **Development** section to inspect emitted SQL.
+  enabled, admins can use this ID in the **Development** section to inspect emitted SQL.
 """
 
 API_TAGS = [
+    {
+        "name": "Accounts",
+        "description": "Register a normal user, sign in, restore a session, and sign out. Admin accounts are provisioned by the local create_admin command.",
+    },
+    {
+        "name": "My favorite teams",
+        "description": "Read and change only the signed-in user's favorite teams. Normal users and admins can both follow teams.",
+    },
     {
         "name": "System",
         "description": "Check connectivity and whether the demo database is initialized.",
@@ -119,6 +130,16 @@ READ_RESPONSES = {
 
 WRITE_RESPONSES = {
     **READ_RESPONSES,
+    401: documented_error(
+        "Sign-in is required or the session expired.",
+        "sign_in_required",
+        "Please sign in to continue.",
+    ),
+    403: documented_error(
+        "An admin role or valid CSRF token is required.",
+        "admin_required",
+        "Only an administrator can change shared sports records.",
+    ),
     409: documented_error(
         "Duplicate record, record in use, or an edit/delete would invalidate related data. No changes are saved.",
         "duplicate_record",

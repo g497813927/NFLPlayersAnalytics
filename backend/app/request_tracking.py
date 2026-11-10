@@ -19,6 +19,7 @@ async def correlate_request(request: Request, call_next):
         and request.url.path.startswith("/api/")
         and request.url.path != "/api/health"
         and not request.url.path.startswith("/api/debug/")
+        and not request.url.path.startswith("/api/auth/")
     ):
         trace = SQLTrace(request_id, request.method, request.url.path)
         token = active_trace.set(trace)
@@ -31,6 +32,8 @@ async def correlate_request(request: Request, call_next):
                 500, "unexpected_error", "Something went wrong. Please try again."
             )
         response.headers["X-Request-ID"] = request_id
+        if request.url.path.startswith("/api/"):
+            response.headers["Cache-Control"] = "no-store"
         return response
     finally:
         if trace is not None:

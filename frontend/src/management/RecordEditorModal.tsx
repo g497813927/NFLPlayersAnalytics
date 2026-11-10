@@ -46,7 +46,7 @@ export function RecordEditorModal({
       <Form<ManagementFormValues>
         form={form}
         layout="vertical"
-        preserve={false}
+        preserve
         onFinish={onSubmit}
         disabled={saving}
         requiredMark="optional"

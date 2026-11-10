@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +19,8 @@ class Settings(BaseSettings):
     app_env: str = "development"
     sql_echo: bool = False
     sql_debug_ui: bool = False
+    session_hours: int = Field(default=168, ge=1, le=720)
+    session_cookie_secure: bool = False
     cors_origins: list[str] = ["http://127.0.0.1:5173", "http://localhost:5173"]
 
     @property

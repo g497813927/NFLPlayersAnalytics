@@ -5,6 +5,7 @@ import { ConfigProvider, App as AntApp } from 'antd';
 import App from './App';
 import 'antd/dist/reset.css';
 import './styles.css';
+import './features/auth/auth.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('The application root element is missing.');

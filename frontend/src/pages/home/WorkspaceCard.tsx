@@ -2,10 +2,12 @@ import { ArrowRightOutlined, DatabaseOutlined } from '@ant-design/icons';
 import { Button, Card } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context';
+import { useAuth } from '../../features/auth/useAuth';
 
 export function WorkspaceCard() {
   const navigate = useNavigate();
   const { health } = useData();
+  const { user, isAdmin } = useAuth();
 
   return (
     <Card
@@ -20,18 +22,21 @@ export function WorkspaceCard() {
         </div>
       </div>
       <p>
-        All people, teams, and results in this prototype are synthetic. Browse records or use Data
-        Management to try changes.
+        All teams, athletes, and results are synthetic.{' '}
+        {isAdmin
+          ? 'Use Data Management to edit team statistics, scores, and other shared records.'
+          : 'Explore the data and follow your favorite teams.'}
       </p>
       <Button
         block
-        onClick={() => navigate('/manage')}
+        onClick={() => navigate(isAdmin ? '/manage' : user ? '/games' : '/login')}
       >
-        Manage records <ArrowRightOutlined />
+        {isAdmin ? 'Manage records' : user ? 'My favorite teams' : 'Sign in to sync favorites'}{' '}
+        <ArrowRightOutlined />
       </Button>
       <div className="future-note">
         <span className="eyebrow">COMING LATER</span>
-        <p>Sign-in, synced favorites, comparisons, imports, and exports.</p>
+        <p>Saved comparisons, imports, and exports.</p>
       </div>
     </Card>
   );

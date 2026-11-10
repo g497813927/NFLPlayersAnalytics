@@ -1,6 +1,8 @@
 import { CodeOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-import { Badge, Button, Layout, Space } from 'antd';
+import { Badge, Button, Layout } from 'antd';
 import { useData } from '../hooks/useData';
+import { AccountMenu } from '../features/auth/AccountMenu';
+import { useAuth } from '../features/auth/useAuth';
 
 interface Props {
   title: string;
@@ -11,6 +13,7 @@ interface Props {
 
 export function Topbar({ title, collapsed, onToggle, onSqlOpen }: Props) {
   const { health, connectionError, connecting } = useData();
+  const { isAdmin } = useAuth();
   const connected = health?.initialized && !connectionError;
   return (
     <Layout.Header className="topbar">
@@ -27,10 +30,7 @@ export function Topbar({ title, collapsed, onToggle, onSqlOpen }: Props) {
         <span className="breadcrumb-slash">/</span>
         <strong>{title}</strong>
       </div>
-      <Space
-        className="topbar-status"
-        size="middle"
-      >
+      <div className="topbar-status">
         <Badge
           status={connecting ? 'processing' : connected ? 'success' : 'error'}
           text={connecting ? 'Connecting' : connected ? 'Database connected' : 'Disconnected'}
@@ -42,7 +42,7 @@ export function Topbar({ title, collapsed, onToggle, onSqlOpen }: Props) {
         >
           API docs
         </Button>
-        {health?.sql_debug_ui && (
+        {isAdmin && health?.sql_debug_ui && (
           <Button
             icon={<CodeOutlined />}
             onClick={onSqlOpen}
@@ -50,7 +50,8 @@ export function Topbar({ title, collapsed, onToggle, onSqlOpen }: Props) {
             SQL inspector
           </Button>
         )}
-      </Space>
+        <AccountMenu />
+      </div>
     </Layout.Header>
   );
 }

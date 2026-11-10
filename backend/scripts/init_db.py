@@ -9,7 +9,7 @@ from sqlalchemy import inspect
 
 from app.database import SessionLocal, engine
 from app.models import Base
-from scripts.export_schema import SCHEMA_PATH
+from scripts.export_schema import AUTH_SCHEMA_PATH, SCHEMA_PATH
 from scripts.seed import print_counts, row_counts, seed_data
 
 
@@ -51,6 +51,7 @@ def main() -> None:
         connection = engine.raw_connection()
         try:
             connection.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+            connection.executescript(AUTH_SCHEMA_PATH.read_text(encoding="utf-8"))
         except Exception:
             connection.rollback()
             raise

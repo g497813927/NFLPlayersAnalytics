@@ -3,9 +3,10 @@
 from dataclasses import asdict
 from typing import Annotated
 
-from fastapi import APIRouter, Path
+from fastapi import APIRouter, Depends, Path
 
 from ..api_docs import READ_RESPONSES
+from ..auth.dependencies import require_debug_admin
 from ..config import settings
 from ..errors import AppError
 from ..sql_debug import get_trace
@@ -15,6 +16,7 @@ router = APIRouter()
 
 @router.get(
     "/debug/sql/{request_id}",
+    dependencies=[Depends(require_debug_admin)],
     tags=["Development"],
     summary="Inspect SQL for a recent request",
     description=(

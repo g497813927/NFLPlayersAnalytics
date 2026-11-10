@@ -8,12 +8,14 @@ from pathlib import Path
 from sqlalchemy.dialects import sqlite
 from sqlalchemy.schema import CreateColumn, CreateIndex
 
+from app.auth.schema import AUTH_TABLES
 from app.models import Base
 
 SCHEMA_PATH = Path(__file__).resolve().parents[2] / "db" / "schema.sql"
+AUTH_SCHEMA_PATH = SCHEMA_PATH.with_name("auth_schema.sql")
 
 
-def render_schema() -> str:
+def render_schema(auth: bool = False) -> str:
     dialect = sqlite.dialect()
     compiler = dialect.ddl_compiler(dialect, None)
     sections = [
@@ -22,7 +24,12 @@ def render_schema() -> str:
         "PRAGMA foreign_keys = ON;",
         "BEGIN TRANSACTION;",
     ]
+    if auth:
+        sections[0] += " --auth"
+        sections[1] = "-- Additive authentication extension. Apply after the unchanged schema.sql."
     for table in Base.metadata.sorted_tables:
+        if (table.name in AUTH_TABLES) != auth:
+            continue
         definitions = [compiler.process(CreateColumn(column)) for column in table.columns]
         # Explicit ordering keeps the checked-in script stable across Python processes.
         constraints = [table.primary_key] + sorted(
@@ -41,11 +48,15 @@ def render_schema() -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=SCHEMA_PATH)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--auth", action="store_true", help="Export only the additive authentication tables."
+    )
     args = parser.parse_args()
+    args.output = args.output or (AUTH_SCHEMA_PATH if args.auth else SCHEMA_PATH)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(render_schema(), encoding="utf-8")
-    print(f"Exported {len(Base.metadata.tables)} tables to {args.output}")
+    args.output.write_text(render_schema(auth=args.auth), encoding="utf-8")
+    print(f"Exported {'authentication' if args.auth else 'core'} tables to {args.output}")
 
 
 if __name__ == "__main__":

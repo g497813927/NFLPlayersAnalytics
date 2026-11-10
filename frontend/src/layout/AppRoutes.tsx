@@ -8,10 +8,21 @@ import {
   TeamsPage,
 } from '../pages';
 import ManagementPage from '../management/ManagementPage';
+import { AdminRoute } from '../features/auth/AdminRoute';
+import { LoginPage } from '../features/auth/LoginPage';
+import { RegisterPage } from '../features/auth/RegisterPage';
 
 export function AppRoutes() {
   return (
     <Routes>
+      <Route
+        path="/login"
+        element={<LoginPage />}
+      />
+      <Route
+        path="/register"
+        element={<RegisterPage />}
+      />
       <Route
         path="/"
         element={<HomePage />}
@@ -38,7 +49,11 @@ export function AppRoutes() {
       />
       <Route
         path="/manage"
-        element={<ManagementPage />}
+        element={
+          <AdminRoute>
+            <ManagementPage />
+          </AdminRoute>
+        }
       />
       <Route
         path="*"

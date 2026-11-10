@@ -30,7 +30,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    allow_headers=["Content-Type", "X-CSRF-Token"],
+    allow_credentials=True,
     expose_headers=["X-Request-ID"],
 )
 install_error_handlers(app)
