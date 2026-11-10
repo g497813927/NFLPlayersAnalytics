@@ -39,7 +39,8 @@ class RequestGuardMiddleware:
         await response(scope, receive, send)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        path = scope.get("path", "")
+        # Match FastAPI's slash-redirect variants before inspecting credentials.
+        path = scope.get("path", "").rstrip("/")
         if (
             scope["type"] != "http"
             or not self.settings.waf_enabled
