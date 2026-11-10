@@ -35,12 +35,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     void refresh();
     const synchronize = () => void refresh();
-    const expire = () => {
-      generation.current += 1;
-      applyAccount({ user: null, csrf_token: null });
-    };
     window.addEventListener('focus', synchronize);
-    window.addEventListener('account-session-expired', expire);
+    // A late 401 may belong to a previous session. Read the current cookie's
+    // account instead of clearing a newer sign-in and its CSRF token.
+    window.addEventListener('account-session-expired', synchronize);
     if (typeof BroadcastChannel !== 'undefined') {
       try {
         channel.current = new BroadcastChannel('nfl-account-updates');
@@ -53,10 +51,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       generation.current += 1;
       window.removeEventListener('focus', synchronize);
-      window.removeEventListener('account-session-expired', expire);
+      window.removeEventListener('account-session-expired', synchronize);
       channel.current?.close();
     };
-  }, [applyAccount, refresh]);
+  }, [refresh]);
 
   async function authenticate(path: string, values: Credentials | Registration) {
     mutationInFlight.current = true;

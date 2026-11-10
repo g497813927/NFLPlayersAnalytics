@@ -84,7 +84,12 @@ export async function api<T>(
     if (error instanceof Error && error.name === 'AbortError') throw error;
     throw new ApiError('The API is unavailable. Start the backend, then try again.');
   }
-  if (!path.startsWith('/debug/') && !path.startsWith('/auth/') && path !== '/health') {
+  if (
+    !path.startsWith('/debug/') &&
+    !path.startsWith('/auth/') &&
+    !path.startsWith('/me/') &&
+    path !== '/health'
+  ) {
     const requestId = response.headers.get('X-Request-ID');
     if (requestId) {
       latestRequestId = requestId;
