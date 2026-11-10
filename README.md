@@ -129,6 +129,47 @@ Favorite routes under `/api/me/favorite-teams` always use the signed-in owner.
 Devices must reach the same backend/database; separate local checkouts do not
 share favorites. Reload or refocus the app to fetch changes made elsewhere.
 
+## Request guard (WAF-like plugin)
+
+The optional `RequestGuardMiddleware` runs before API handlers. It rejects common
+SQL-injection probes in URLs and JSON values (union-select, stacked destructive
+statements, quoted boolean probes, and common time-delay functions), limits
+request bodies to 64 KiB, and limits each peer IP to 180 API requests per minute.
+Ordinary names such as `O'Neal` remain valid. Password fields are excluded from
+signature scanning, so the guard does not restrict legitimate passphrases.
+
+Five SQL probes or failed sign-ins within five minutes temporarily block the
+peer for five minutes. Exceeding the request rate also starts a temporary block.
+Responses use the normal readable error envelope: 403 for a detected probe,
+413 for an oversized body, and 429 with `Retry-After` while blocked. Health and
+CORS preflight requests are exempt. Bodies have a ten-second receive timeout;
+query strings are limited to 8 KiB. Guard logs contain reason codes and peer IPs,
+never request bodies, cookies, or passwords.
+
+| Setting in `backend/.env`   | Default | Meaning                                                                                    |
+| --------------------------- | ------- | ------------------------------------------------------------------------------------------ |
+| `WAF_ENABLED`               | `true`  | Enable the request guard. Auth, CSRF, constraints, and bound SQL remain active when false. |
+| `WAF_REQUESTS_PER_MINUTE`   | `180`   | API requests permitted per peer IP in a rolling minute.                                    |
+| `WAF_STRIKE_LIMIT`          | `5`     | Probes/failed sign-ins before temporary blocking.                                          |
+| `WAF_STRIKE_WINDOW_SECONDS` | `300`   | Rolling window for counting strikes.                                                       |
+| `WAF_BAN_SECONDS`           | `300`   | Temporary blocking duration.                                                               |
+| `WAF_MAX_BODY_BYTES`        | `65536` | Maximum API request body size.                                                             |
+
+Restart the backend after changes. This is an application-level prototype
+plugin, not an installed OS firewall or the Fail2ban daemon. State is bounded
+in memory, private to each server process, and cleared on restart. Wait for
+`Retry-After` or restart your local backend to clear a demo block. Through Vite,
+all browsers share the proxy's loopback peer IP and therefore its limits. Do not
+use these per-process limits as distributed or production DDoS protection.
+The supplied launcher uses `--no-proxy-headers` so caller-supplied
+`X-Forwarded-For` cannot choose a fresh IP. Keep that option with custom launchers;
+a production reverse proxy needs an explicit trusted-proxy design.
+
+Signature checks can have false positives and cannot recognize every injection.
+SQLAlchemy expressions/bound parameters remain the actual SQL-injection defense;
+never concatenate user input into SQL or weaken that rule because the guard is
+present. This follows the [OWASP SQL injection prevention guidance](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html).
+
 ## Game center
 
 Open **Games** or **Explore game center** on the homepage. The layout takes

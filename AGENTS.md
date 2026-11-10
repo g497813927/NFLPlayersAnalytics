@@ -205,3 +205,13 @@ it, without overwriting remote work or force-pushing as routine conflict repair.
 - Setup/upgrade_auth may add the two new auth tables to an intact legacy schema;
   never alter core tables or reset data for this feature. Existing .env values
   remain intact. Normal startup does not perform upgrades.
+
+## Request guard
+
+- Keep SQLAlchemy queries parameterized regardless of WAF_ENABLED. The optional
+  ASGI request guard is a small defensive layer, not a comprehensive WAF.
+- Never scan/log password contents or log request bodies/cookies. Guard logs
+  contain only a reason code, peer IP, and retry duration.
+- Keep --no-proxy-headers in the local Uvicorn launcher to prevent forged
+  forwarded IPs bypassing limits. Vite shares one peer-IP bucket; per-process
+  bans reset on restart and are not distributed production protection.

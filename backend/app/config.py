@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     sql_debug_ui: bool = False
     session_hours: int = Field(default=168, ge=1, le=720)
     session_cookie_secure: bool = False
+    waf_enabled: bool = True
+    waf_requests_per_minute: int = Field(default=180, ge=10, le=10_000)
+    waf_strike_limit: int = Field(default=5, ge=1, le=100)
+    waf_strike_window_seconds: int = Field(default=300, ge=10, le=3600)
+    waf_ban_seconds: int = Field(default=300, ge=1, le=86_400)
+    waf_max_body_bytes: int = Field(default=65_536, ge=1024, le=1_048_576)
     cors_origins: list[str] = ["http://127.0.0.1:5173", "http://localhost:5173"]
 
     @property

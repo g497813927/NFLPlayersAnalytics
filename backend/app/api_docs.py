@@ -25,6 +25,9 @@ Interactive writes change your local database.
   UTC offset such as `2026-11-01T18:00:00Z`.
 - Failed writes roll back and return a readable `error.message`.
   The Responses section documents the actual error envelope.
+- The optional request guard rejects common SQL probes, oversized requests,
+  and repeated abuse. A temporary block returns 429 with `Retry-After`.
+  SQL remains parameterized independently of this guard.
 - Every response includes `X-Request-ID`. With development SQL inspection
   enabled, admins can use this ID in the **Development** section to inspect emitted SQL.
 """
@@ -98,6 +101,31 @@ def documented_error(description: str, code: str, message: str) -> dict:
 
 
 SERVER_RESPONSES = {
+    403: documented_error(
+        "The request guard rejected suspicious query syntax.",
+        "request_blocked",
+        "This request contains unsupported query syntax. Use ordinary names or values and try again.",
+    ),
+    408: documented_error(
+        "The request body took too long to arrive.",
+        "request_timeout",
+        "This request took too long. Please try again.",
+    ),
+    413: documented_error(
+        "The request body exceeds the configured size limit.",
+        "body_too_large",
+        "This request is too large. Send fewer or shorter values.",
+    ),
+    414: documented_error(
+        "The query string exceeds 8 KiB.",
+        "query_too_large",
+        "Shorten the search or filter values and try again.",
+    ),
+    429: documented_error(
+        "Temporary peer-IP block; see the Retry-After response header.",
+        "temporarily_blocked",
+        "Too many requests. Try again in 300 seconds.",
+    ),
     500: documented_error(
         "Unexpected failure; internal details are kept in the backend logs.",
         "unexpected_error",
@@ -136,7 +164,7 @@ WRITE_RESPONSES = {
         "Please sign in to continue.",
     ),
     403: documented_error(
-        "An admin role or valid CSRF token is required.",
+        "An admin role or valid CSRF token is required, or the request guard blocked query syntax.",
         "admin_required",
         "Only an administrator can change shared sports records.",
     ),
