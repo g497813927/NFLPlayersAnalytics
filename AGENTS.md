@@ -108,6 +108,10 @@ pagination; do not filter only the first API page.
 
 ## Database rules
 
+Season/year filters refer to the stored season, including dates in the following
+calendar year. Team detail rosters, memberships, and statistics share that filter
+and retain independent pagination.
+
 - Treat `models.py` and its imported entity definitions as the schema source.
   `db/schema.sql` is a coursework submission artifact: preserve it
   byte-for-byte during refactors and documentation work. Only change it when the

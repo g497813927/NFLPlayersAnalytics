@@ -3,6 +3,7 @@ import { Button, Card } from 'antd';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../features/auth/useAuth';
 import { FilterSelect, PageHeading, ResourceTable } from '../components';
+import { SeasonSelect } from '../components/SeasonSelect';
 import { athleteName, useData, useLabels } from '../context';
 import type { PageFilters } from './filters';
 import { useList } from './hooks/useList';
@@ -31,6 +32,12 @@ export function StatisticsPage() {
       />
       <Card className="data-card">
         <div className="filter-bar">
+          <SeasonSelect
+            value={filters.season_id}
+            onChange={(season_id) =>
+              setFilters((current) => ({ ...current, season_id, game_id: undefined }))
+            }
+          />
           <FilterSelect
             label="All statistics"
             options={lookups.stat_definitions.map((definition) => ({
@@ -46,10 +53,15 @@ export function StatisticsPage() {
           />
           <FilterSelect
             label="All games"
-            options={lookups.games.map((game) => ({
-              value: game.game_id,
-              label: labels.game(game.game_id),
-            }))}
+            value={filters.game_id}
+            options={lookups.games
+              .filter(
+                (game) => filters.season_id === undefined || game.season_id === filters.season_id,
+              )
+              .map((game) => ({
+                value: game.game_id,
+                label: labels.game(game.game_id),
+              }))}
             onChange={(game_id) => setFilters((current) => ({ ...current, game_id }))}
           />
           <FilterSelect
