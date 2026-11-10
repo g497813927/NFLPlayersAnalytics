@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Card } from 'antd';
+import { Button, Card, Space } from 'antd';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../features/auth/useAuth';
 import { FilterSelect, PageHeading, ResourceTable } from '../components';
@@ -23,11 +23,16 @@ export function StatisticsPage() {
         title="Statistics"
         description="Connect individual and team performance to the game where it happened."
         action={
-          isAdmin ? (
-            <Link to="/manage?entity=performance-statistics">
-              <Button>Edit statistics</Button>
+          <Space wrap>
+            <Link to="/compare">
+              <Button>Compare teams & players</Button>
             </Link>
-          ) : undefined
+            {isAdmin && (
+              <Link to="/manage?entity=performance-statistics">
+                <Button>Edit statistics</Button>
+              </Link>
+            )}
+          </Space>
         }
       />
       <Card className="data-card">

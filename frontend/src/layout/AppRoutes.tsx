@@ -11,6 +11,7 @@ import ManagementPage from '../management/ManagementPage';
 import { AdminRoute } from '../features/auth/AdminRoute';
 import { LoginPage } from '../features/auth/LoginPage';
 import { RegisterPage } from '../features/auth/RegisterPage';
+import { ComparisonPage } from '../pages/ComparisonPage';
 
 export function AppRoutes() {
   return (
@@ -46,6 +47,10 @@ export function AppRoutes() {
       <Route
         path="/statistics"
         element={<StatisticsPage />}
+      />
+      <Route
+        path="/compare"
+        element={<ComparisonPage />}
       />
       <Route
         path="/manage"

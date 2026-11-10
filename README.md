@@ -203,6 +203,41 @@ close button/Escape returns to the content.
 
 No live sports feed, real player information, or external sports API is used.
 
+## Compare teams and players
+
+Open **Compare** in the navigation, or **Compare teams & players** on the
+Statistics page. Choose **Teams** or **Players**, select a season, then choose
+two different records. The swap button exchanges the two sides. Selectors
+include every team or player with a roster membership in that season; players
+show their position and team context. Comparison is public and read-only.
+
+- Charts aggregate all saved statistics from **completed games** in the chosen
+  season, rather than just the first page of results. Simulated game-center
+  events never enter these figures.
+- Each statistic uses its definition's calculation: sum, arithmetic average of
+  recorded values, minimum, maximum, or latest value. Latest is ordered by game
+  time, game ID, and statistic ID. The caption names the calculation and shows
+  how many games contributed to each value.
+- A dash means no recorded value, not zero. Each metric has its own scale;
+  negative values remain visible, and a larger value does not always mean better.
+  Team comparisons use recorded team statistics, not sums of player records.
+- Team and player selections reset when the season or comparison type changes.
+  Saving a comparison to an account remains deferred.
+
+Swagger UI documents both read-only endpoints under **Comparisons**:
+
+```text
+GET /api/comparisons/options?season_id=5
+GET /api/comparisons?subject_type=team&season_id=5&left_id=1&right_id=2
+```
+
+Use `subject_type=athlete` for players, and IDs from the options response.
+Invalid or duplicate selections return readable errors. No schema changes or
+database initialization are needed for this page.
+
+Preview captures: [team comparison](docs/screenshots/team-comparison.jpg) and
+[player comparison](docs/screenshots/player-comparison.jpg).
+
 ## Season and year filters
 
 On **Teams**, use **Season / year** to find teams with a roster for that season.
@@ -323,6 +358,7 @@ If a sandbox prevents writes to the normal package caches, use
 
 - Home with connection status, record counts, and recent results.
 - Teams, athletes, games, statistics, and basic standings backed by the API.
+- Side-by-side team/player season comparisons.
 - Season filters for team rosters, player memberships, and recorded statistics.
 - Admin-only Data Management forms for teams, athletes, rosters, memberships, games and
   their participants, and individual/team performance statistics.
@@ -561,7 +597,7 @@ ten account attempts per client IP per minute; it is not distributed protection.
 
 There is no automated test suite yet. This phase uses static checks and targeted
 manual walkthroughs, including the [SQL injection demo](docs/SQL_INJECTION_DEMO.md)
-and the roster capture above. Those demonstrate specific cases; do not
+and the comparison and roster captures above. Those demonstrate specific cases; do not
 interpret the prototype as fully tested.
 
 Later phases can add account management, synced comparisons, advanced

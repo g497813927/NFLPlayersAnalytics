@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from . import (
     athletes,
     auth,
+    comparisons,
     development,
     favorites,
     games,
@@ -22,6 +23,7 @@ router = APIRouter(prefix="/api")
 
 router.include_router(auth.router)
 router.include_router(favorites.router)
+router.include_router(comparisons.router)
 router.include_router(system.router)
 router.include_router(overview.router)
 router.include_router(lookups.router)

@@ -108,6 +108,13 @@ pagination; do not filter only the first API page.
 
 ## Database rules
 
+The Compare page aggregates all recorded statistics for two teams or athletes
+within one season, using completed games only. Respect each definition's
+`calc_type`; do not sum averages or substitute zero for missing data. Team
+statistics are recorded team-subject rows, not sums of athlete rows. Comparison
+selectors use complete season rosters, independently of list pagination.
+Comparisons remain read-only and unsaved.
+
 Season/year filters refer to the stored season, including dates in the following
 calendar year. Team detail rosters, memberships, and statistics share that filter
 and retain independent pagination.
