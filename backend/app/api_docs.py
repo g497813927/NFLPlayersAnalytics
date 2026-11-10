@@ -78,6 +78,10 @@ API_TAGS = [
         "description": "Record one statistic for either an athlete or a team in a game.",
     },
     {
+        "name": "Comparisons",
+        "description": "Compare two teams or athletes in the same season using all saved statistics from completed games.",
+    },
+    {
         "name": "Standings",
         "description": "Read basic standings derived from completed games; direct edits are unavailable.",
     },

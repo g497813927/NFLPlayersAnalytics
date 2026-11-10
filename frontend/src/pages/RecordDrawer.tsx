@@ -1,22 +1,14 @@
 import { Alert, Drawer } from 'antd';
 import { query } from '../api';
 import { athleteName, useLabels, useResource } from '../context';
-import type {
-  Athlete,
-  Game,
-  Membership,
-  Paged,
-  PerformanceStatistic,
-  Roster,
-  Team,
-} from '../types';
+import type { Athlete, Game, Membership, Paged, PerformanceStatistic, Team } from '../types';
 import { AthleteDetails } from './details/AthleteDetails';
 import { GameDetails } from './details/GameDetails';
 import { MembershipHistory } from './details/MembershipHistory';
 import { PerformanceHistory } from './details/PerformanceHistory';
 import { TeamDetails } from './details/TeamDetails';
 
-type RecordDrawerProps = { onClose: () => void } & (
+type RecordDrawerProps = { onClose: () => void; initialSeasonId?: number } & (
   | { kind: 'team'; record: Team | null }
   | { kind: 'athlete'; record: Athlete | null }
   | { kind: 'game'; record: Game | null }
@@ -31,13 +23,8 @@ export function RecordDrawer(props: RecordDrawerProps) {
         ? props.record?.athlete_id
         : props.record?.game_id;
   const memberships = useResource<Paged<Membership>>(
-    props.record && props.kind !== 'game'
+    props.record && props.kind === 'athlete'
       ? `/memberships${query({ [`${props.kind}_id`]: id, page_size: 200 })}`
-      : null,
-  );
-  const rosters = useResource<Paged<Roster>>(
-    props.record && props.kind === 'team'
-      ? `/rosters${query({ team_id: id, page_size: 200 })}`
       : null,
   );
   const statistics = useResource<Paged<PerformanceStatistic>>(
@@ -53,7 +40,7 @@ export function RecordDrawer(props: RecordDrawerProps) {
         : props.record
           ? labels.game(id)
           : '';
-  const hasMoreRecords = [memberships, rosters, statistics].some(
+  const hasMoreRecords = [memberships, statistics].some(
     (resource) => (resource.data?.total ?? 0) > 200,
   );
 
@@ -68,12 +55,13 @@ export function RecordDrawer(props: RecordDrawerProps) {
         <>
           {props.kind === 'team' && (
             <TeamDetails
+              key={`${props.record.team_id}-${props.initialSeasonId ?? 'all'}`}
               team={props.record}
-              rosters={rosters}
+              initialSeasonId={props.initialSeasonId}
             />
           )}
           {props.kind === 'athlete' && <AthleteDetails athlete={props.record} />}
-          {props.kind !== 'game' && (
+          {props.kind === 'athlete' && (
             <MembershipHistory
               kind={props.kind}
               resource={memberships}

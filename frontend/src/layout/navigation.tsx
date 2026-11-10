@@ -3,6 +3,7 @@ import {
   CalendarOutlined,
   DatabaseOutlined,
   HomeOutlined,
+  SwapOutlined,
   TeamOutlined,
   TrophyOutlined,
   UserOutlined,
@@ -20,6 +21,7 @@ export const navigation: NavigationItem[] = [
   { key: '/games', label: 'Games', icon: <CalendarOutlined /> },
   { key: '/standings', label: 'Standings', icon: <TrophyOutlined /> },
   { key: '/statistics', label: 'Statistics', icon: <BarChartOutlined /> },
+  { key: '/compare', label: 'Compare', icon: <SwapOutlined /> },
   { type: 'divider' },
   { key: '/manage', label: 'Data management', icon: <DatabaseOutlined /> },
 ];

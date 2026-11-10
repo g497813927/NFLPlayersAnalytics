@@ -3,6 +3,7 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 import { Button, Card, Input } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { FilterSelect, PageHeading, ResourceTable } from '../components';
+import { SeasonSelect } from '../components/SeasonSelect';
 import { useData, useLabels } from '../context';
 import type { Team } from '../types';
 import type { PageFilters } from './filters';
@@ -65,6 +66,10 @@ export function TeamsPage() {
             aria-label="Search team or city"
             onSearch={(q) => setFilters((current) => ({ ...current, q }))}
           />
+          <SeasonSelect
+            value={filters.season_id}
+            onChange={(season_id) => setFilters((current) => ({ ...current, season_id }))}
+          />
           <FilterSelect
             label="All leagues"
             options={lookups.leagues.map((league) => ({
@@ -83,6 +88,7 @@ export function TeamsPage() {
       <RecordDrawer
         kind="team"
         record={selected}
+        initialSeasonId={filters.season_id}
         onClose={() => setSelected(null)}
       />
     </>

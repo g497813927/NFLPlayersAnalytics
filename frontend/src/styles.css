@@ -629,6 +629,10 @@ input {
 .ant-drawer-body .ant-descriptions {
   margin-bottom: 20px;
 }
+.team-season-filter {
+  padding-inline: 0;
+  margin-bottom: 24px;
+}
 .matchup-panel {
   display: flex;
   justify-content: space-around;

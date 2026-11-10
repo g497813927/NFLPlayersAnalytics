@@ -6,9 +6,12 @@ import type { Membership, Paged, ResourceState } from '../../types';
 interface MembershipHistoryProps {
   kind: 'team' | 'athlete';
   resource: ResourceState<Paged<Membership>>;
+  page?: number;
+  pageSize?: number;
+  onPageChange?: (page: number, pageSize: number) => void;
 }
 
-export function MembershipHistory({ kind, resource }: MembershipHistoryProps) {
+export function MembershipHistory({ kind, resource, ...pagination }: MembershipHistoryProps) {
   const labels = useLabels();
   const columns: TableColumnsType<Membership> = [
     ...(kind === 'team'
@@ -29,6 +32,7 @@ export function MembershipHistory({ kind, resource }: MembershipHistoryProps) {
     <>
       <h3>{kind === 'team' ? 'Roster memberships' : 'Team history'}</h3>
       <ResourceTable
+        {...pagination}
         resource={resource}
         rowKey="membership_id"
         columns={columns}
