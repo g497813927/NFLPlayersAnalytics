@@ -13,6 +13,16 @@ from scripts.export_schema import AUTH_SCHEMA_PATH, SCHEMA_PATH
 from scripts.seed import print_counts, row_counts, seed_data
 
 
+def schema_body(path: Path) -> str:
+    """Read one generated script without its standalone transaction wrapper."""
+    source = path.read_text(encoding="utf-8")
+    _header, separator, body = source.partition("\nBEGIN TRANSACTION;\n")
+    body = body.rstrip()
+    if not separator or not body.endswith("\nCOMMIT;"):
+        raise ValueError(f"Expected a generated, transaction-wrapped schema in {path.name}.")
+    return body.removesuffix("\nCOMMIT;")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--method", choices=("sql", "orm"), default="orm")
@@ -27,6 +37,14 @@ def main() -> None:
         help="Also populate fictional demo data after creating tables.",
     )
     args = parser.parse_args()
+
+    # Read both files before any reset or DDL. Each remains independently usable,
+    # but this initialization command must apply them as a single transaction.
+    combined_schema = (
+        "\n".join(schema_body(path) for path in (SCHEMA_PATH, AUTH_SCHEMA_PATH))
+        if args.method == "sql"
+        else None
+    )
 
     if args.reset:
         if engine.dialect.name != "sqlite" or engine.url.database in (None, "", ":memory:"):
@@ -50,8 +68,8 @@ def main() -> None:
             )
         connection = engine.raw_connection()
         try:
-            connection.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
-            connection.executescript(AUTH_SCHEMA_PATH.read_text(encoding="utf-8"))
+            connection.execute("PRAGMA foreign_keys = ON;")
+            connection.executescript(f"BEGIN TRANSACTION;\n{combined_schema}\nCOMMIT;")
         except Exception:
             connection.rollback()
             raise

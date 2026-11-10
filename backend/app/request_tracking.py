@@ -20,6 +20,7 @@ async def correlate_request(request: Request, call_next):
         and request.url.path != "/api/health"
         and not request.url.path.startswith("/api/debug/")
         and not request.url.path.startswith("/api/auth/")
+        and not request.url.path.startswith("/api/me/")
     ):
         trace = SQLTrace(request_id, request.method, request.url.path)
         token = active_trace.set(trace)
