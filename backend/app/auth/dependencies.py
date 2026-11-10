@@ -1,11 +1,13 @@
 """Read the current role for every request; never trust a client-supplied role."""
 
 import secrets
+from collections.abc import Iterator
 from typing import Annotated
 
 from fastapi import Depends, Header, Request
 from fastapi.security import APIKeyCookie
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from ..config import settings
 from ..errors import AppError
@@ -15,6 +17,14 @@ from .sessions import COOKIE_NAME, csrf_token, token_digest, utc_now
 
 session_cookie = APIKeyCookie(name=COOKIE_NAME, auto_error=False)
 CookieToken = Annotated[str | None, Depends(session_cookie)]
+
+
+def get_account_session() -> Iterator[Session]:
+    with AuthSessionLocal() as session:
+        yield session
+
+
+AccountDB = Annotated[Session, Depends(get_account_session)]
 
 
 def check_origin(request: Request) -> None:
