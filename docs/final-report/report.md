@@ -1089,13 +1089,14 @@ The public repository is the source for the application, reproducible setup, dat
 
 [Public project repository](https://github.com/g497813927/NFLPlayersAnalytics)
 
-Table 46 maps deliverables to their actual locations. The editable Word report and PDF contain all three team names in author metadata. The original core schema was verified unchanged with SHA-256 d1653c7c2f2c42049b8182fc0c917c8f777de4a5b18be2b0515c2a6bdead2bc1.
+Table 46 maps deliverables to their actual locations. The editable Word report and PDF contain all three team names in author metadata.
 
 Table 46. Repository evidence map
 
 | Location                   | Content                                                                                                                   |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | README.md                  | Short project overview, screenshots, quick start, and guide links.                                                        |
+| .github/workflows/         | Node/Python CI: formatting, linting, type/build, and syntax checks for pull requests and pushes.                          |
 | backend/ and frontend/     | API, SQLAlchemy mappings, React/TSX task screens, and dependency lockfiles.                                               |
 | db/                        | Unchanged core schema.sql plus auth_schema.sql.                                                                           |
 | docs/ guides               | Setup, user tasks, project structure, CI, security rules, and limitations.                                                |
@@ -1105,9 +1106,9 @@ Table 46. Repository evidence map
 
 ## 8.2 Evidence Method and Submission Notes
 
-Evidence uses source baseline baf2c23a8291dfecc2d4cd73e93c14b05f1c8a25 plus the account-completion changes accompanying this report. A new disposable SQLite file was initialized using the SQL scripts and deterministic seed; the developer’s existing database was not reset. Browser captures show actual local application behavior. Team/player/roster screenshots from the preceding feature work were retained, and the two report result sets were rechecked through the current API. Figure captions identify form states rather than claiming an unobserved success.
+Evidence was collected against the accompanying account changes in a disposable SQLite database initialized from the SQL scripts and deterministic seed. The developer’s database was not reset. Browser images show actual local states. Earlier team, player, and roster images were retained; comparison results were rechecked through the current API. Captions distinguish form states from observed successful writes.
 
-The sample appendix is a read-only, sanitized snapshot. Credential hashes and session digests are withheld before publishing. Runtime verification consisted of the repository’s format/lint/build/Python-syntax checks and targeted manual browser/API checks. These are not an automated test suite or a complete security assessment. The dated review snapshot in Section 8.4 records the reviewed revisions; the pull requests remain the live source for subsequent CI and review status.
+Sample extracts are read-only and redact credential hashes and session digests. Verification used formatting, lint, build, and syntax checks plus focused browser/API and controlled concurrency checks. Section 8.4 records dated review results; use the live PRs for later status. These checks do not constitute an automated test suite or a complete security assessment.
 
 ## 8.3 Initial ER Diagram
 
