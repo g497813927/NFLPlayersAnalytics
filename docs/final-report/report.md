@@ -1085,24 +1085,23 @@ The prototype has limits. It has no automated test suite, production migration h
 
 ## 8.1 Repository and Deliverables
 
-The public repository is the source for the application, reproducible setup, database scripts, and supporting report materials. Its public visibility was checked while preparing this report. The existing folder layout is retained; no files were moved merely to match an example hierarchy.
+The public repository contains the application, reproducible setup, database scripts, and project guides. The existing folder layout is retained.
 
 [Public project repository](https://github.com/g497813927/NFLPlayersAnalytics)
 
-Table 46 maps deliverables to their actual locations. The editable Word report and PDF contain all three team names in author metadata.
+Table 46 maps the application and development files to their locations.
 
-Table 46. Repository evidence map
+Table 46. Project structure
 
-| Location                   | Content                                                                                                                   |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| README.md                  | Short project overview, screenshots, quick start, and guide links.                                                        |
-| .github/workflows/         | Node/Python CI: formatting, linting, type/build, and syntax checks for pull requests and pushes.                          |
-| backend/ and frontend/     | API, SQLAlchemy mappings, React/TSX task screens, and dependency lockfiles.                                               |
-| db/                        | Unchanged core schema.sql plus auth_schema.sql.                                                                           |
-| docs/ guides               | Setup, user tasks, project structure, CI, security rules, and limitations.                                                |
-| docs/final-report/         | Final PDF/DOCX, evidence index, schema metadata, sample rows, query captures, UML diagrams, and this report in text form. |
-| docs/screenshots/          | Original screenshot captures, including the final-report walkthrough.                                                     |
-| Section 7.1 of this report | Reserved individual contribution paragraphs; intentionally blank.                                                         |
+| Location                | Content                                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| README.md               | Short project overview, screenshots, quick start, and guide links.                               |
+| .github/workflows/      | Node/Python CI: formatting, linting, type/build, and syntax checks for pull requests and pushes. |
+| backend/ and frontend/  | API, SQLAlchemy mappings, React/TSX task screens, and dependency lockfiles.                      |
+| db/                     | Unchanged core schema.sql plus auth_schema.sql.                                                  |
+| docs/ guides            | Setup, user tasks, project structure, CI, security rules, and limitations.                       |
+| docs/screenshots/       | Application screenshots.                                                                         |
+| AGENTS.md and CLAUDE.md | Project workflow, coding conventions, and guidance for coding agents.                            |
 
 ## 8.2 Evidence Method and Submission Notes
 
