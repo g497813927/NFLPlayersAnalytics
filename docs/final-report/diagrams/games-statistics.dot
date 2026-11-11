@@ -11,7 +11,7 @@ sport [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" C
 standing [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>standing</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK standing_id</TD></TR><TR><TD ALIGN="LEFT">FK team_id</TD></TR><TR><TD ALIGN="LEFT">FK season_id</TD></TR></TABLE>>];
 season -> game [label="1 : 0..*"];
 venue -> game [label="0..1 : 0..*"];
-game -> game_participant [label="1 : 0..*"];
+game -> game_participant [label="1 : 0..2"];
 team -> game_participant [label="1 : 0..*"];
 game -> performance_statistic [label="1 : 0..*"];
 stat_definition -> performance_statistic [label="1 : 0..*"];

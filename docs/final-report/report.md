@@ -50,9 +50,9 @@ The app_user table holds identity labels and roles. user_credential stores one A
 
 ## 2.2 Authentication (Login System)
 
-Public signup always creates a fan and does not accept a role. The sign-in form is shared by all roles. Logout removes the current session and clears the cookie. Password change verifies the existing password, writes the new hash and revokes every previous session in one transaction, then issues a new session and CSRF token for the current browser. A concurrent change is detected using the old password hash in the conditional update.
+Public signup always creates a fan and does not accept a role. The sign-in form is shared by all roles. Logout removes the current session and clears the cookie. Password change verifies the existing password, writes the new hash and revokes every previous session in one transaction, then issues a new session and CSRF token for the current browser. A conditional credential write coordinates concurrent logins with password changes, so a login cannot issue a session using a revoked hash.
 
-The first administrator is created through the local Python setup command, which prompts for a hidden password. Subsequent admins can create users through Account menu → Create a user. That flow never overwrites an existing email and never switches the administrator into the new account. Figures 1–7 show the user-facing account flows; Table 2 records additional HTTP observations.
+Administrators are created through the local Python setup command, which prompts for a hidden password. Signed-in admins can create fan or analyst accounts through Account menu → Create a user; the API rejects administrator roles. That flow never overwrites an existing email and never switches the administrator into the new account. Figures 1–7 show the user-facing account flows; Table 2 records additional HTTP observations.
 
 Listing 1. Create the first administrator from the repository root
 
@@ -98,7 +98,7 @@ Figure 5. Password-change form for a signed-in normal user.
 
 ### Administrator user creation
 
-Figure 6 shows the administrator preparing a normal user account. Role options are offered only in this admin flow. The initial password is masked and is hashed before storage.
+Figure 6 shows the administrator preparing a normal user account. Only fan and analyst roles are offered in this admin flow; administrators are provisioned locally. The initial password is masked and is hashed before storage.
 
 Figure 6. Admin form before creating the synthetic Report Scout account.
 
@@ -242,7 +242,7 @@ Figure 10. Final UML view: sports, leagues, teams, seasons, rosters, and members
 
 ### Game and statistic relationships
 
-Figure 11 connects games to seasons, optional venues, participants, and performance rows. Each statistic belongs to one game and definition, with exactly one athlete or team subject. The database permits zero or more participant rows structurally; application validation saves exactly one home and one away participant with each game and requires both scores for completed games. An athlete statistic also requires a qualifying membership on a participating team on the game date.
+Figure 11 connects games to seasons, optional venues, participants, and performance rows. Each statistic belongs to one game and definition, with exactly one athlete or team subject. The database permits zero to two participant rows: the home/away CHECK and unique game/role key cap the count at two; application validation saves exactly one home and one away participant with each game and requires both scores for completed games. An athlete statistic also requires a qualifying membership on a participating team on the game date.
 
 Figure 11. Final UML view: games, participants, statistics, definitions, and derived standings.
 
