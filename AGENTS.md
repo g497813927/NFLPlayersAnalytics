@@ -207,7 +207,8 @@ and retain independent pagination.
 ## Handoff and Git hygiene
 
 Update documentation when setup commands, schema rules, flags, or API contracts
-change. Keep agent instructions here; `CLAUDE.md` should remain a short pointer.
+change. Keep the full shared instructions here. `CLAUDE.md` includes a stand-alone
+working guide and must stay consistent with these rules and `docs/PROJECT_STRUCTURE.md`.
 
 Never commit local databases, `.env` files, credentials, dependency directories,
 caches, build output, or machine-specific logs. Commit the example environment

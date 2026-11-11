@@ -11,7 +11,7 @@ and quality checks live. Start with the folder for the behavior you want to chan
 NFLPlayersAnalytics/
 ├── .github/workflows/quality.yml  # Hosted Node and Python quality checks
 ├── AGENTS.md                     # Shared instructions for coding agents
-├── CLAUDE.md                     # Claude entry point; references AGENTS.md
+├── CLAUDE.md                     # Stand-alone Claude workflow and conventions
 ├── README.md                     # Short overview and quick start
 ├── package.json                  # Shared setup, dev, and check commands
 ├── package-lock.json             # Locked Node tooling dependencies
