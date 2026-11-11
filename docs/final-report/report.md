@@ -114,11 +114,11 @@ Figure 7. Successful in-app user creation with the admin session preserved.
 
 ## 2.3 Security Measures
 
-Passwords use Argon2 hashing rather than plaintext or reversible storage. Cookie tokens are random and only their SHA-256 digests are persisted. Cookies are HttpOnly and SameSite=Lax, with a configurable fixed lifetime of 168 hours by default. The local HTTP demo leaves Secure disabled; an HTTPS deployment must enable it. Argon2 and password hashing are consistent with OWASP password-storage guidance [2].
+Passwords use Argon2 hashing rather than plaintext or reversible storage. Cookie tokens are random and only their SHA-256 digests are persisted. Cookies are HttpOnly and SameSite=Lax, with a configurable fixed lifetime of 168 hours by default. The local HTTP demo leaves Secure disabled; an HTTPS deployment must enable it. Argon2 and password hashing are consistent with OWASP password-storage guidance [[2]](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
 
 Authenticated writes require a valid session and an X-CSRF-Token header. Account requests also require JSON and reject untrusted browser origins. The server requires admin authorization for shared-data writes and user creation. Favorite ownership comes from the session, never a supplied user ID. Account SQL uses a private engine with logging and request capture disabled, including when sports SQL debugging is enabled.
 
-SQLAlchemy expressions pass values as bound parameters. User input is never concatenated into SQL or accepted as arbitrary SQL through the UI. Database constraints and cross-table validation remain active independently of the optional request guard. This follows the parameterized-query approach described by OWASP [1]. The guard adds signatures for obvious probes, body limits, peer-IP rate limits, and temporary bans; it is not a complete WAF or an installed Fail2ban daemon.
+SQLAlchemy expressions pass values as bound parameters. User input is never concatenated into SQL or accepted as arbitrary SQL through the UI. Database constraints and cross-table validation remain active independently of the optional request guard. This follows the parameterized-query approach described by OWASP [[1]](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html). The guard adds signatures for obvious probes, body limits, peer-IP rate limits, and temporary bans; it is not a complete WAF or an installed Fail2ban daemon.
 
 The manual checks in Table 2 were performed against synthetic accounts in the disposable database. They support the listed cases, not an exhaustive security claim. No automated test suite was added.
 
@@ -156,7 +156,7 @@ Figure 9. Browser, API, and database connection paths; account queries use priva
 
 ![Figure 9. Browser, API, and database connection paths; account queries use private sessions.](diagrams/architecture.png)
 
-Sports and account engines use the same configured database. Both enable SQLite foreign keys on every connection. SQLite documents that this setting is connection-specific [3]. The browser never opens the database file directly. Source-of-truth records are accessed through the application; the read-only extracts in this report serve only as coursework evidence.
+Sports and account engines use the same configured database. Both enable SQLite foreign keys on every connection. SQLite documents that this setting is connection-specific [[3]](https://www.sqlite.org/foreignkeys.html). The browser never opens the database file directly. Source-of-truth records are accessed through the application; the read-only extracts in this report serve only as coursework evidence.
 
 ## 3.2 Setup Instructions
 
@@ -212,21 +212,21 @@ Season filters revealed why domain dates matter. A season can end in the followi
 
 ## 4.1 Schema Design
 
-Table 4 maps the initial relational proposal to the implemented design. The original diagram contains 17 core entities. The final design retains those entities and adds two authentication tables. This update does not modify the core schema file; the new password-change and admin-create-user features reuse the existing authentication extension.
+Table 4 maps the initial relational proposal to the implemented design. The Phase 2 ER diagram in Figure 27 shows 16 entities. The normalized core adds saved_comparison, producing 17 tables; user_credential and auth_session then bring the implemented total to 19. This update does not modify the core schema file; the new password-change and admin-create-user features reuse the existing authentication extension.
 
 Table 4. Initial proposal to final implementation
 
-| Area                           | Implemented decision and reason                                                                                      |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| USER entity                    | Mapped to app_user to avoid a reserved or ambiguous SQL name; keeps email, display name, and role.                   |
-| STANDING totals                | Adds ties and derives points as wins + 0.5 × ties. Rank uses win percentage with dense ties.                         |
-| Authentication                 | Adds user_credential (one hash per credentialed user) and auth_session (many expiring token digests).                |
-| Keys and uniqueness            | Game participants use (game_id, team_id); one home/away role per game and one roster per team/season.                |
-| Optional subject/target fields | CHECK constraints require exactly one statistic subject or favorite target, and a valid distinct comparison pair.    |
-| Dates and numeric rules        | Valid season/membership date ranges, nonnegative scores and standing counts; jersey numbers remain nullable strings. |
-| References                     | Explicit CASCADE, SET NULL, or RESTRICT actions preserve the intended ownership/history behavior.                    |
+| Area                                 | Implemented decision and reason                                                                                          |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| USER entity                          | Mapped to app_user to avoid a reserved or ambiguous SQL name; keeps email, display name, and role.                       |
+| STANDING totals                      | Adds ties and derives points as wins + 0.5 × ties. Rank uses win percentage with dense ties.                             |
+| Authentication and saved comparisons | Adds saved_comparison to the Phase 2 model, then user_credential and auth_session for credentials and expiring sessions. |
+| Keys and uniqueness                  | Game participants use (game_id, team_id); one home/away role per game and one roster per team/season.                    |
+| Optional subject/target fields       | CHECK constraints require exactly one statistic subject or favorite target, and a valid distinct comparison pair.        |
+| Dates and numeric rules              | Valid season/membership date ranges, nonnegative scores and standing counts; jersey numbers remain nullable strings.     |
+| References                           | Explicit CASCADE, SET NULL, or RESTRICT actions preserve the intended ownership/history behavior.                        |
 
-The design separates entities so descriptive attributes belong to their own keys: a team name is stored on team, a sport name on sport, and a statistic definition on stat_definition. roster resolves the team–season relationship, membership resolves dated athlete–roster participation, and game_participant resolves team–game participation. These separations avoid repeating league names, athlete profiles, and statistic labels in every observation and follow the intended third-normal-form structure. This is a design explanation, not a formal proof of every functional dependency.
+The initial diagram separates entities and relationships conceptually; the SQL model makes those references explicit as foreign keys. Membership gains start/end dates for historical rosters, and stat_definition uses calc_type for aggregation. Descriptive attributes belong to their own keys: a team name is stored on team, a sport name on sport, and a statistic definition on stat_definition. roster resolves the team–season relationship, membership resolves dated athlete–roster participation, and game_participant resolves team–game participation. These separations avoid repeating league names, athlete profiles, and statistic labels in every observation and follow the intended third-normal-form structure. This is a design explanation, not a formal proof of every functional dependency.
 
 standing is an intentional stored summary, recalculated from completed games within the sports-write transaction. Favorite target columns and comparison pair columns preserve the original proposal with explicit CHECK constraints. saved_comparison and data_import have synthetic records but their full save/import workflows remain deferred; the current Compare page is read-only and does not write saved_comparison.
 
@@ -1093,30 +1093,55 @@ Table 46 maps deliverables to their actual locations. The editable Word report a
 
 Table 46. Repository evidence map
 
-| Location                             | Content                                                                                                                   |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| README.md                            | Short project overview, screenshots, quick start, and guide links.                                                        |
-| backend/ and frontend/               | API, SQLAlchemy mappings, React/TSX task screens, and dependency lockfiles.                                               |
-| db/                                  | Unchanged core schema.sql plus auth_schema.sql.                                                                           |
-| docs/SETUP.md and docs/USER_GUIDE.md | Detailed configuration, startup, task instructions, and limitations.                                                      |
-| docs/final-report/                   | Final PDF/DOCX, evidence index, schema metadata, sample rows, query captures, UML diagrams, and this report in text form. |
-| docs/screenshots/                    | Original screenshot captures, including the final-report walkthrough.                                                     |
-| Section 7.1 of this report           | Reserved individual contribution paragraphs; intentionally blank.                                                         |
+| Location                   | Content                                                                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| README.md                  | Short project overview, screenshots, quick start, and guide links.                                                        |
+| backend/ and frontend/     | API, SQLAlchemy mappings, React/TSX task screens, and dependency lockfiles.                                               |
+| db/                        | Unchanged core schema.sql plus auth_schema.sql.                                                                           |
+| docs/ guides               | Setup, user tasks, project structure, CI, security rules, and limitations.                                                |
+| docs/final-report/         | Final PDF/DOCX, evidence index, schema metadata, sample rows, query captures, UML diagrams, and this report in text form. |
+| docs/screenshots/          | Original screenshot captures, including the final-report walkthrough.                                                     |
+| Section 7.1 of this report | Reserved individual contribution paragraphs; intentionally blank.                                                         |
 
 ## 8.2 Evidence Method and Submission Notes
 
 Evidence uses source baseline baf2c23a8291dfecc2d4cd73e93c14b05f1c8a25 plus the account-completion changes accompanying this report. A new disposable SQLite file was initialized using the SQL scripts and deterministic seed; the developer’s existing database was not reset. Browser captures show actual local application behavior. Team/player/roster screenshots from the preceding feature work were retained, and the two report result sets were rechecked through the current API. Figure captions identify form states rather than claiming an unobserved success.
 
-The sample appendix is a read-only, sanitized snapshot. Credential hashes and session digests are withheld before publishing. Runtime verification consisted of the repository’s format/lint/build/Python-syntax checks and targeted manual browser/API checks. These are not an automated test suite or a complete security assessment. No CI or bot-review status is asserted in this static report; those statuses belong to the accompanying pull requests.
+The sample appendix is a read-only, sanitized snapshot. Credential hashes and session digests are withheld before publishing. Runtime verification consisted of the repository’s format/lint/build/Python-syntax checks and targeted manual browser/API checks. These are not an automated test suite or a complete security assessment. The dated review snapshot in Section 8.4 records the reviewed revisions; the pull requests remain the live source for subsequent CI and review status.
 
-Before submission, the team should fill in each individual contribution paragraph, review the captured evidence, and submit the PDF and public repository link through one designated member. The two missing account features have been implemented; contribution text remains blank by instruction, rather than being invented.
+## 8.3 Initial ER Diagram
 
-## 8.3 References
+Figure 27 reproduces the original diagram from page 9 of the team’s Phase 2 submission. It contains 16 entity boxes, including stat_definition and game_participant, although the narrative separately describes 14 entities. Relationship lines express conceptual references; the later relational schema stores these as explicit foreign-key columns.
 
-The implementation files and captured evidence are the primary sources for project-specific claims. The following external references support the general security and SQLite explanations; accessed November 11, 2026.
+Figure 27. Original Phase 2 ER diagram, reproduced from the team-provided PDF, page 9.
 
-[[1] OWASP SQL Injection Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
+![Figure 27. Original Phase 2 ER diagram, reproduced from the team-provided PDF, page 9.](diagrams/initial-phase2.jpg)
 
-[[2] OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
+Relative to this initial model, the normalized core adds saved_comparison, membership dates, an aggregation rule for each statistic definition, explicit foreign keys, and constraints. Authentication adds two more tables. The proposed import-to-record provenance linkage, CSV export, and account-saved comparison workflow remain deferred; their presence in the initial proposal does not imply an implemented feature.
 
-[[3] SQLite Foreign Key Support](https://www.sqlite.org/foreignkeys.html)
+## 8.4 Review and Verification
+
+Table 47 records the review snapshot taken on November 11, 2026 at 17:16 UTC, before this addendum was committed. Both pull requests were open and unmerged, their Node/Python quality workflows had passed, and no unresolved review threads remained. Codex completed both reviews without unresolved findings. The saved review_snapshot.json includes the revisions and evidence links.
+
+Table 47. Review snapshot before the report addendum
+
+| PR  | Reviewed revision | CI     | Copilot                                         |
+| --- | ----------------- | ------ | ----------------------------------------------- |
+| 11  | e3579fd           | Passed | Approval recommended; no open issues            |
+| 12  | 755ad67           | Passed | No open issues; human document review requested |
+
+Review corrections kept administrator provisioning local, coordinated login with password rotation, and queued browser account mutations so sign-out revokes the final session. The participant diagram now shows zero to two rows per game. The stand-alone Claude guide explicitly includes schema exports and admin authorization. A trailing-slash concern was resolved with the existing normalization and successful requests; a repeated login concern referred to an older revision.
+
+Controlled verification covered both login/password-change orderings and successful or failed password changes followed by queued logout. Formatting, lint, type/build, and Python syntax checks passed. These checks supplement human review and do not replace a future functional test suite.
+
+Figure 28 shows the reviewed fan/analyst role choices. This form was refilled only to capture the revised selector; the original successful creation is shown in Figure 7. Its masked example password was not submitted again.
+
+Figure 28. Reviewed web role choices: fan and analyst; administrator provisioning remains local.
+
+![Figure 28. Reviewed web role choices: fan and analyst; administrator provisioning remains local.](../screenshots/final-report/admin-roles-reviewed.jpg)
+
+Copilot requested human verification of the Word/PDF layout and coursework requirements. The team must still review the rendered report and complete the reserved individual-contribution paragraphs before submission. Neither pull request was merged during the review loop.
+
+[PR 11 account changes](https://github.com/g497813927/NFLPlayersAnalytics/pull/11)
+
+[PR 12 report and documentation](https://github.com/g497813927/NFLPlayersAnalytics/pull/12)

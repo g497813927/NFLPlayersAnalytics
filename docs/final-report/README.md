@@ -17,3 +17,8 @@ submission.
 The documented app includes password change and admin user creation in addition
 to the previously merged accounts, game center, comparisons, and roster filters.
 The original `db/schema.sql` is unchanged.
+
+The appendix includes the original Phase 2 ER diagram and a dated Copilot/Codex
+review snapshot. Source links sit beside the relevant explanations; there is no
+standalone reference page. See the separate
+[project structure guide](../PROJECT_STRUCTURE.md) for folders, entry points, and CI.

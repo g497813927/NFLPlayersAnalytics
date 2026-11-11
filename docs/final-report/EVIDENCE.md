@@ -15,6 +15,7 @@ The existing repository layout is retained.
 - [All ORM columns, keys, and constraints](schema_metadata.json)
 - [Sanitized sample rows and evidence counts](sample_rows.json)
 - [Additional report-only catalog fixtures](catalog_fixtures.json)
+- [Dated automated review snapshot](review_snapshot.json)
 - [Comparison results, emitted SQL, and separate parameters](report_queries.json)
 
 Word creator/last-modified-by and PDF author metadata include John Zhao,
@@ -85,23 +86,32 @@ suite or a comprehensive security assessment.
 | Fan attempts admin user creation         | 403                                                                                       |
 | Admin creation without CSRF              | 403                                                                                       |
 | Duplicate email                          | 409 without overwriting an account                                                        |
+| Admin requests an admin role             | 422; administrator provisioning remains local-only                                        |
 | Admin creates analyst and fan            | 201; created users could sign in                                                          |
 | SQL-like text inside password fields     | Accepted on password change; admin duplicate reaches 409, including trailing-slash routes |
 | Credential logging with SQL_ECHO enabled | Tested passwords, Argon2 hashes, and credential-write SQL absent                          |
 | SQL probe in team search                 | 403 and readable on-screen message                                                        |
 
+Controlled concurrency checks also verified both login/password-change orderings.
+A stale verified login was rejected after rotation; a login that obtained the
+credential lock first had its session revoked by the following password change.
+The actual React account provider was also run with controlled responses: logout
+waited for either a successful or rejected password change, used the current CSRF
+token, and cleared both the browser session and the displayed account. Temporary
+verification harnesses and databases were kept outside the repository.
+
 `npm run check` covers formatting, ESLint, Stylelint, strict TypeScript/Vite,
 Ruff formatting/linting, and Python syntax compilation. It does not establish
-complete behavior or integrity coverage. Hosted CI and review status should be
-read from the accompanying PRs, not inferred from this static report.
+complete behavior or integrity coverage. The dated review snapshot records successful CI and resolved findings before the
+final report addendum. Current status should be read from the accompanying PRs.
 
 ## Preserved artifacts and limits
 
 The supplied Word template was not modified. Its page size, margins, heading
 styles, and original PAGE footer were retained in the new report. Word and PDF
-renders were checked for layout and page-number consistency. All 56 pages were
-visually reviewed. All 30 linked contents entries were checked against their PDF
-pages; 26 figures, 46 tables, and 6 SQL/command listings are numbered.
+renders were checked for layout and page-number consistency. All 57 pages were
+visually reviewed. All 31 linked contents entries were checked against their PDF
+pages; 28 figures, 47 tables, and 6 SQL/command listings are numbered.
 
 The core `db/schema.sql` remains byte-for-byte unchanged, SHA-256:
 
@@ -114,3 +124,25 @@ migration. Password recovery, email verification, account deletion, distributed
 rate limiting, account-backed saved comparisons, imports/exports, general schema
 migrations, and an automated test suite remain deferred. The request guard is a
 small application-level defensive layer; parameterized SQL is still required.
+
+## Review outcomes and original ER source
+
+[PR #11](https://github.com/g497813927/NFLPlayersAnalytics/pull/11) and
+[PR #12](https://github.com/g497813927/NFLPlayersAnalytics/pull/12) were reviewed
+by Copilot and Codex. The dated snapshot records green Node/Python CI and zero
+unresolved findings for both reviewed revisions. Copilot recommended approval
+for the account changes and retained human layout/submission review for the report.
+The stack remains unmerged for the team.
+
+Fixes cover local-only administrator provisioning, the login/password-change
+race, queued password-change/logout operations, the two-participant database
+limit, and explicit schema-export/admin-authorization instructions in CLAUDE.md.
+The supplied Phase 2 PDF's page-9 image was extracted unchanged as
+`diagrams/initial-phase2.jpg`. The final report explains 16 diagram entities,
+17 normalized core tables, and 19 tables after authentication. The source PDF's
+older contribution paragraphs were not copied into the final blank sections.
+
+`admin-roles-reviewed.jpg` captures the final role selector. It is an illustrative
+refill of the form, not a second successful creation. The original creation
+before/after images remain intact. Source attribution is placed beside relevant
+content; no standalone reference page is included.
