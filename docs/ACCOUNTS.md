@@ -11,6 +11,10 @@ the current password and matching new passwords of 12–128 characters. Success
 revokes all previous sessions, including other devices, and issues a new session
 and CSRF token for this browser.
 
+Login rechecks the verified password hash under a database write lock before
+issuing a session. A concurrent password change either rejects that stale login
+or revokes its session after the login commits.
+
 Admins can open **Account menu → Create a user** to provide a unique email,
 display name, initial password, and either the fan or analyst role. Both have
 normal access. The API rejects the admin role; use the local command above to
