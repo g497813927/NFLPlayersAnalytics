@@ -88,6 +88,7 @@ export async function api<T>(
     !path.startsWith('/debug/') &&
     !path.startsWith('/auth/') &&
     !path.startsWith('/me/') &&
+    !path.startsWith('/admin/') &&
     path !== '/health'
   ) {
     const requestId = response.headers.get('X-Request-ID');

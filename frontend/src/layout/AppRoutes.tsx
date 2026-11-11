@@ -12,10 +12,24 @@ import { AdminRoute } from '../features/auth/AdminRoute';
 import { LoginPage } from '../features/auth/LoginPage';
 import { RegisterPage } from '../features/auth/RegisterPage';
 import { ComparisonPage } from '../pages/ComparisonPage';
+import { PasswordChangePage } from '../features/auth/PasswordChangePage';
+import { AdminUsersPage } from '../features/auth/AdminUsersPage';
 
 export function AppRoutes() {
   return (
     <Routes>
+      <Route
+        path="/account/password"
+        element={<PasswordChangePage />}
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <AdminRoute>
+            <AdminUsersPage />
+          </AdminRoute>
+        }
+      />
       <Route
         path="/login"
         element={<LoginPage />}

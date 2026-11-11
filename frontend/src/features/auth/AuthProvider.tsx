@@ -2,7 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { api, ApiError, errorMessage, setCsrfToken } from '../../api';
 import { AuthContext } from './AuthContext';
-import type { AccountResponse, AccountUser, Credentials, Registration } from './types';
+import type {
+  AccountResponse,
+  AccountUser,
+  Credentials,
+  PasswordChange,
+  Registration,
+} from './types';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AccountUser | null>(null);
@@ -56,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [refresh]);
 
-  async function authenticate(path: string, values: Credentials | Registration) {
+  async function authenticate(path: string, values: Credentials | Registration | PasswordChange) {
     mutationInFlight.current = true;
     const request = (generation.current += 1);
     try {
@@ -65,6 +71,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         applyAccount(result);
         channel.current?.postMessage('changed');
       }
+    } catch (cause) {
+      if (path === '/auth/password' && cause instanceof ApiError && cause.status === 401) {
+        mutationInFlight.current = false;
+        await refresh();
+      }
+      throw cause;
     } finally {
       mutationInFlight.current = false;
     }
@@ -94,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refresh,
         signIn: (values) => authenticate('/auth/login', values),
         register: (values) => authenticate('/auth/register', values),
+        changePassword: (values) => authenticate('/auth/password', values),
         signOut,
       }}
     >

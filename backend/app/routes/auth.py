@@ -38,7 +38,7 @@ router = APIRouter(
         429: documented_error(
             "Wait before trying more account requests.",
             "too_many_attempts",
-            "Too many sign-in attempts. Wait a minute and try again.",
+            "Too many account attempts. Wait a minute and try again.",
         ),
     },
 )

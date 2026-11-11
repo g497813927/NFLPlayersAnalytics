@@ -43,8 +43,12 @@ export function AccountMenu() {
             disabled: true,
           },
           ...(isAdmin
-            ? [{ key: 'manage', label: <Link to="/manage">Manage sports data</Link> }]
+            ? [
+                { key: 'manage', label: <Link to="/manage">Manage sports data</Link> },
+                { key: 'users', label: <Link to="/admin/users">Create a user</Link> },
+              ]
             : []),
+          { key: 'password', label: <Link to="/account/password">Change password</Link> },
           { key: 'logout', label: 'Sign out', onClick: () => void logout() },
         ],
       }}

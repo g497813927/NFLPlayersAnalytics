@@ -18,3 +18,12 @@ export interface Credentials {
 export interface Registration extends Credentials {
   display_name: string;
 }
+
+export interface PasswordChange {
+  current_password: string;
+  new_password: string;
+}
+
+export interface NewAccount extends Registration {
+  role: AccountUser['role'];
+}

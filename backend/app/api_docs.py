@@ -35,7 +35,11 @@ Interactive writes change your local database.
 API_TAGS = [
     {
         "name": "Accounts",
-        "description": "Register a normal user, sign in, restore a session, and sign out. Admin accounts are provisioned by the local create_admin command.",
+        "description": "Register a normal user, sign in, change your password, restore a session, and sign out. Provision the first admin with the local create_admin command.",
+    },
+    {
+        "name": "User administration",
+        "description": "Administrators can create new users with a chosen role. Existing accounts are never overwritten.",
     },
     {
         "name": "My favorite teams",
@@ -170,7 +174,7 @@ WRITE_RESPONSES = {
     403: documented_error(
         "An admin role or valid CSRF token is required, or the request guard blocked query syntax.",
         "admin_required",
-        "Only an administrator can change shared sports records.",
+        "Only an administrator can perform this action.",
     ),
     409: documented_error(
         "Duplicate record, record in use, or an edit/delete would invalidate related data. No changes are saved.",
