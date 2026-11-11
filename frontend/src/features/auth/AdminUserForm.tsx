@@ -83,14 +83,13 @@ export function AdminUserForm() {
       <Form.Item
         name="role"
         label="Access level"
-        extra="Administrators can edit shared sports data and create users."
+        extra="New accounts receive normal access."
         rules={[{ required: true }]}
       >
         <Select
           options={[
             { value: 'fan', label: 'Normal user (fan)' },
             { value: 'analyst', label: 'Analyst (normal access)' },
-            { value: 'admin', label: 'Administrator' },
           ]}
         />
       </Form.Item>

@@ -42,7 +42,8 @@ router = APIRouter(
     response_model=AccountUser,
     summary="Create a user as an administrator",
     description="Requires an admin session and X-CSRF-Token. Creates a new account with "
-    "an Argon2 password hash; fan is the default role. Analyst has normal-user access. "
+    "an Argon2 password hash; only fan and analyst roles are accepted, with fan the default. "
+    "Provision administrators with the local create_admin command. "
     "This does not sign in as the new user or change the admin's current session. "
     "Existing emails (including seeded users) return 409 and are never overwritten. "
     "Passwords have 12–128 characters and are excluded from SQL traces. "

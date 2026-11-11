@@ -35,11 +35,11 @@ Interactive writes change your local database.
 API_TAGS = [
     {
         "name": "Accounts",
-        "description": "Register a normal user, sign in, change your password, restore a session, and sign out. Provision the first admin with the local create_admin command.",
+        "description": "Register a normal user, sign in, change your password, restore a session, and sign out. Provision administrators with the local create_admin command.",
     },
     {
         "name": "User administration",
-        "description": "Administrators can create new users with a chosen role. Existing accounts are never overwritten.",
+        "description": "Administrators can create fan or analyst users. Administrator provisioning stays local; existing accounts are never overwritten.",
     },
     {
         "name": "My favorite teams",

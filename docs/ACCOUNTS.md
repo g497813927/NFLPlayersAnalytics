@@ -1,6 +1,6 @@
 # Account management
 
-The first admin is created locally, with a hidden interactive password prompt:
+Administrators are created locally, with a hidden interactive password prompt:
 
 ```sh
 uv run --directory backend --frozen python -m scripts.create_admin
@@ -12,9 +12,10 @@ revokes all previous sessions, including other devices, and issues a new session
 and CSRF token for this browser.
 
 Admins can open **Account menu → Create a user** to provide a unique email,
-display name, initial password, and role. Fan and analyst have normal access;
-admin can also edit sports records and create users. Existing accounts are never
-overwritten, and creation does not replace the admin's own session.
+display name, initial password, and either the fan or analyst role. Both have
+normal access. The API rejects the admin role; use the local command above to
+provision administrators. Existing accounts are never overwritten, and creation
+does not replace the admin's own session.
 
 The endpoints are `POST /api/auth/password` and `POST /api/admin/users`.
 Swagger at `/docs/api` includes descriptions and payload examples. Both require

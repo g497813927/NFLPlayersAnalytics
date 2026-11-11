@@ -25,5 +25,5 @@ export interface PasswordChange {
 }
 
 export interface NewAccount extends Registration {
-  role: AccountUser['role'];
+  role: 'fan' | 'analyst';
 }
