@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import type { AccountUser, Credentials, Registration } from './types';
+import type { AccountUser, Credentials, PasswordChange, Registration } from './types';
 
 export interface AuthValue {
   user: AccountUser | null;
@@ -9,6 +9,7 @@ export interface AuthValue {
   refresh: () => Promise<void>;
   signIn: (values: Credentials) => Promise<void>;
   register: (values: Registration) => Promise<void>;
+  changePassword: (values: PasswordChange) => Promise<void>;
   signOut: () => Promise<void>;
 }
 

@@ -120,7 +120,9 @@ class RequestGuardMiddleware:
             return
 
         if body_has_sql_probe(
-            bytes(body), account_request=path in {"/api/auth/login", "/api/auth/register"}
+            bytes(body),
+            account_request=path
+            in {"/api/auth/login", "/api/auth/register", "/api/auth/password", "/api/admin/users"},
         ):
             await self.block_probe(scope, receive, send, peer)
             return

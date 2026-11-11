@@ -1,0 +1,23 @@
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep=0.35, ranksep=0.65, splines=polyline, pad=0.2]; node [shape=plain,fontname="Helvetica",fontsize=12]; edge [dir=forward,arrowhead=vee,arrowsize=0.6,color="#607584",fontname="Helvetica",fontsize=10,labeldistance=2.3, labelangle=25];
+season [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>season</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK season_id</TD></TR><TR><TD ALIGN="LEFT">FK league_id</TD></TR></TABLE>>];
+venue [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>venue</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK venue_id</TD></TR></TABLE>>];
+game [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>game</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK game_id</TD></TR><TR><TD ALIGN="LEFT">FK season_id</TD></TR><TR><TD ALIGN="LEFT">FK venue_id [0..1]</TD></TR></TABLE>>];
+game_participant [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>game_participant</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK FK game_id</TD></TR><TR><TD ALIGN="LEFT">PK FK team_id</TD></TR></TABLE>>];
+team [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>team</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK team_id</TD></TR><TR><TD ALIGN="LEFT">FK league_id</TD></TR></TABLE>>];
+athlete [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>athlete</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK athlete_id</TD></TR></TABLE>>];
+performance_statistic [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>performance_statistic</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK performance_statistic_id</TD></TR><TR><TD ALIGN="LEFT">FK game_id</TD></TR><TR><TD ALIGN="LEFT">FK stat_definition_id</TD></TR><TR><TD ALIGN="LEFT">FK athlete_id [0..1]</TD></TR><TR><TD ALIGN="LEFT">FK team_id [0..1]</TD></TR></TABLE>>];
+stat_definition [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>stat_definition</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK stat_definition_id</TD></TR><TR><TD ALIGN="LEFT">FK sport_id</TD></TR></TABLE>>];
+sport [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>sport</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK sport_id</TD></TR></TABLE>>];
+standing [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>standing</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK standing_id</TD></TR><TR><TD ALIGN="LEFT">FK team_id</TD></TR><TR><TD ALIGN="LEFT">FK season_id</TD></TR></TABLE>>];
+season -> game [label="1 : 0..*"];
+venue -> game [label="0..1 : 0..*"];
+game -> game_participant [label="1 : 0..2"];
+team -> game_participant [label="1 : 0..*"];
+game -> performance_statistic [label="1 : 0..*"];
+stat_definition -> performance_statistic [label="1 : 0..*"];
+athlete -> performance_statistic [label="0..1 : 0..*"];
+team -> performance_statistic [label="0..1 : 0..*"];
+sport -> stat_definition [label="1 : 0..*"];
+team -> standing [label="1 : 0..*"];
+season -> standing [label="1 : 0..*"];
+}

@@ -3,6 +3,8 @@
 from fastapi import APIRouter
 
 from . import (
+    account_password,
+    admin_users,
     athletes,
     auth,
     comparisons,
@@ -22,6 +24,8 @@ from . import (
 router = APIRouter(prefix="/api")
 
 router.include_router(auth.router)
+router.include_router(account_password.router)
+router.include_router(admin_users.router)
 router.include_router(favorites.router)
 router.include_router(comparisons.router)
 router.include_router(system.router)

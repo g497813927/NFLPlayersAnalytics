@@ -1,0 +1,50 @@
+{
+  "captured_at_utc": "2026-11-11T17:16:39Z",
+  "purpose": "Review snapshot before adding this report addendum; live PRs contain later documentation-only review results.",
+  "stack_url": "https://github.com/g497813927/NFLPlayersAnalytics/stack/13",
+  "pull_requests": [
+    {
+      "number": 11,
+      "url": "https://github.com/g497813927/NFLPlayersAnalytics/pull/11",
+      "reviewed_commit": "e3579fd08cb5859ea3492efd8cecb9a648b0a852",
+      "state": "open",
+      "unresolved_threads": 0,
+      "codex": {
+        "status": "completed",
+        "has_unresolved_findings": false,
+        "url": "https://github.com/g497813927/NFLPlayersAnalytics/pull/11#issuecomment-6801742930"
+      },
+      "copilot": {
+        "assessment": "Approval recommended",
+        "open_issues": 0,
+        "url": "https://github.com/g497813927/NFLPlayersAnalytics/pull/11#pullrequestreview-5862476032"
+      },
+      "ci": {
+        "conclusion": "success",
+        "url": "https://github.com/g497813927/NFLPlayersAnalytics/actions/runs/43063961013"
+      }
+    },
+    {
+      "number": 12,
+      "url": "https://github.com/g497813927/NFLPlayersAnalytics/pull/12",
+      "reviewed_commit": "755ad67c9a28a4eeb5626d5f6e5c4cb6de8c640f",
+      "state": "open",
+      "unresolved_threads": 0,
+      "codex": {
+        "status": "completed",
+        "has_unresolved_findings": false,
+        "url": "https://github.com/g497813927/NFLPlayersAnalytics/pull/12#issuecomment-6801747812"
+      },
+      "copilot": {
+        "assessment": "Needs a closer look: human document layout and submission review",
+        "open_issues": 0,
+        "url": "https://github.com/g497813927/NFLPlayersAnalytics/pull/12#pullrequestreview-5862638444"
+      },
+      "ci": {
+        "conclusion": "success",
+        "url": "https://github.com/g497813927/NFLPlayersAnalytics/actions/runs/43066063497"
+      }
+    }
+  ],
+  "human_review": "pending; neither PR merged"
+}

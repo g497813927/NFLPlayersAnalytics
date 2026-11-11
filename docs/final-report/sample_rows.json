@@ -1,0 +1,752 @@
+{
+  "app_user": {
+    "count": 10,
+    "rows": [
+      {
+        "user_id": 1,
+        "email": "demo.fan@example.invalid",
+        "display_name": "Demo Fan",
+        "role": "fan"
+      },
+      {
+        "user_id": 2,
+        "email": "rowan.analyst@example.invalid",
+        "display_name": "Rowan Analyst",
+        "role": "analyst"
+      },
+      {
+        "user_id": 3,
+        "email": "avery.manager@example.invalid",
+        "display_name": "Avery Manager",
+        "role": "admin"
+      },
+      {
+        "user_id": 4,
+        "email": "morgan.scout@example.invalid",
+        "display_name": "Morgan Scout",
+        "role": "analyst"
+      },
+      {
+        "user_id": 5,
+        "email": "casey.supporter@example.invalid",
+        "display_name": "Casey Supporter",
+        "role": "fan"
+      }
+    ]
+  },
+  "athlete": {
+    "count": 100,
+    "rows": [
+      {
+        "athlete_id": 1,
+        "first_name": "Alden",
+        "last_name": "Ashford",
+        "nationality": "United States"
+      },
+      {
+        "athlete_id": 2,
+        "first_name": "Alden",
+        "last_name": "Brookvale",
+        "nationality": "United States"
+      },
+      {
+        "athlete_id": 3,
+        "first_name": "Alden",
+        "last_name": "Crestwood",
+        "nationality": "United States"
+      },
+      {
+        "athlete_id": 4,
+        "first_name": "Alden",
+        "last_name": "Dunridge",
+        "nationality": "United States"
+      },
+      {
+        "athlete_id": 5,
+        "first_name": "Alden",
+        "last_name": "Evermere",
+        "nationality": "United States"
+      }
+    ]
+  },
+  "sport": {
+    "count": 5,
+    "rows": [
+      {
+        "sport_id": 1,
+        "sport_name": "American Football"
+      },
+      {
+        "sport_id": 2,
+        "sport_name": "Basketball"
+      },
+      {
+        "sport_id": 3,
+        "sport_name": "Association Football"
+      },
+      {
+        "sport_id": 4,
+        "sport_name": "Baseball"
+      },
+      {
+        "sport_id": 5,
+        "sport_name": "Ice Hockey"
+      }
+    ]
+  },
+  "venue": {
+    "count": 10,
+    "rows": [
+      {
+        "venue_id": 1,
+        "venue_name": "Alder Bay Community Field",
+        "city": "Alder Bay"
+      },
+      {
+        "venue_id": 2,
+        "venue_name": "Cedar Reach Community Field",
+        "city": "Cedar Reach"
+      },
+      {
+        "venue_id": 3,
+        "venue_name": "Elm Ridge Community Field",
+        "city": "Elm Ridge"
+      },
+      {
+        "venue_id": 4,
+        "venue_name": "Granite Cove Community Field",
+        "city": "Granite Cove"
+      },
+      {
+        "venue_id": 5,
+        "venue_name": "Iron Meadow Community Field",
+        "city": "Iron Meadow"
+      }
+    ]
+  },
+  "data_import": {
+    "count": 5,
+    "rows": [
+      {
+        "import_id": 1,
+        "source_name": "Synthetic fixtures (seed 5614), 2022 season",
+        "imported_at": "2026-08-15 12:00:00.000000",
+        "status": "completed",
+        "run_by_user_id": 3
+      },
+      {
+        "import_id": 2,
+        "source_name": "Synthetic fixtures (seed 5614), 2023 season",
+        "imported_at": "2026-08-15 12:00:00.000000",
+        "status": "completed",
+        "run_by_user_id": 3
+      },
+      {
+        "import_id": 3,
+        "source_name": "Synthetic fixtures (seed 5614), 2024 season",
+        "imported_at": "2026-08-15 12:00:00.000000",
+        "status": "completed",
+        "run_by_user_id": 3
+      },
+      {
+        "import_id": 4,
+        "source_name": "Synthetic fixtures (seed 5614), 2025 season",
+        "imported_at": "2026-08-15 12:00:00.000000",
+        "status": "completed",
+        "run_by_user_id": 3
+      },
+      {
+        "import_id": 5,
+        "source_name": "Synthetic fixtures (seed 5614), 2026 season",
+        "imported_at": "2026-08-15 12:00:00.000000",
+        "status": "completed",
+        "run_by_user_id": 3
+      }
+    ]
+  },
+  "league": {
+    "count": 5,
+    "rows": [
+      {
+        "league_id": 1,
+        "league_name": "Frontier Football League",
+        "country": "United States",
+        "sport_id": 1
+      },
+      {
+        "league_id": 2,
+        "league_name": "Cedar Valley Basketball League",
+        "country": "United States",
+        "sport_id": 2
+      },
+      {
+        "league_id": 3,
+        "league_name": "Harbor District Soccer League",
+        "country": "United States",
+        "sport_id": 3
+      },
+      {
+        "league_id": 4,
+        "league_name": "Meadow County Baseball League",
+        "country": "United States",
+        "sport_id": 4
+      },
+      {
+        "league_id": 5,
+        "league_name": "Northlake Hockey League",
+        "country": "United States",
+        "sport_id": 5
+      }
+    ]
+  },
+  "stat_definition": {
+    "count": 6,
+    "rows": [
+      {
+        "stat_definition_id": 1,
+        "stat_name": "Points scored",
+        "abbreviation": "PTS",
+        "calc_type": "sum",
+        "sport_id": 1
+      },
+      {
+        "stat_definition_id": 2,
+        "stat_name": "Total offensive yards",
+        "abbreviation": "YDS",
+        "calc_type": "sum",
+        "sport_id": 1
+      },
+      {
+        "stat_definition_id": 3,
+        "stat_name": "Turnovers",
+        "abbreviation": "TO",
+        "calc_type": "sum",
+        "sport_id": 1
+      },
+      {
+        "stat_definition_id": 4,
+        "stat_name": "Passing yards",
+        "abbreviation": "PASS_YDS",
+        "calc_type": "sum",
+        "sport_id": 1
+      },
+      {
+        "stat_definition_id": 5,
+        "stat_name": "Rushing yards",
+        "abbreviation": "RUSH_YDS",
+        "calc_type": "sum",
+        "sport_id": 1
+      }
+    ]
+  },
+  "user_credential": {
+    "count": 5,
+    "rows": [
+      {
+        "user_id": 6,
+        "password_hash": "[withheld]",
+        "created_at": "2026-11-11 16:19:40"
+      },
+      {
+        "user_id": 7,
+        "password_hash": "[withheld]",
+        "created_at": "2026-11-11 16:20:20"
+      },
+      {
+        "user_id": 8,
+        "password_hash": "[withheld]",
+        "created_at": "2026-11-11 16:22:37"
+      },
+      {
+        "user_id": 9,
+        "password_hash": "[withheld]",
+        "created_at": "2026-11-11 16:24:35"
+      },
+      {
+        "user_id": 10,
+        "password_hash": "[withheld]",
+        "created_at": "2026-11-11 16:24:35"
+      }
+    ]
+  },
+  "auth_session": {
+    "count": 7,
+    "rows": [
+      {
+        "token_hash": "[withheld]",
+        "user_id": 7,
+        "expires_at": "2026-11-18 16:20:56.223609",
+        "created_at": "2026-11-11 16:20:56"
+      },
+      {
+        "token_hash": "[withheld]",
+        "user_id": 7,
+        "expires_at": "2026-11-18 16:20:56.284163",
+        "created_at": "2026-11-11 16:20:56"
+      },
+      {
+        "token_hash": "[withheld]",
+        "user_id": 6,
+        "expires_at": "2026-11-18 16:21:04.958540",
+        "created_at": "2026-11-11 16:21:04"
+      },
+      {
+        "token_hash": "[withheld]",
+        "user_id": 6,
+        "expires_at": "2026-11-18 16:24:35.104068",
+        "created_at": "2026-11-11 16:24:35"
+      },
+      {
+        "token_hash": "[withheld]",
+        "user_id": 7,
+        "expires_at": "2026-11-18 16:24:35.131366",
+        "created_at": "2026-11-11 16:24:35"
+      }
+    ]
+  },
+  "season": {
+    "count": 5,
+    "rows": [
+      {
+        "season_id": 1,
+        "season_name": "2022",
+        "start_date": "2022-08-01",
+        "end_date": "2023-02-28",
+        "league_id": 1
+      },
+      {
+        "season_id": 2,
+        "season_name": "2023",
+        "start_date": "2023-08-01",
+        "end_date": "2024-02-28",
+        "league_id": 1
+      },
+      {
+        "season_id": 3,
+        "season_name": "2024",
+        "start_date": "2024-08-01",
+        "end_date": "2025-02-28",
+        "league_id": 1
+      },
+      {
+        "season_id": 4,
+        "season_name": "2025",
+        "start_date": "2025-08-01",
+        "end_date": "2026-02-28",
+        "league_id": 1
+      },
+      {
+        "season_id": 5,
+        "season_name": "2026",
+        "start_date": "2026-08-01",
+        "end_date": "2027-02-28",
+        "league_id": 1
+      }
+    ]
+  },
+  "team": {
+    "count": 20,
+    "rows": [
+      {
+        "team_id": 1,
+        "team_name": "Alder Bay Foxes",
+        "city": "Alder Bay",
+        "league_id": 1
+      },
+      {
+        "team_id": 2,
+        "team_name": "Briar Glen Owls",
+        "city": "Briar Glen",
+        "league_id": 1
+      },
+      {
+        "team_id": 3,
+        "team_name": "Cedar Reach Bears",
+        "city": "Cedar Reach",
+        "league_id": 1
+      },
+      {
+        "team_id": 4,
+        "team_name": "Dawn Harbor Falcons",
+        "city": "Dawn Harbor",
+        "league_id": 1
+      },
+      {
+        "team_id": 5,
+        "team_name": "Elm Ridge Stags",
+        "city": "Elm Ridge",
+        "league_id": 1
+      }
+    ]
+  },
+  "favorite": {
+    "count": 21,
+    "rows": [
+      {
+        "favorite_id": 1,
+        "user_id": 1,
+        "sport_id": 1,
+        "league_id": null,
+        "team_id": null,
+        "athlete_id": null,
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "favorite_id": 2,
+        "user_id": 1,
+        "sport_id": null,
+        "league_id": 1,
+        "team_id": null,
+        "athlete_id": null,
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "favorite_id": 3,
+        "user_id": 1,
+        "sport_id": null,
+        "league_id": null,
+        "team_id": 1,
+        "athlete_id": null,
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "favorite_id": 4,
+        "user_id": 1,
+        "sport_id": null,
+        "league_id": null,
+        "team_id": null,
+        "athlete_id": 1,
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "favorite_id": 5,
+        "user_id": 2,
+        "sport_id": 1,
+        "league_id": null,
+        "team_id": null,
+        "athlete_id": null,
+        "created_at": "2026-08-15 12:00:00.000000"
+      }
+    ]
+  },
+  "game": {
+    "count": 100,
+    "rows": [
+      {
+        "game_id": 1,
+        "game_time": "2022-09-13 17:00:00.000000",
+        "status": "completed",
+        "season_id": 1,
+        "venue_id": 1
+      },
+      {
+        "game_id": 2,
+        "game_time": "2022-09-13 17:00:00.000000",
+        "status": "completed",
+        "season_id": 1,
+        "venue_id": 1
+      },
+      {
+        "game_id": 3,
+        "game_time": "2022-09-13 17:00:00.000000",
+        "status": "completed",
+        "season_id": 1,
+        "venue_id": 2
+      },
+      {
+        "game_id": 4,
+        "game_time": "2022-09-13 17:00:00.000000",
+        "status": "completed",
+        "season_id": 1,
+        "venue_id": 2
+      },
+      {
+        "game_id": 5,
+        "game_time": "2022-09-13 17:00:00.000000",
+        "status": "completed",
+        "season_id": 1,
+        "venue_id": 3
+      }
+    ]
+  },
+  "roster": {
+    "count": 100,
+    "rows": [
+      {
+        "roster_id": 1,
+        "team_id": 1,
+        "season_id": 1
+      },
+      {
+        "roster_id": 2,
+        "team_id": 2,
+        "season_id": 1
+      },
+      {
+        "roster_id": 3,
+        "team_id": 3,
+        "season_id": 1
+      },
+      {
+        "roster_id": 4,
+        "team_id": 4,
+        "season_id": 1
+      },
+      {
+        "roster_id": 5,
+        "team_id": 5,
+        "season_id": 1
+      }
+    ]
+  },
+  "saved_comparison": {
+    "count": 20,
+    "rows": [
+      {
+        "comparison_id": 1,
+        "user_id": 1,
+        "sport_id": 1,
+        "object_type": "team",
+        "athlete_a_id": null,
+        "athlete_b_id": null,
+        "team_a_id": 1,
+        "team_b_id": 11,
+        "title": "Alder Bay and Kestrel Hills",
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "comparison_id": 2,
+        "user_id": 1,
+        "sport_id": 1,
+        "object_type": "athlete",
+        "athlete_a_id": 1,
+        "athlete_b_id": 51,
+        "team_a_id": null,
+        "team_b_id": null,
+        "title": "Quarterbacks: Alder Bay and Kestrel Hills",
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "comparison_id": 3,
+        "user_id": 1,
+        "sport_id": 1,
+        "object_type": "team",
+        "athlete_a_id": null,
+        "athlete_b_id": null,
+        "team_a_id": 6,
+        "team_b_id": 16,
+        "title": "Fern Valley and Pine Crossing",
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "comparison_id": 4,
+        "user_id": 1,
+        "sport_id": 1,
+        "object_type": "athlete",
+        "athlete_a_id": 26,
+        "athlete_b_id": 76,
+        "team_a_id": null,
+        "team_b_id": null,
+        "title": "Quarterbacks: Fern Valley and Pine Crossing",
+        "created_at": "2026-08-15 12:00:00.000000"
+      },
+      {
+        "comparison_id": 5,
+        "user_id": 2,
+        "sport_id": 1,
+        "object_type": "team",
+        "athlete_a_id": null,
+        "athlete_b_id": null,
+        "team_a_id": 2,
+        "team_b_id": 12,
+        "title": "Briar Glen and Laurel Creek",
+        "created_at": "2026-08-15 12:00:00.000000"
+      }
+    ]
+  },
+  "standing": {
+    "count": 100,
+    "rows": [
+      {
+        "standing_id": 1,
+        "team_id": 1,
+        "season_id": 1,
+        "rank": 3,
+        "wins": 1,
+        "losses": 1,
+        "ties": 0,
+        "points": 1.0
+      },
+      {
+        "standing_id": 2,
+        "team_id": 2,
+        "season_id": 1,
+        "rank": 3,
+        "wins": 1,
+        "losses": 1,
+        "ties": 0,
+        "points": 1.0
+      },
+      {
+        "standing_id": 3,
+        "team_id": 3,
+        "season_id": 1,
+        "rank": 4,
+        "wins": 0,
+        "losses": 1,
+        "ties": 1,
+        "points": 0.5
+      },
+      {
+        "standing_id": 4,
+        "team_id": 4,
+        "season_id": 1,
+        "rank": 4,
+        "wins": 0,
+        "losses": 1,
+        "ties": 1,
+        "points": 0.5
+      },
+      {
+        "standing_id": 5,
+        "team_id": 5,
+        "season_id": 1,
+        "rank": 3,
+        "wins": 1,
+        "losses": 1,
+        "ties": 0,
+        "points": 1.0
+      }
+    ]
+  },
+  "game_participant": {
+    "count": 200,
+    "rows": [
+      {
+        "game_id": 1,
+        "team_id": 1,
+        "participant_role": "home",
+        "score": 14
+      },
+      {
+        "game_id": 1,
+        "team_id": 11,
+        "participant_role": "away",
+        "score": 17
+      },
+      {
+        "game_id": 2,
+        "team_id": 2,
+        "participant_role": "home",
+        "score": 21
+      },
+      {
+        "game_id": 2,
+        "team_id": 12,
+        "participant_role": "away",
+        "score": 14
+      },
+      {
+        "game_id": 3,
+        "team_id": 3,
+        "participant_role": "home",
+        "score": 14
+      }
+    ]
+  },
+  "membership": {
+    "count": 500,
+    "rows": [
+      {
+        "membership_id": 1,
+        "roster_id": 1,
+        "athlete_id": 1,
+        "position": "QB",
+        "jersey_number": "12",
+        "start_date": "2022-08-01",
+        "end_date": "2023-02-28"
+      },
+      {
+        "membership_id": 2,
+        "roster_id": 1,
+        "athlete_id": 2,
+        "position": "RB",
+        "jersey_number": "24",
+        "start_date": "2022-08-01",
+        "end_date": "2023-02-28"
+      },
+      {
+        "membership_id": 3,
+        "roster_id": 1,
+        "athlete_id": 3,
+        "position": "WR",
+        "jersey_number": "81",
+        "start_date": "2022-08-01",
+        "end_date": "2023-02-28"
+      },
+      {
+        "membership_id": 4,
+        "roster_id": 1,
+        "athlete_id": 4,
+        "position": "LB",
+        "jersey_number": "54",
+        "start_date": "2022-08-01",
+        "end_date": "2023-02-28"
+      },
+      {
+        "membership_id": 5,
+        "roster_id": 1,
+        "athlete_id": 5,
+        "position": "DB",
+        "jersey_number": "31",
+        "start_date": "2022-08-01",
+        "end_date": "2023-02-28"
+      }
+    ]
+  },
+  "performance_statistic": {
+    "count": 1260,
+    "rows": [
+      {
+        "performance_statistic_id": 1,
+        "game_id": 1,
+        "stat_definition_id": 1,
+        "athlete_id": null,
+        "team_id": 1,
+        "stat_value": 14.0
+      },
+      {
+        "performance_statistic_id": 2,
+        "game_id": 1,
+        "stat_definition_id": 2,
+        "athlete_id": null,
+        "team_id": 1,
+        "stat_value": 442.0
+      },
+      {
+        "performance_statistic_id": 3,
+        "game_id": 1,
+        "stat_definition_id": 3,
+        "athlete_id": null,
+        "team_id": 1,
+        "stat_value": 0.0
+      },
+      {
+        "performance_statistic_id": 4,
+        "game_id": 1,
+        "stat_definition_id": 4,
+        "athlete_id": 1,
+        "team_id": null,
+        "stat_value": 252.0
+      },
+      {
+        "performance_statistic_id": 5,
+        "game_id": 1,
+        "stat_definition_id": 5,
+        "athlete_id": 2,
+        "team_id": null,
+        "stat_value": 190.0
+      }
+    ]
+  }
+}

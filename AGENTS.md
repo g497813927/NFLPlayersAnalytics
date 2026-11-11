@@ -11,9 +11,10 @@ relational sports schema, a working API, and simple browser-based CRUD. The
 sample is one fictional football league; the schema supports multiple sports.
 
 Keep changes small and readable. The current priority is the prototype and
-skeleton, not production infrastructure or additional features. Account recovery/administration, account-backed comparisons, real imports/exports, advanced
-analytics, migrations, automated tests, and the formal coursework evidence
-package are deferred unless the current task explicitly requests them.
+skeleton, not production infrastructure or additional features. Account recovery,
+account-backed comparisons, real imports/exports, advanced analytics, migrations,
+and automated tests are deferred unless the current task explicitly requests them.
+The final coursework report and its manual evidence live in `docs/final-report/`.
 
 There is no automated test suite yet. Do not add or run automated tests solely
 as routine cleanup during this phase. Teammates can explore the app manually;
@@ -21,11 +22,25 @@ when a task explicitly asks for tests, implement the relevant tests then.
 
 ## Start with the relevant source
 
-- `README.md`: fresh-clone setup, startup commands, debugging, and troubleshooting.
+```text
+.github/workflows/  Hosted Node/Python quality checks
+scripts/           Shared setup command
+backend/app/       API, models, services, accounts, and request guard
+backend/scripts/   Explicit database setup and maintenance
+frontend/src/      React/TSX pages, features, layout, and API client
+db/                Core SQL artifact and authentication extension
+docs/              Guides, screenshots, and final coursework report
+```
+
+See `docs/PROJECT_STRUCTURE.md` for the full map, CI jobs, and change entry points.
+
+- `README.md`: short project overview and quick start.
+- `docs/SETUP.md`: full setup, configuration, debugging, and troubleshooting.
+- `docs/USER_GUIDE.md`: accounts, game center, comparisons, and request guard.
 - `scripts/setup.mjs`: dependency installation and missing local environment files.
 - `docs/DATABASE.md`: ER mapping, integrity rules, seed data, and known limits.
 - `backend/app/models.py`: public imports and complete ORM metadata.
-- `backend/app/entities/`: the 17 SQLAlchemy table mappings, one entity per file.
+- `backend/app/entities/`: the 19 SQLAlchemy table mappings, one entity per file.
 - `backend/app/database.py` and `config.py`: engine, sessions, paths, and flags.
 - `backend/app/schemas/`: Pydantic payloads and examples, one model per file.
 - `backend/app/routes/`: resource routers and shared transaction boundaries.
@@ -192,7 +207,8 @@ and retain independent pagination.
 ## Handoff and Git hygiene
 
 Update documentation when setup commands, schema rules, flags, or API contracts
-change. Keep agent instructions here; `CLAUDE.md` should remain a short pointer.
+change. Keep the full shared instructions here. `CLAUDE.md` includes a stand-alone
+working guide and must stay consistent with these rules and `docs/PROJECT_STRUCTURE.md`.
 
 Never commit local databases, `.env` files, credentials, dependency directories,
 caches, build output, or machine-specific logs. Commit the example environment
@@ -211,8 +227,14 @@ it, without overwriting remote work or force-pushing as routine conflict repair.
   derives its owner from `require_user`; never accept a user ID from the client.
   Validate CSRF headers on authenticated writes and origin/JSON on login/register.
 - Create admins explicitly with `python -m scripts.create_admin`; never add
-  shared default passwords or let registration choose its role. Seeded users
-  remain synthetic records without credentials.
+  shared default passwords or let public registration choose its role. After
+  bootstrap, admins can create fan or analyst users through `/api/admin/users`.
+  Administrator provisioning remains local-only. The endpoint must use
+  `require_admin`, CSRF validation, and the private authentication engine.
+  Seeded users remain synthetic records without credentials.
+- Password changes require the current password, use the private engine,
+  revoke all previous sessions, and issue a fresh cookie/CSRF token. Keep all
+  password fields out of WAF scanning and account routes out of SQL inspection.
 - Setup/upgrade_auth may add the two new auth tables to an intact legacy schema;
   never alter core tables or reset data for this feature. Existing .env values
   remain intact. Normal startup does not perform upgrades.

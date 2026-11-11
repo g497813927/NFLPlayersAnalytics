@@ -23,6 +23,6 @@ def limit_account_attempts(request: Request) -> None:
             _attempts.popitem(last=False)
         if len(recent) >= 10:
             raise AppError(
-                429, "too_many_attempts", "Too many sign-in attempts. Wait a minute and try again."
+                429, "too_many_attempts", "Too many account attempts. Wait a minute and try again."
             )
         recent.append(now)

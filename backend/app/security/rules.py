@@ -51,7 +51,9 @@ def body_has_sql_probe(body: bytes, *, account_request: bool) -> bool:
         value = pending.pop()
         if isinstance(value, dict):
             pending.extend(
-                item for key, item in value.items() if not (account_request and key == "password")
+                item
+                for key, item in value.items()
+                if not (account_request and key in {"password", "current_password", "new_password"})
             )
         elif isinstance(value, list):
             pending.extend(value)

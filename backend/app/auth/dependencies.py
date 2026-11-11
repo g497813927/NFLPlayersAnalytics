@@ -84,9 +84,7 @@ def require_user(
 
 def require_admin(user: Annotated[User, Depends(require_user)]) -> User:
     if user.role != "admin":
-        raise AppError(
-            403, "admin_required", "Only an administrator can change shared sports records."
-        )
+        raise AppError(403, "admin_required", "Only an administrator can perform this action.")
     return user
 
 

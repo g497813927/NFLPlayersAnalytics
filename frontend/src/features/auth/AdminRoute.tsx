@@ -16,7 +16,7 @@ export function AdminRoute({ children }: { children: ReactNode }) {
       <Result
         status="403"
         title="Admin access required"
-        subTitle="Everyone can explore the data. Only administrators can edit shared sports records."
+        subTitle="Everyone can explore the data. Only administrators can edit shared sports records or create users."
         extra={
           user ? (
             <Link to="/games">Explore games</Link>

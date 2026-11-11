@@ -1,0 +1,8 @@
+digraph G { graph [rankdir=TB,bgcolor="white",nodesep=0.4,ranksep=0.5]; node [shape=box,style="rounded,filled",fillcolor="#eef3f5",fontname="Helvetica",fontsize=14,margin=0.18]; edge [fontname="Helvetica",fontsize=11,color="#607584"]; browser [label="React TypeScript + Ant Design
+Task screens, forms, and charts"]; proxy [label="Vite development proxy
+/api, /docs/api, /openapi.json"]; api [label="FastAPI
+Request guard, authentication, CSRF, validation"]; sports [label="SQLAlchemy sports sessions
+Optional SQL logging / capture"]; auth [label="Private account sessions
+No credential SQL logging / capture"]; db [shape=cylinder,label="SQLite database
+17 core tables + 2 authentication tables
+Foreign keys enabled per connection"]; browser -> proxy [label="JSON requests and cookie"]; proxy -> api; api -> sports; api -> auth; sports -> db [label="bound SQL + transactions"]; auth -> db [label="Argon2 and hashed session tokens"]; }

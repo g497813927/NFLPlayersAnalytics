@@ -3,7 +3,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Response
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.exc import IntegrityError
 
 from ..api_docs import WRITE_RESPONSES, documented_error
@@ -38,7 +38,7 @@ router = APIRouter(
         429: documented_error(
             "Wait before trying more account requests.",
             "too_many_attempts",
-            "Too many sign-in attempts. Wait a minute and try again.",
+            "Too many account attempts. Wait a minute and try again.",
         ),
     },
 )
@@ -109,6 +109,19 @@ def login(payload: LoginRequest, response: Response, token: CookieToken):
         if not verify_password(payload.password, record[1].password_hash if record else None):
             raise AppError(401, "invalid_credentials", "The email or password is incorrect.")
         user = record[0]
+        verified_hash = record[1].password_hash
+        # A conditional no-op write rechecks the hash and locks it through session
+        # creation, including on SQLite where SELECT FOR UPDATE has no effect.
+        locked = session.execute(
+            update(UserCredential)
+            .where(
+                UserCredential.user_id == user.user_id,
+                UserCredential.password_hash == verified_hash,
+            )
+            .values(password_hash=verified_hash)
+        )
+        if locked.rowcount != 1:
+            raise AppError(401, "invalid_credentials", "The email or password is incorrect.")
         new_token = create_session(session, user.user_id, token)
         result = account_result(user, new_token)
     set_session_cookie(response, new_token)

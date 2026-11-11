@@ -74,10 +74,11 @@ lookup tables have at least five useful records; core entities have at least 20.
 Future account-feature rows are sample database content, not real accounts or
 authentication credentials.
 
-## Deferred verification
+## Verification evidence
 
-Automated integrity/CRUD tests, repeatable rejection demonstrations, and the
-formal screenshot evidence package are intentionally left for a later phase.
+Manual account, CRUD, and rejection evidence is documented in
+[the final report](final-report/README.md). The walkthrough uses an isolated
+synthetic database. Automated integrity/CRUD tests remain deferred.
 
 ## Account extension
 
@@ -100,3 +101,7 @@ existing installation with dependencies ready, run `python -m scripts.upgrade_au
 from `backend`. A partial/incompatible schema is rejected before any changes.
 Seeded users have no credentials, and public registration cannot claim them.
 Use the explicit `create_admin` CLI for a new administrator.
+
+Once the first administrator exists, the admin-only user creation form can
+create additional accounts. Password change requires the current password and
+revokes all old sessions. These features reuse the existing 19-table schema.
