@@ -1,0 +1,9 @@
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep=0.35, ranksep=0.65, splines=polyline, pad=0.2]; node [shape=plain,fontname="Helvetica",fontsize=12]; edge [dir=forward,arrowhead=vee,arrowsize=0.6,color="#607584",fontname="Helvetica",fontsize=10,labeldistance=2.3, labelangle=25];
+app_user [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>app_user</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK user_id</TD></TR></TABLE>>];
+user_credential [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>user_credential</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK FK user_id</TD></TR></TABLE>>];
+auth_session [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>auth_session</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK token_hash</TD></TR><TR><TD ALIGN="LEFT">FK user_id</TD></TR></TABLE>>];
+data_import [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="4" COLOR="#607584"><TR><TD BGCOLOR="#e8eef2"><B>data_import</B></TD></TR><HR/><TR><TD ALIGN="LEFT">PK import_id</TD></TR><TR><TD ALIGN="LEFT">FK run_by_user_id [0..1]</TD></TR></TABLE>>];
+app_user -> user_credential [label="1 : 0..1"];
+user_credential -> auth_session [label="1 : 0..*"];
+app_user -> data_import [label="0..1 : 0..*"];
+}
