@@ -14,6 +14,8 @@ and CSRF token for this browser.
 Login rechecks the verified password hash under a database write lock before
 issuing a session. A concurrent password change either rejects that stale login
 or revokes its session after the login commits.
+The browser queues account mutations, so sign-out waits for an in-progress
+password change and revokes its final session with the updated CSRF token.
 
 Admins can open **Account menu → Create a user** to provide a unique email,
 display name, initial password, and either the fan or analyst role. Both have
