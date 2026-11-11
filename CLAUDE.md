@@ -125,6 +125,11 @@ security coverage. Do not disable rules or compact source to make CI pass.
 - Treat `models.py` and the imported entity mappings as the schema source.
   Preserve `db/schema.sql` byte-for-byte unless the user explicitly authorizes a
   schema change. Authentication DDL is separate in `db/auth_schema.sql`.
+- For an authorized schema change, update the ORM mappings, regenerate the
+  corresponding SQL artifact, and include it in the same commit. From `backend`,
+  run `uv run --frozen python -m scripts.export_schema` for the core schema or
+  `uv run --frozen python -m scripts.export_schema --auth` for the authentication
+  extension. Do not regenerate either artifact during unrelated work.
 - Never reset, delete, or reseed an existing database during ordinary feature
   work. Use an explicitly identified disposable database for destructive demos.
 - Enable SQLite foreign keys on every connection. Preserve named constraints,
@@ -152,7 +157,9 @@ See [DATABASE.md](docs/DATABASE.md) for relationships and integrity details.
 - Public registration creates a fan. Fan and analyst have normal-user access.
   Only admins can change shared sports data or inspect development SQL.
 - Create every administrator with the local `scripts.create_admin` command.
-  The admin web form may create only fan or analyst accounts.
+  The admin web form may create only fan or analyst accounts. Its
+  `POST /api/admin/users` endpoint must enforce `require_admin`, CSRF validation,
+  and the private authentication engine.
 - Use Argon2 hashes and expiring, revocable opaque sessions in HttpOnly cookies.
   Store only token hashes. Account queries use the private engine with SQL
   logging and capture disabled; never log passwords, hashes, cookies, or CSRF.
