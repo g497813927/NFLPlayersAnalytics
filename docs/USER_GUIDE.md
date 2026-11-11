@@ -216,7 +216,7 @@ basic demo standings and do not implement official NFL tiebreakers.
 
 This remains a local prototype with real server-enforced account permissions.
 Keep the demo bound to loopback. Public registration creates normal users;
-the first admin is provisioned with the local CLI; admins can then create users in the app. Password recovery, email verification,
+administrators are provisioned with the local CLI; admins can create fan or analyst users in the app. Password recovery, email verification,
 account deletion, shared rate limiting, and production
 deployment hardening remain deferred. The login limiter is per process, with
 ten account attempts per client IP per minute; it is not distributed protection.
@@ -240,8 +240,8 @@ Incorrect current passwords and mismatched confirmation receive readable errors.
 
 After bootstrapping the first administrator with `scripts.create_admin`, open
 **Account menu → Create a user**. Enter a unique email, display name, initial
-password, and access level. Fan and analyst have normal access; admin can also
-edit shared sports data and create users. Creation preserves the current admin
+password, and either fan or analyst access. Both roles have normal access;
+create additional administrators with the local command above. Creation preserves the current admin
 session and never overwrites an existing account. The new user can change their
 password after signing in.
 

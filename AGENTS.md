@@ -215,7 +215,8 @@ it, without overwriting remote work or force-pushing as routine conflict repair.
   Validate CSRF headers on authenticated writes and origin/JSON on login/register.
 - Create admins explicitly with `python -m scripts.create_admin`; never add
   shared default passwords or let public registration choose its role. After
-  bootstrap, admins can create users through `/api/admin/users`. This must use
+  bootstrap, admins can create fan or analyst users through `/api/admin/users`.
+  Administrator provisioning remains local-only. The endpoint must use
   `require_admin`, CSRF validation, and the private authentication engine.
   Seeded users remain synthetic records without credentials.
 - Password changes require the current password, use the private engine,
