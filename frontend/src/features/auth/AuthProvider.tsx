@@ -16,7 +16,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const generation = useRef(0);
   const channel = useRef<BroadcastChannel | null>(null);
-  const mutationInFlight = useRef(false);
+  const mutationQueue = useRef(Promise.resolve());
+  const pendingMutations = useRef(0);
 
   const applyAccount = useCallback((result: AccountResponse) => {
     setCsrfToken(result.csrf_token);
@@ -25,8 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const refresh = useCallback(async () => {
-    if (mutationInFlight.current) return;
+  const restoreAccount = useCallback(async () => {
     const request = (generation.current += 1);
     try {
       const result = await api<AccountResponse>('/auth/me');
@@ -37,6 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   }, [applyAccount]);
+
+  const refresh = useCallback(async () => {
+    if (pendingMutations.current) return;
+    await restoreAccount();
+  }, [restoreAccount]);
 
   useEffect(() => {
     void refresh();
@@ -62,38 +67,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [refresh]);
 
-  async function authenticate(path: string, values: Credentials | Registration | PasswordChange) {
-    mutationInFlight.current = true;
-    const request = (generation.current += 1);
-    try {
-      const result = await api<AccountResponse>(path, { method: 'POST', body: values });
-      if (generation.current === request) {
-        applyAccount(result);
-        channel.current?.postMessage('changed');
-      }
-    } catch (cause) {
-      if (path === '/auth/password' && cause instanceof ApiError && cause.status === 401) {
-        mutationInFlight.current = false;
-        await refresh();
-      }
-      throw cause;
-    } finally {
-      mutationInFlight.current = false;
-    }
+  function enqueueMutation(operation: () => Promise<void>) {
+    pendingMutations.current += 1;
+    if (pendingMutations.current === 1) generation.current += 1;
+    const result = mutationQueue.current.then(operation).finally(() => {
+      pendingMutations.current -= 1;
+    });
+    // Keep later actions runnable after a rejection. Each caller still receives
+    // its own error, and logout uses the cookie/CSRF token from the prior action.
+    mutationQueue.current = result.catch(() => undefined);
+    return result;
   }
 
-  async function signOut() {
-    mutationInFlight.current = true;
-    generation.current += 1;
-    try {
-      await api('/auth/logout', { method: 'POST' });
-    } catch (cause) {
-      if (!(cause instanceof ApiError && cause.status === 401)) throw cause;
-    } finally {
-      mutationInFlight.current = false;
-    }
-    applyAccount({ user: null, csrf_token: null });
-    channel.current?.postMessage('changed');
+  function authenticate(path: string, values: Credentials | Registration | PasswordChange) {
+    return enqueueMutation(async () => {
+      const request = (generation.current += 1);
+      try {
+        const result = await api<AccountResponse>(path, { method: 'POST', body: values });
+        if (generation.current === request) {
+          applyAccount(result);
+          channel.current?.postMessage('changed');
+        }
+      } catch (cause) {
+        if (path === '/auth/password' && cause instanceof ApiError && cause.status === 401) {
+          await restoreAccount();
+        }
+        throw cause;
+      }
+    });
+  }
+
+  function signOut() {
+    return enqueueMutation(async () => {
+      generation.current += 1;
+      try {
+        await api('/auth/logout', { method: 'POST' });
+      } catch (cause) {
+        if (!(cause instanceof ApiError && cause.status === 401)) throw cause;
+      }
+      applyAccount({ user: null, csrf_token: null });
+      channel.current?.postMessage('changed');
+    });
   }
 
   return (
