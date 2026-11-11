@@ -75,6 +75,7 @@ deployment remain future work.
 | [Setup and configuration](docs/SETUP.md)         | Full `.env` reference, ports, database initialization, SQL debugging, troubleshooting |
 | [User guide](docs/USER_GUIDE.md)                 | Accounts, permissions, games, comparisons, season filters, request guard              |
 | [Database design](docs/DATABASE.md)              | Tables, relationships, constraints, synthetic seed data                               |
+| [Project structure](docs/PROJECT_STRUCTURE.md)   | Folder map, entry points, and CI jobs                                                 |
 | [Final report](docs/final-report/README.md)      | PDF, editable Word report, numbered evidence and submission notes                     |
 | [SQL injection demo](docs/SQL_INJECTION_DEMO.md) | Reproduction and limits of the defensive layer                                        |
 | [Agent guidance](AGENTS.md)                      | Repository conventions shared by Codex and Claude                                     |

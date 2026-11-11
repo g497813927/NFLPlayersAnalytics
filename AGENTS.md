@@ -22,13 +22,25 @@ when a task explicitly asks for tests, implement the relevant tests then.
 
 ## Start with the relevant source
 
+```text
+.github/workflows/  Hosted Node/Python quality checks
+scripts/           Shared setup command
+backend/app/       API, models, services, accounts, and request guard
+backend/scripts/   Explicit database setup and maintenance
+frontend/src/      React/TSX pages, features, layout, and API client
+db/                Core SQL artifact and authentication extension
+docs/              Guides, screenshots, and final coursework report
+```
+
+See `docs/PROJECT_STRUCTURE.md` for the full map, CI jobs, and change entry points.
+
 - `README.md`: short project overview and quick start.
 - `docs/SETUP.md`: full setup, configuration, debugging, and troubleshooting.
 - `docs/USER_GUIDE.md`: accounts, game center, comparisons, and request guard.
 - `scripts/setup.mjs`: dependency installation and missing local environment files.
 - `docs/DATABASE.md`: ER mapping, integrity rules, seed data, and known limits.
 - `backend/app/models.py`: public imports and complete ORM metadata.
-- `backend/app/entities/`: the 17 SQLAlchemy table mappings, one entity per file.
+- `backend/app/entities/`: the 19 SQLAlchemy table mappings, one entity per file.
 - `backend/app/database.py` and `config.py`: engine, sessions, paths, and flags.
 - `backend/app/schemas/`: Pydantic payloads and examples, one model per file.
 - `backend/app/routes/`: resource routers and shared transaction boundaries.
