@@ -2,7 +2,7 @@
 
 ## ER mapping
 
-The prototype keeps all 17 entities in the supplied normalized ER diagram:
+The core schema contains 17 tables, with two authentication tables described below:
 
 | Area                     | Tables                                                  |
 | ------------------------ | ------------------------------------------------------- |
@@ -74,11 +74,12 @@ lookup tables have at least five useful records; core entities have at least 20.
 Future account-feature rows are sample database content, not real accounts or
 authentication credentials.
 
-## Verification evidence
+## Manual verification
 
-Manual account, CRUD, and rejection evidence is documented in
-[the final report](final-report/README.md). The walkthrough uses an isolated
-synthetic database. Automated integrity/CRUD tests remain deferred.
+Use the application forms with an isolated synthetic database for manual checks.
+The [account guide](ACCOUNTS.md) describes password changes and user creation;
+the [user guide](USER_GUIDE.md#check-a-rejected-search) includes a request-guard
+walkthrough. Automated integrity/CRUD tests remain deferred.
 
 ## Account extension
 

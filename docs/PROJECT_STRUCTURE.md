@@ -66,13 +66,11 @@ NFLPlayersAnalytics/
     ├── ACCOUNTS.md               # Account behavior and security boundaries
     ├── DATABASE.md               # Schema mapping and integrity rules
     ├── PROJECT_STRUCTURE.md      # This guide
-    ├── screenshots/              # Original application captures
-    └── final-report/             # PDF, Word, evidence, UML, and sample extracts
+    └── screenshots/              # Captures linked from README and the user guide
 ```
 
-Older coursework files remain in their existing locations. The final report and
-individual contribution spaces are in `docs/final-report/`; there is no separate
-`reports/` or `roles/` folder in this checkout.
+The repository keeps project guides and the screenshots they reference.
+Coursework reports, submission evidence, and document exports are stored separately.
 
 ## How a request reaches the database
 
@@ -130,15 +128,15 @@ source or weaken lint rules to pass CI.
 
 ## Where to make a change
 
-| Change                                  | Relevant files                                                                                                                     |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Add a screen or navigation entry        | `frontend/src/pages/`, `features/`, and `layout/AppRoutes.tsx`                                                                     |
-| Change an account flow                  | `frontend/src/features/auth/`, `backend/app/routes/auth.py`, `account_password.py`, `admin_users.py`, and `backend/app/auth/`      |
-| Add or adjust an API field              | Resource files in `backend/app/schemas/` and `routes/`; matching frontend types; Swagger examples                                  |
-| Adjust integrity or report calculations | `backend/app/services/` and the relevant entity mappings                                                                           |
-| Change request-guard behavior           | `backend/app/security/`; preserve parameterized SQL and password exclusions                                                        |
-| Change startup or dependencies          | Root/frontend `package.json`, `scripts/setup.mjs`, or `backend/pyproject.toml`; update only affected lockfiles                     |
-| Update coursework evidence              | `docs/final-report/` and `docs/screenshots/`; preserve author metadata and blank contribution sections unless instructed otherwise |
+| Change                                  | Relevant files                                                                                                                |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Add a screen or navigation entry        | `frontend/src/pages/`, `features/`, and `layout/AppRoutes.tsx`                                                                |
+| Change an account flow                  | `frontend/src/features/auth/`, `backend/app/routes/auth.py`, `account_password.py`, `admin_users.py`, and `backend/app/auth/` |
+| Add or adjust an API field              | Resource files in `backend/app/schemas/` and `routes/`; matching frontend types; Swagger examples                             |
+| Adjust integrity or report calculations | `backend/app/services/` and the relevant entity mappings                                                                      |
+| Change request-guard behavior           | `backend/app/security/`; preserve parameterized SQL and password exclusions                                                   |
+| Change startup or dependencies          | Root/frontend `package.json`, `scripts/setup.mjs`, or `backend/pyproject.toml`; update only affected lockfiles                |
+| Update project documentation            | `README.md` and the relevant guide in `docs/`; keep linked screenshots in `docs/screenshots/`                                 |
 
 Local `.env` files, database files, dependency directories, build output, caches,
 and machine logs stay outside Git. Defaults belong in the two `.env.example`

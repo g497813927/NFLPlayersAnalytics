@@ -14,7 +14,8 @@ Keep changes small and readable. The current priority is the prototype and
 skeleton, not production infrastructure or additional features. Account recovery,
 account-backed comparisons, real imports/exports, advanced analytics, migrations,
 and automated tests are deferred unless the current task explicitly requests them.
-The final coursework report and its manual evidence live in `docs/final-report/`.
+Keep coursework reports, submission evidence, and document exports outside the
+repository. `docs/` contains project guides and the screenshots they reference.
 
 There is no automated test suite yet. Do not add or run automated tests solely
 as routine cleanup during this phase. Teammates can explore the app manually;
@@ -29,7 +30,7 @@ backend/app/       API, models, services, accounts, and request guard
 backend/scripts/   Explicit database setup and maintenance
 frontend/src/      React/TSX pages, features, layout, and API client
 db/                Core SQL artifact and authentication extension
-docs/              Guides, screenshots, and final coursework report
+docs/              Project guides and referenced screenshots
 ```
 
 See `docs/PROJECT_STRUCTURE.md` for the full map, CI jobs, and change entry points.
@@ -211,8 +212,9 @@ change. Keep the full shared instructions here. `CLAUDE.md` includes a stand-alo
 working guide and must stay consistent with these rules and `docs/PROJECT_STRUCTURE.md`.
 
 Never commit local databases, `.env` files, credentials, dependency directories,
-caches, build output, or machine-specific logs. Commit the example environment
-file, reproducible source/scripts, and dependency lockfiles instead. Review the
+caches, build output, coursework reports, document exports, or machine-specific
+logs. Commit the example environment file, reproducible source/scripts, and
+dependency lockfiles instead. Review the
 staged diff and preserve unrelated changes. Use `codex/` for new agent-created
 branches unless a task specifies otherwise. Push only when the task authorizes
 it, without overwriting remote work or force-pushing as routine conflict repair.

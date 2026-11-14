@@ -39,8 +39,8 @@ frontend/src/pages/           User-task screens
 frontend/src/features/        Accounts, favorites, games, comparisons
 frontend/src/components/      Reusable controls and messages
 frontend/src/hooks/           Shared data hooks
-db/                          Core SQL artifact and authentication extension
-docs/                        Guides, screenshots, and final coursework report
+db/                           Core SQL artifact and authentication extension
+docs/                         Project guides and referenced screenshots
 ```
 
 See [PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md) for the detailed tree,
@@ -193,9 +193,9 @@ changes and use complete lookup/roster data before filtering or pagination.
 ## Documentation and Git handoff
 
 Update guides when commands, settings, APIs, or schema rules change. Keep
-`AGENTS.md`, this guide, and `PROJECT_STRUCTURE.md` consistent. Final report
-files live in `docs/final-report/`; preserve all three authors in document
-metadata and leave individual contribution paragraphs blank unless instructed.
+`AGENTS.md`, this guide, and `PROJECT_STRUCTURE.md` consistent. Keep coursework
+reports, submission evidence, and document exports outside the repository.
+`docs/` contains project guides and the screenshots they reference.
 
 Inspect the current branch, remote, PR head/base, and worktree before editing.
 Preserve unrelated changes. Use `codex/` for new branches. Commit only intended

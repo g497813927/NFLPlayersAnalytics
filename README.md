@@ -43,8 +43,8 @@ uv run --directory backend --frozen python -m scripts.create_admin
 
 More screenshots: [player comparison](docs/screenshots/player-comparison.jpg),
 [roster filter](docs/screenshots/team-roster-year.jpg),
-[admin user creation](docs/screenshots/final-report/admin-create-after.jpg),
-[SQL injection rejection](docs/screenshots/final-report/sql-injection.jpg).
+[admin user creation](docs/screenshots/admin-user-creation.jpg),
+[SQL injection rejection](docs/screenshots/sql-injection-rejected.jpg).
 
 ## Configure and develop
 
@@ -70,16 +70,15 @@ deployment remain future work.
 
 ## Documentation
 
-| Guide                                            | Contents                                                                              |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| [Setup and configuration](docs/SETUP.md)         | Full `.env` reference, ports, database initialization, SQL debugging, troubleshooting |
-| [User guide](docs/USER_GUIDE.md)                 | Accounts, permissions, games, comparisons, season filters, request guard              |
-| [Database design](docs/DATABASE.md)              | Tables, relationships, constraints, synthetic seed data                               |
-| [Project structure](docs/PROJECT_STRUCTURE.md)   | Folder map, entry points, and CI jobs                                                 |
-| [Final report](docs/final-report/README.md)      | PDF, editable Word report, numbered evidence and submission notes                     |
-| [SQL injection demo](docs/SQL_INJECTION_DEMO.md) | Reproduction and limits of the defensive layer                                        |
-| [Agent guidance](AGENTS.md)                      | Repository conventions shared by Codex and Claude                                     |
+| Guide                                          | Contents                                                                              |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Setup and configuration](docs/SETUP.md)       | Full `.env` reference, ports, database initialization, SQL debugging, troubleshooting |
+| [User guide](docs/USER_GUIDE.md)               | Accounts, permissions, games, comparisons, season filters, request guard              |
+| [Account operations](docs/ACCOUNTS.md)         | Password changes, user creation, sessions, and authorization                          |
+| [Database design](docs/DATABASE.md)            | Tables, relationships, constraints, synthetic seed data                               |
+| [Project structure](docs/PROJECT_STRUCTURE.md) | Folder map, entry points, and CI jobs                                                 |
+| [Agent guidance](AGENTS.md)                    | Repository conventions shared by Codex and Claude                                     |
 
-Source stays in `frontend/` and `backend/`; SQL stays in `db/`; documentation and
-report materials stay in `docs/`. The original `db/schema.sql` submission artifact
+Source stays in `frontend/` and `backend/`; SQL stays in `db/`; project guides and
+screenshots stay in `docs/`. The original `db/schema.sql` submission artifact
 is unchanged. `db/auth_schema.sql` adds the two authentication tables.

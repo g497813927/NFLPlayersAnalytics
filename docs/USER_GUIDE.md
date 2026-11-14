@@ -105,6 +105,29 @@ SQLAlchemy expressions/bound parameters remain the actual SQL-injection defense;
 never concatenate user input into SQL or weaken that rule because the guard is
 present. This follows the [OWASP SQL injection prevention guidance](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html).
 
+### Check a rejected search
+
+With `WAF_ENABLED=true`, start the local prototype with `npm run dev`. Open
+**Teams**, enter `' OR 1=1 --` in **Search team or city**, and submit. The API
+returns HTTP `403` with error code `request_blocked`; the page explains:
+“This request contains unsupported query syntax. Use ordinary names or values
+and try again.” Clear the search and submit again to restore the normal list.
+
+![Teams search rejecting unsupported query syntax](screenshots/sql-injection-rejected.jpg)
+
+The empty table during a rejected search is a UI error state, not an empty
+database. The probe is read-only. To inspect the same response in a terminal:
+
+```sh
+curl -i --get \
+  --data-urlencode "q=' OR 1=1 --" \
+  http://127.0.0.1:8000/api/teams
+```
+
+Repeated probes can trigger the temporary `429` block described above. Use this
+walkthrough only against your own local prototype; it checks one rejection path,
+not comprehensive protection against SQL injection.
+
 ## Game center
 
 Open **Games** or **Explore game center** on the homepage. The layout takes
@@ -222,7 +245,7 @@ deployment hardening remain deferred. The login limiter is per process, with
 ten account attempts per client IP per minute; it is not distributed protection.
 
 There is no automated test suite yet. This phase uses static checks and targeted
-manual walkthroughs, including the [SQL injection demo](SQL_INJECTION_DEMO.md)
+manual walkthroughs, including the [request-guard check](#check-a-rejected-search)
 and the comparison and roster captures above. Those demonstrate specific cases; do not
 interpret the prototype as fully tested.
 

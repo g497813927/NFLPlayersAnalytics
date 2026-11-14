@@ -16,3 +16,10 @@ dist/
 .ruff_cache/
 .pytest_cache/
 .cache/
+
+# Coursework reports and local document exports
+*.docx
+*.pdf
+/output/
+/docs/final-report/
+/docs/screenshots/final-report/
